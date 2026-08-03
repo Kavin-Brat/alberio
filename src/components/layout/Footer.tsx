@@ -24,7 +24,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full bg-albireo-blue border-t border-border-custom pt-16 pb-8 px-4 sm:px-6 lg:px-8 mt-auto">
+    <footer className="w-full border-t border-slate-200/20 dark:border-slate-800/10 bg-slate-50/10 dark:bg-slate-900/5 backdrop-blur-md pt-16 pb-8 px-4 sm:px-6 lg:px-8 mt-auto relative z-10">
       <div className="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
         {/* Column 1: Brand & Risk Disclosure */}
         <div className="flex flex-col gap-4">
@@ -77,6 +77,7 @@ export default function Footer() {
         {/* Column 2: Products */}
         <div className="flex flex-col gap-4">
           <h3 className="font-bold text-sm uppercase tracking-wider text-text-primary">Products</h3>
+          <div className="section-divider" />
           <ul className="flex flex-col gap-2.5 text-sm text-text-muted">
             <li>
               <Link href="/prop-firms" className="hover:text-cygnus-gold transition-colors">
@@ -104,6 +105,7 @@ export default function Footer() {
         {/* Column 3: Community */}
         <div className="flex flex-col gap-4">
           <h3 className="font-bold text-sm uppercase tracking-wider text-text-primary">Community</h3>
+          <div className="section-divider" />
           <ul className="flex flex-col gap-3.5 text-sm text-text-muted">
             <li>
               <a
@@ -153,6 +155,7 @@ export default function Footer() {
         {/* Column 4: Legal & Contact */}
         <div className="flex flex-col gap-4">
           <h3 className="font-bold text-sm uppercase tracking-wider text-text-primary">Legal</h3>
+          <div className="section-divider" />
           <ul className="flex flex-col gap-2.5 text-sm text-text-muted">
             <li>
               <Link href="/terms" className="hover:text-cygnus-gold transition-colors">
@@ -179,21 +182,50 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="max-w-[1600px] mx-auto pt-8 border-t border-border-custom/30 flex flex-col md:flex-row items-center justify-between gap-4">
-        <span className="text-xs text-text-muted">
-          &copy; {currentYear} Albireo. All rights reserved. Built with precision for prop challenge success.
+      {/* Bottom Bar — 3-col: copyright · built-with · social icons */}
+      <div className="max-w-[1600px] mx-auto pt-8 border-t border-slate-200/20 dark:border-slate-800/10 flex flex-col md:flex-row items-center justify-between gap-4">
+        <span className="text-xs text-text-muted order-3 md:order-1">
+          &copy; {currentYear} Albireo. All rights reserved.
         </span>
-        <div className="flex items-center gap-1.5 text-xs text-text-muted">
-          <span>Star rating:</span>
+        <div className="flex items-center gap-1.5 text-xs text-text-muted order-2">
+          <span>Built with precision for prop challenge success</span>
+          <span className="text-cygnus-gold mx-1">&middot;</span>
           <div className="flex items-center text-cygnus-gold">
-            <Star className="w-3.5 h-3.5 fill-current" />
-            <Star className="w-3.5 h-3.5 fill-current" />
-            <Star className="w-3.5 h-3.5 fill-current" />
-            <Star className="w-3.5 h-3.5 fill-current" />
-            <Star className="w-3.5 h-3.5 fill-current" />
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} className="w-3.5 h-3.5 fill-current" />
+            ))}
           </div>
           <span className="font-semibold text-text-primary">4.9/5</span>
+        </div>
+        {/* Social icons */}
+        <div className="flex items-center gap-3 order-1 md:order-3">
+          <a
+            href="https://t.me/albireo_trading"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-text-muted hover:text-cygnus-gold transition-colors"
+            aria-label="Telegram"
+          >
+            <Send className="w-4 h-4" />
+          </a>
+          <a
+            href="https://linkedin.com/in/kavin-brat"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-text-muted hover:text-cygnus-gold transition-colors"
+            aria-label="LinkedIn"
+          >
+            <Linkedin className="w-4 h-4" />
+          </a>
+          <a
+            href="https://discord.gg/albireo_trading"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-text-muted hover:text-cygnus-gold transition-colors"
+            aria-label="Discord"
+          >
+            <MessageSquare className="w-4 h-4" />
+          </a>
         </div>
       </div>
     </footer>

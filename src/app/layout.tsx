@@ -22,11 +22,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-full" data-theme="dark">
       <body className="min-h-full flex flex-col bg-albireo-blue text-text-primary antialiased">
+        {/* Star field — three parallax layers, GPU-composited, dark mode only (opacity via CSS var) */}
+        <div id="stars1" aria-hidden="true" />
+        <div id="stars2" aria-hidden="true" />
+        <div id="stars3" aria-hidden="true" />
         <ThemeProvider>
           <Header />
-          <main className="flex-1 w-full flex flex-col">
+          <main className="flex-1 w-full flex flex-col relative z-10">
             {children}
           </main>
           <Footer />

@@ -6,10 +6,22 @@ import { usePathname } from "next/navigation";
 import { ChevronDown, Menu, X, Star, BarChart3, Calculator, PenTool, Send } from "lucide-react";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 
+/**
+ * Header Component
+ *
+ * Glassmorphic sticky top navigation bar.
+ * - backdrop-blur-md translucent background (light & dark)
+ * - Pill container for desktop nav links with sliding active indicator
+ * - Logo: binary star SVG + ALBIREO text + amber trailing dot
+ * - Mobile: right-side slide-in drawer (translate-x animation)
+ */
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  // Tracks the active nav pill position for the sliding indicator
+  const [pillStyle, setPillStyle] = useState({ left: 0, width: 0 });
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
   // Close dropdown when clicking outside
@@ -29,10 +41,36 @@ export default function Header() {
     setIsDropdownOpen(false);
   }, [pathname]);
 
+  // Update sliding pill indicator to the active nav link
+  useEffect(() => {
+    if (!navRef.current) return;
+    const activeLink = navRef.current.querySelector<HTMLElement>("[data-active='true']");
+    if (activeLink) {
+      const navRect = navRef.current.getBoundingClientRect();
+      const linkRect = activeLink.getBoundingClientRect();
+      setPillStyle({
+        left: linkRect.left - navRect.left,
+        width: linkRect.width,
+      });
+    }
+  }, [pathname]);
+
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
+  // Helper: check if a path is active
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
+
+  // Nav link base classes
+  const navLinkClass = (href: string) =>
+    `relative z-10 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors duration-200 ${
+      isActive(href)
+        ? "text-white dark:text-white"
+        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+    }`;
+
   return (
-    <header className="sticky top-0 w-full z-50 flex flex-col bg-albireo-blue/90 backdrop-blur-md">
+    <header className="fixed top-0 w-full z-50 flex flex-col">
       {/* Announcement Banner */}
       <div className="w-full bg-gradient-to-r from-cygnus-gold/20 via-albireo-blue to-electric-cyan/20 border-b border-border-custom py-2 px-4 text-center text-xs md:text-sm font-medium text-text-primary">
         Joined 1,000+ traders scaling prop firm challenges.{" "}
@@ -46,10 +84,10 @@ export default function Header() {
         </a>
       </div>
 
-      {/* Main Navigation */}
-      <nav className="w-full bg-albireo-blue/80 backdrop-blur-md border-b border-border-custom px-4 sm:px-6 lg:px-8 py-4">
+      {/* Main Navigation — glassmorphic bar */}
+      <nav className="w-full bg-slate-100/40 dark:bg-slate-950/20 backdrop-blur-md border-b border-b-[0.5px] border-slate-200/10 dark:border-white/5 transition-all duration-300 px-4 sm:px-6 lg:px-8 py-4">
         <div className="max-w-[1600px] mx-auto flex items-center justify-between">
-          {/* Logo */}
+          {/* Logo: Binary Star SVG + ALBIREO + amber trailing dot */}
           <Link href="/" className="flex items-center gap-2.5 group">
             <div className="relative flex items-center justify-center w-8 h-8">
               {/* Futuristic Binary Star Constellation Logo */}
@@ -70,7 +108,7 @@ export default function Header() {
                   strokeLinecap="round"
                   className="group-hover:stroke-cygnus-gold-hover transition-colors"
                 />
-                {/* Primary Star (Albireo A) - Volt Glow */}
+                {/* Primary Star (Albireo A) — Volt/Amber Glow */}
                 <circle
                   cx="13"
                   cy="4"
@@ -78,7 +116,7 @@ export default function Header() {
                   fill="var(--accent-gold)"
                   className="animate-pulse"
                 />
-                {/* Secondary Star (Albireo B) - Cyan */}
+                {/* Secondary Star (Albireo B) — Cyan */}
                 <circle
                   cx="18"
                   cy="15"
@@ -88,107 +126,129 @@ export default function Header() {
                 />
               </svg>
             </div>
+            {/* Brand text + amber trailing dot (portfolio-2k26 Section 7) */}
             <span className="font-black text-lg tracking-[0.25em] bg-gradient-to-r from-text-primary via-text-primary to-cygnus-gold bg-clip-text text-transparent group-hover:to-electric-cyan transition-all duration-300">
               ALBIREO
             </span>
+            <span className="text-2xl font-extrabold text-cygnus-gold leading-none -ml-1">
+              .
+            </span>
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <div className="hidden lg:flex items-center gap-8 font-medium text-sm text-text-muted">
-            <Link
-              href={pathname === "/" ? "#journey" : "/#journey"}
-              className="hover:text-text-primary transition-colors hover:scale-105"
+          {/* Desktop Navigation — pill container with sliding indicator */}
+          <div className="hidden lg:flex items-center">
+            <div
+              ref={navRef}
+              className="relative flex items-center gap-1 bg-slate-900/5 dark:bg-white/5 border border-slate-900/10 dark:border-white/10 rounded-full p-1"
             >
-              Story
-            </Link>
+              {/* Sliding active pill background */}
+              <div
+                className="absolute top-1 bottom-1 bg-slate-900 dark:bg-white/15 rounded-full transition-all duration-300 ease-out pointer-events-none"
+                style={{ left: `${pillStyle.left + 4}px`, width: `${pillStyle.width}px` }}
+              />
 
-            {/* Tools Dropdown */}
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={toggleDropdown}
-                className="flex items-center gap-1 hover:text-text-primary transition-colors focus:outline-none"
+              <Link
+                href={pathname === "/" ? "#journey" : "/#journey"}
+                data-active={pathname === "/"}
+                className={navLinkClass("/")}
               >
-                Tools <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} />
-              </button>
+                Story
+              </Link>
 
-              {isDropdownOpen && (
-                <div className="absolute left-0 mt-3 w-64 bg-surface-card border border-border-custom rounded-xl shadow-2xl p-2 flex flex-col gap-1 animate-in fade-in slide-in-from-top-2 duration-200">
-                  <Link
-                    href="/prop-firms"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-albireo-blue transition-colors text-text-muted hover:text-text-primary group"
-                  >
-                    <Calculator className="w-5 h-5 text-cygnus-gold" />
-                    <div>
-                      <div className="font-semibold text-sm text-text-primary group-hover:text-cygnus-gold transition-colors">
-                        Drawdown Simulator
-                      </div>
-                      <div className="text-xs text-text-muted/80 mt-0.5">Test account survival rules</div>
-                    </div>
-                  </Link>
+              {/* Tools Dropdown */}
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={toggleDropdown}
+                  className={`relative z-10 flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors duration-200 ${
+                    isActive("/tools") || isActive("/prop-firms")
+                      ? "text-white dark:text-white"
+                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                  } focus:outline-none`}
+                >
+                  Tools <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} />
+                </button>
 
-                  <Link
-                    href="/tools/cot-analyzer"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-albireo-blue transition-colors text-text-muted hover:text-text-primary group"
-                  >
-                    <BarChart3 className="w-5 h-5 text-electric-cyan" />
-                    <div>
-                      <div className="font-semibold text-sm text-text-primary group-hover:text-electric-cyan transition-colors">
-                        COT Analyzer
+                {isDropdownOpen && (
+                  <div className="absolute left-0 mt-3 w-64 glass border border-glass-border rounded-xl shadow-2xl p-2 flex flex-col gap-1 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <Link
+                      href="/prop-firms"
+                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-albireo-blue/40 transition-colors text-text-muted hover:text-text-primary group"
+                    >
+                      <Calculator className="w-5 h-5 text-cygnus-gold" />
+                      <div>
+                        <div className="font-semibold text-sm text-text-primary group-hover:text-cygnus-gold transition-colors">
+                          Drawdown Simulator
+                        </div>
+                        <div className="text-xs text-text-muted/80 mt-0.5">Test account survival rules</div>
                       </div>
-                      <div className="text-xs text-text-muted/80 mt-0.5">Track institutional sentiment</div>
-                    </div>
-                  </Link>
+                    </Link>
 
-                  <Link
-                    href="/blog#position-sizer"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-albireo-blue transition-colors text-text-muted hover:text-text-primary group"
-                  >
-                    <PenTool className="w-5 h-5 text-profit" />
-                    <div>
-                      <div className="font-semibold text-sm text-text-primary group-hover:text-profit transition-colors">
-                        Position Sizer
+                    <Link
+                      href="/tools/cot-analyzer"
+                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-albireo-blue/40 transition-colors text-text-muted hover:text-text-primary group"
+                    >
+                      <BarChart3 className="w-5 h-5 text-electric-cyan" />
+                      <div>
+                        <div className="font-semibold text-sm text-text-primary group-hover:text-electric-cyan transition-colors">
+                          COT Analyzer
+                        </div>
+                        <div className="text-xs text-text-muted/80 mt-0.5">Track institutional sentiment</div>
                       </div>
-                      <div className="text-xs text-text-muted/80 mt-0.5">Calculate risk per trade</div>
-                    </div>
-                  </Link>
-                </div>
-              )}
+                    </Link>
+
+                    <Link
+                      href="/blog#position-sizer"
+                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-albireo-blue/40 transition-colors text-text-muted hover:text-text-primary group"
+                    >
+                      <PenTool className="w-5 h-5 text-profit" />
+                      <div>
+                        <div className="font-semibold text-sm text-text-primary group-hover:text-profit transition-colors">
+                          Position Sizer
+                        </div>
+                        <div className="text-xs text-text-muted/80 mt-0.5">Calculate risk per trade</div>
+                      </div>
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              <Link
+                href="/prop-firms"
+                data-active={isActive("/prop-firms")}
+                className={navLinkClass("/prop-firms")}
+              >
+                Prop Firms
+              </Link>
+
+              <Link
+                href="/journal"
+                data-active={isActive("/journal")}
+                className={navLinkClass("/journal")}
+              >
+                Journal
+              </Link>
+
+              <Link
+                href="/blog"
+                data-active={isActive("/blog")}
+                className={navLinkClass("/blog")}
+              >
+                Blog & Guides
+              </Link>
             </div>
-
-            <Link
-              href="/prop-firms"
-              className={`hover:text-text-primary transition-colors ${pathname === "/prop-firms" ? "text-cygnus-gold" : ""}`}
-            >
-              Prop Firms
-            </Link>
-
-            <Link
-              href="/journal"
-              className={`hover:text-text-primary transition-colors ${pathname === "/journal" ? "text-cygnus-gold" : ""}`}
-            >
-              Journal
-            </Link>
-
-            <Link
-              href="/blog"
-              className={`hover:text-text-primary transition-colors ${pathname.startsWith("/blog") ? "text-cygnus-gold" : ""}`}
-            >
-              Blog & Guides
-            </Link>
           </div>
 
           {/* Desktop Right CTAs */}
           <div className="hidden lg:flex items-center gap-4">
-            <ThemeToggle />
             <Link
               href="/journal"
-              className="text-text-primary hover:text-cygnus-gold transition-colors text-sm font-medium px-4 py-2 border border-transparent hover:border-border-custom rounded-lg bg-transparent"
+              className="text-text-primary hover:text-cygnus-gold transition-colors text-xs font-semibold uppercase tracking-wider px-4 py-2 border border-transparent hover:border-border-custom rounded-full bg-transparent"
             >
               Log In
             </Link>
             <Link
               href="/journal"
-              className="bg-cygnus-gold text-albireo-blue hover:bg-cygnus-gold/90 px-5 py-2.5 rounded-lg text-sm font-bold shadow-lg shadow-cygnus-gold/20 hover:shadow-cygnus-gold/45 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
+              className="bg-cygnus-gold text-albireo-blue hover:bg-cygnus-gold/90 px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg shadow-cygnus-gold/20 hover:shadow-cygnus-gold/45 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
             >
               Launch Platform
             </Link>
@@ -203,69 +263,83 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Mobile Dropdown Menu */}
-        {isMobileMenuOpen && (
-          <div className="lg:hidden mt-4 pt-4 border-t border-border-custom flex flex-col gap-4 animate-in slide-in-from-top-5 duration-200">
+        {/* Mobile Slide-in Drawer (right-side, translate-x animation) */}
+        <div
+          className={`lg:hidden fixed top-0 right-0 h-full w-72 bg-slate-100/90 dark:bg-slate-950/95 backdrop-blur-xl z-[200] shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
+            isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          {/* Drawer Header */}
+          <div className="flex items-center justify-between px-6 py-5 border-b border-border-custom/50">
+            <span className="font-black text-sm tracking-[0.25em] text-text-primary uppercase">Menu</span>
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="p-2 rounded-full hover:bg-surface-card text-text-muted hover:text-text-primary transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Drawer Links */}
+          <div className="flex flex-col gap-1 p-4 flex-1 overflow-y-auto">
             <Link
               href={pathname === "/" ? "#journey" : "/#journey"}
-              className="text-text-muted hover:text-text-primary py-2 text-base font-semibold"
+              className="px-4 py-3 rounded-xl text-sm font-semibold uppercase tracking-wider text-text-muted hover:text-text-primary hover:bg-surface-card transition-colors"
             >
               Story
             </Link>
 
-            <div className="flex flex-col gap-2 pl-2 border-l border-border-custom">
-              <span className="text-xs font-bold uppercase tracking-wider text-text-muted/60">Tools</span>
-              <Link href="/prop-firms" className="text-text-muted hover:text-text-primary py-1 text-sm flex items-center gap-2">
+            <div className="flex flex-col gap-1 pl-2 border-l border-border-custom mt-1">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted/60 px-2 py-1">Tools</span>
+              <Link href="/prop-firms" className="px-4 py-2.5 rounded-xl text-sm font-semibold text-text-muted hover:text-text-primary hover:bg-surface-card transition-colors flex items-center gap-2">
                 <Calculator className="w-4 h-4 text-cygnus-gold" /> Drawdown Simulator
               </Link>
-              <Link href="/tools/cot-analyzer" className="text-text-muted hover:text-text-primary py-1 text-sm flex items-center gap-2">
+              <Link href="/tools/cot-analyzer" className="px-4 py-2.5 rounded-xl text-sm font-semibold text-text-muted hover:text-text-primary hover:bg-surface-card transition-colors flex items-center gap-2">
                 <BarChart3 className="w-4 h-4 text-electric-cyan" /> COT Analyzer
               </Link>
-              <Link href="/blog#position-sizer" className="text-text-muted hover:text-text-primary py-1 text-sm flex items-center gap-2">
+              <Link href="/blog#position-sizer" className="px-4 py-2.5 rounded-xl text-sm font-semibold text-text-muted hover:text-text-primary hover:bg-surface-card transition-colors flex items-center gap-2">
                 <PenTool className="w-4 h-4 text-profit" /> Position Sizer
               </Link>
             </div>
 
-            <Link
-              href="/prop-firms"
-              className="text-text-muted hover:text-text-primary py-2 text-base font-semibold"
-            >
+            <Link href="/prop-firms" className="px-4 py-3 rounded-xl text-sm font-semibold uppercase tracking-wider text-text-muted hover:text-text-primary hover:bg-surface-card transition-colors">
               Prop Firms
             </Link>
-
-            <Link
-              href="/journal"
-              className="text-text-muted hover:text-text-primary py-2 text-base font-semibold"
-            >
+            <Link href="/journal" className="px-4 py-3 rounded-xl text-sm font-semibold uppercase tracking-wider text-text-muted hover:text-text-primary hover:bg-surface-card transition-colors">
               Journal
             </Link>
-
-            <Link
-              href="/blog"
-              className="text-text-muted hover:text-text-primary py-2 text-base font-semibold"
-            >
+            <Link href="/blog" className="px-4 py-3 rounded-xl text-sm font-semibold uppercase tracking-wider text-text-muted hover:text-text-primary hover:bg-surface-card transition-colors">
               Blog & Guides
             </Link>
-
-            <div className="flex flex-col gap-3 pt-4 border-t border-border-custom">
-              <div className="flex items-center justify-between px-2 mb-1">
-                <span className="text-xs font-bold text-text-muted">Appearance</span>
-                <ThemeToggle />
-              </div>
-              <Link
-                href="/journal"
-                className="w-full text-center py-2.5 rounded-lg border border-border-custom text-text-primary hover:bg-surface-card transition-colors font-medium text-sm"
-              >
-                Log In
-              </Link>
-              <Link
-                href="/journal"
-                className="w-full text-center py-2.5 rounded-lg bg-cygnus-gold text-albireo-blue hover:bg-cygnus-gold/90 transition-colors font-bold text-sm"
-              >
-                Launch Platform
-              </Link>
-            </div>
           </div>
+
+          {/* Drawer Footer CTAs */}
+          <div className="flex flex-col gap-3 p-4 border-t border-border-custom/50">
+            <div className="flex items-center justify-between px-2 mb-1">
+              <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Appearance</span>
+              <ThemeToggle />
+            </div>
+            <Link
+              href="/journal"
+              className="w-full text-center py-2.5 rounded-full border border-border-custom text-text-primary hover:bg-surface-card transition-colors font-semibold text-sm uppercase tracking-wider"
+            >
+              Log In
+            </Link>
+            <Link
+              href="/journal"
+              className="w-full text-center py-2.5 rounded-full bg-cygnus-gold text-albireo-blue hover:bg-cygnus-gold/90 transition-colors font-bold text-sm uppercase tracking-wider"
+            >
+              Launch Platform
+            </Link>
+          </div>
+        </div>
+
+        {/* Backdrop overlay */}
+        {isMobileMenuOpen && (
+          <div
+            className="lg:hidden fixed inset-0 bg-slate-950/60 dark:bg-black/60 backdrop-blur-sm z-[150]"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
         )}
       </nav>
     </header>

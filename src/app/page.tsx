@@ -22,7 +22,7 @@ export default function Home() {
   return (
     <div className="flex flex-col w-full overflow-hidden">
       {/* HERO SECTION */}
-      <section className="relative w-full pt-20 pb-16 md:pt-32 md:pb-24 px-4 sm:px-6 lg:px-8 bg-radial from-surface-card via-albireo-blue to-albireo-blue border-b border-border-custom/50">
+      <section className="relative w-full pt-20 pb-16 md:pt-32 md:pb-24 px-4 sm:px-6 lg:px-8 border-b border-slate-200/20 dark:border-slate-800/10 scroll-mt-20">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(6,182,212,0.08),transparent_45%)] pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(245,158,11,0.05),transparent_40%)] pointer-events-none" />
 
@@ -35,10 +35,10 @@ export default function Home() {
             <span className="text-electric-cyan">Market Alpha</span>
           </div>
 
-          {/* H1 */}
+          {/* H1 — amber gradient text */}
           <h1 className="max-w-4xl text-4xl md:text-6xl font-extrabold tracking-tight text-text-primary leading-tight md:leading-[1.15]">
             Master Prop Firm Rules, <br className="hidden md:inline" />
-            <span className="bg-gradient-to-r from-cygnus-gold via-text-primary to-electric-cyan bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-600 bg-clip-text text-transparent">
               Analyze Institutional Flow,
             </span>{" "}
             and Scale.
@@ -134,7 +134,7 @@ export default function Home() {
       </section>
 
       {/* FEATURE MATRIX (4 PILLARS) */}
-      <section className="w-full py-20 px-4 sm:px-6 lg:px-8 bg-surface-card/10 border-t border-b border-border-custom/30">
+      <section className="w-full py-20 px-4 sm:px-6 lg:px-8 border-t border-b border-slate-200/20 dark:border-slate-800/10 scroll-mt-20">
         <div className="max-w-[1600px] mx-auto">
           <div className="flex flex-col items-center text-center mb-16">
             <span className="text-xs font-bold uppercase tracking-widest text-cygnus-gold">
@@ -143,6 +143,8 @@ export default function Home() {
             <h2 className="text-3xl md:text-4xl font-extrabold text-text-primary mt-3 tracking-tight">
               Engineered Tools for Disciplined Trading
             </h2>
+            {/* Amber section divider (portfolio-2k26 Section 10) */}
+            <div className="section-divider mx-auto mt-3" />
             <p className="max-w-xl text-sm md:text-base text-text-muted mt-4">
               Eliminate emotional guess-work. Quantify risk, track institutional commitment, and journal performance using automated software analytics.
             </p>
@@ -150,7 +152,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
             {/* Card 1 */}
-            <div className="bg-surface-card border border-border-custom/75 p-8 rounded-2xl hover:border-cygnus-gold/30 hover:shadow-xl hover:shadow-cygnus-gold/5 group transition-all duration-300">
+            <div className="bg-slate-50/20 dark:bg-slate-900/10 backdrop-blur-sm border border-slate-200/30 dark:border-slate-800/40 p-8 rounded-2xl hover:border-cygnus-gold/40 hover:shadow-xl hover:shadow-cygnus-gold/5 group transition-all duration-300">
               <div className="p-3 bg-cygnus-gold/10 text-cygnus-gold rounded-xl w-fit mb-6 group-hover:scale-110 transition-transform">
                 <Code2 className="w-6 h-6" />
               </div>
@@ -163,7 +165,7 @@ export default function Home() {
             </div>
 
             {/* Card 2 */}
-            <div className="bg-surface-card border border-border-custom/75 p-8 rounded-2xl hover:border-electric-cyan/30 hover:shadow-xl hover:shadow-electric-cyan/5 group transition-all duration-300">
+            <div className="bg-slate-50/20 dark:bg-slate-900/10 backdrop-blur-sm border border-slate-200/30 dark:border-slate-800/40 p-8 rounded-2xl hover:border-electric-cyan/40 hover:shadow-xl hover:shadow-electric-cyan/5 group transition-all duration-300">
               <div className="p-3 bg-electric-cyan/10 text-electric-cyan rounded-xl w-fit mb-6 group-hover:scale-110 transition-transform">
                 <LineChart className="w-6 h-6" />
               </div>
@@ -176,7 +178,7 @@ export default function Home() {
             </div>
 
             {/* Card 3 */}
-            <div className="bg-surface-card border border-border-custom/75 p-8 rounded-2xl hover:border-profit/30 hover:shadow-xl hover:shadow-profit/5 group transition-all duration-300">
+            <div className="bg-slate-50/20 dark:bg-slate-900/10 backdrop-blur-sm border border-slate-200/30 dark:border-slate-800/40 p-8 rounded-2xl hover:border-profit/40 hover:shadow-xl hover:shadow-profit/5 group transition-all duration-300">
               <div className="p-3 bg-profit/10 text-profit rounded-xl w-fit mb-6 group-hover:scale-110 transition-transform">
                 <Compass className="w-6 h-6" />
               </div>

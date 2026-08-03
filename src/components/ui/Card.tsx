@@ -18,8 +18,13 @@ export default function Card({
   className = "",
   ...props
 }: CardProps) {
-  const baseStyle = "bg-surface-card border border-border-custom rounded-2xl p-6 relative overflow-hidden transition-all duration-300";
-  const hoverStyle = hoverEffect ? "hover:border-accent-gold/45 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/25" : "";
+  /**
+   * Base: glassmorphism card (backdrop-blur + translucent bg + subtle border).
+   * Matching portfolio-2k26 glassmorphism recipe (Section 1).
+   */
+  const baseStyle = "bg-slate-50/20 dark:bg-slate-900/10 backdrop-blur-sm border border-slate-200/30 dark:border-slate-800/40 rounded-2xl p-6 relative overflow-hidden transition-all duration-300";
+  /** Hover: lift + accent gold border glow */
+  const hoverStyle = hoverEffect ? "hover:border-cygnus-gold/40 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20" : "";
   const accentStyle = topAccent ? "border-t-2 border-t-accent-gold" : "";
 
   return (
