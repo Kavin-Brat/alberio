@@ -2,14 +2,14 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, Clock, Compass, Tag, Calendar, User } from "lucide-react";
 import { BLOG_POSTS } from "@/data/blogPosts";
 import PositionSizerWidget from "@/components/dashboard/PositionSizerWidget";
+import PageContainer from "@/components/layout/PageContainer";
 
 export default function BlogArchive() {
   const featuredPost = BLOG_POSTS.find((post) => post.featured) || BLOG_POSTS[0];
   const regularPosts = BLOG_POSTS.filter((post) => post.slug !== featuredPost.slug);
 
   return (
-    <div className="w-full flex-1 bg-albireo-blue px-4 lg:px-8 py-12">
-      <div className="max-w-[1600px] mx-auto flex flex-col gap-10">
+    <PageContainer>
         
         {/* Blog Header */}
         <div className="flex flex-col gap-2 border-b border-border-custom/50 pb-6">
@@ -152,7 +152,6 @@ export default function BlogArchive() {
 
         </div>
 
-      </div>
-    </div>
+    </PageContainer>
   );
 }

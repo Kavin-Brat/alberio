@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { BarChart3, TrendingUp, Info, HelpCircle, AlertCircle, Compass } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, ReferenceLine } from "recharts";
+import PageContainer from "@/components/layout/PageContainer";
 
 type AssetType = "EUR/USD" | "GBP/USD" | "Gold (XAU)" | "Crude Oil" | "S&P 500" | "Bitcoin";
 type TimeframeType = "6 Months" | "1 Year" | "3 Years";
@@ -18,6 +19,13 @@ interface CotDataPoint {
   netSpec: number; // Speculator Longs - Shorts
 }
 
+/**
+ * CotAnalyzer Component
+ * 
+ * Commitments of Traders (COT) Sentiment Visualizer.
+ * Simulates weekly CFTC contract flows (Commercial hedger layers, non-commercial spec funds, and retail levels)
+ * and plots relative trend net ratios across historical windows.
+ */
 export default function CotAnalyzer() {
   const [mounted, setMounted] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<AssetType>("EUR/USD");
@@ -147,8 +155,7 @@ export default function CotAnalyzer() {
   };
 
   return (
-    <div className="w-full flex-1 bg-albireo-blue px-4 lg:px-8 py-12">
-      <div className="max-w-[1600px] mx-auto flex flex-col gap-8">
+    <PageContainer>
         
         {/* Page Header */}
         <div className="flex flex-col gap-2 border-b border-border-custom/50 pb-6">
@@ -415,7 +422,6 @@ export default function CotAnalyzer() {
           </div>
         </div>
 
-      </div>
-    </div>
+    </PageContainer>
   );
 }

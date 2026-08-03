@@ -11,45 +11,45 @@
   --color-cygnus-gold: var(--accent-gold);
   --color-cygnus-gold-hover: var(--accent-gold-hover);
   
-  --color-electric-cyan: #06b6d4;
-  --color-profit: #10b981;
-  --color-loss: #ef4444;
+  --color-electric-cyan: #22d3ee;
+  --color-profit: #00ff88;
+  --color-loss: #ff3366;
   
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
 
 :root {
-  /* Light Theme Palette */
-  --bg-primary: #f4f4f6;
+  /* Light Theme Palette - Optimized for Bodaghee style compatibility */
+  --bg-primary: #f4f6f9;
   --bg-secondary: #ffffff;
-  --bg-surface: #f9f9fb;
-  --text-primary: #101014;
-  --text-secondary: #5a5a6e;
-  --accent-gold: #b8860b;
-  --accent-gold-hover: #d4af37;
-  --border-color: #e0e0e6;
-  --shadow-color: rgba(0, 0, 0, 0.08);
-  --tag-bg: #eaeaef;
-  --tag-border: #d0d0dc;
-  --tag-text: #1a1a22;
-  --gold-glow: rgba(184, 134, 11, 0.25);
+  --bg-surface: #eef2f6;
+  --text-primary: #040319;
+  --text-secondary: #555273;
+  --accent-gold: #799d10; /* Dark volt/lime readable on light mode */
+  --accent-gold-hover: #b5cc00;
+  --border-color: #dde2eb;
+  --shadow-color: rgba(4, 3, 25, 0.08);
+  --tag-bg: #eceff5;
+  --tag-border: #c4cddc;
+  --tag-text: #040319;
+  --gold-glow: rgba(220, 253, 53, 0.25);
 }
 
 [data-theme="dark"] {
-  /* Dark Luxury Theme Palette */
-  --bg-primary: #0a0a0c;
-  --bg-secondary: #16161a;
-  --bg-surface: #1e1e24;
+  /* Dark Luxury Theme Palette - Futuristic Navy & Volt Green */
+  --bg-primary: #040319;      /* Midnight Navy/Black */
+  --bg-secondary: #0a0926;    /* Dark navy slate cards */
+  --bg-surface: #12103b;      /* Hover states */
   --text-primary: #ffffff;
-  --text-secondary: #9e9eb0;
-  --accent-gold: #d4af37;
-  --accent-gold-hover: #ffd700;
-  --border-color: #2a2a32;
-  --shadow-color: rgba(0, 0, 0, 0.4);
-  --tag-bg: #121216;
-  --tag-border: #333340;
-  --tag-text: #e0e0ea;
-  --gold-glow: rgba(255, 215, 0, 0.35);
+  --text-secondary: #aeacd1;  /* Cool lavender/slate */
+  --accent-gold: #dcfd35;     /* Neon Volt accent */
+  --accent-gold-hover: #f0ff6b;
+  --border-color: #1b194d;    /* Cyber violet/navy borders */
+  --shadow-color: rgba(0, 0, 0, 0.5);
+  --tag-bg: #0f0e35;
+  --tag-border: #29286c;
+  --tag-text: #f0ff9e;
+  --gold-glow: rgba(220, 253, 53, 0.35);
 }
 
 * {

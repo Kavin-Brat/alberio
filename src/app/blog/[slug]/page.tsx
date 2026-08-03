@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Clock, Calendar, Tag, Send, MessageSquare, List } from "lucide-react";
 import { BLOG_POSTS } from "@/data/blogPosts";
 import PositionSizerWidget from "@/components/dashboard/PositionSizerWidget";
+import PageContainer from "@/components/layout/PageContainer";
 
 const Linkedin = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -33,8 +34,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   }
 
   return (
-    <div className="w-full flex-1 bg-albireo-blue px-4 lg:px-8 py-12">
-      <div className="max-w-[1600px] mx-auto flex flex-col gap-6">
+    <PageContainer>
         
         {/* Back Link */}
         <Link
@@ -159,7 +159,6 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         </div>
 
-      </div>
-    </div>
+    </PageContainer>
   );
 }

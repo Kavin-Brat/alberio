@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Plus, Trash2, Edit2, TrendingUp, BarChart3, Clock, AlertTriangle, Calendar, RefreshCw, X, FileText, CheckCircle } from "lucide-react";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Legend, Cell } from "recharts";
 import KPICard from "@/components/dashboard/KPICard";
+import PageContainer from "@/components/layout/PageContainer";
 
 interface Trade {
   id: string;
@@ -111,6 +112,14 @@ const DEFAULT_TRADES: Trade[] = [
   }
 ];
 
+/**
+ * TradeJournal Component
+ * 
+ * Reusable SaaS Trade Journal dashboard.
+ * Evaluates performance analytics (Net P&L, Win Rate, Profit Factor, Max Drawdown metrics),
+ * renders chronological equity curves and session win rates using Recharts,
+ * and handles adding, editing, and deleting local trade records.
+ */
 export default function TradeJournal() {
   const [mounted, setMounted] = useState(false);
   const [trades, setTrades] = useState<Trade[]>([]);
@@ -304,8 +313,7 @@ export default function TradeJournal() {
   })).sort((a, b) => b["Net P&L"] - a["Net P&L"]);
 
   return (
-    <div className="w-full flex-1 bg-albireo-blue px-4 lg:px-8 py-12">
-      <div className="max-w-[1600px] mx-auto flex flex-col gap-8">
+    <PageContainer>
         
         {/* Header Dashboard section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border-custom/50 pb-6">
@@ -816,7 +824,6 @@ export default function TradeJournal() {
           </div>
         )}
 
-      </div>
-    </div>
+    </PageContainer>
   );
 }

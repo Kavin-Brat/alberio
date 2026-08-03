@@ -50,27 +50,45 @@ export default function Header() {
       <nav className="w-full bg-albireo-blue/80 backdrop-blur-md border-b border-border-custom px-4 lg:px-8 py-4">
         <div className="max-w-[1600px] mx-auto flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
+          <Link href="/" className="flex items-center gap-2.5 group">
             <div className="relative flex items-center justify-center w-8 h-8">
-              {/* Double Star SVG Logo */}
-              <svg className="w-8 h-8 filter drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]" viewBox="0 0 24 24" fill="none">
-                {/* Primary Gold Star (Albireo A) */}
+              {/* Futuristic Binary Star Constellation Logo */}
+              <svg className="w-8 h-8 filter drop-shadow-[0_0_8px_rgba(220,253,53,0.35)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Orbital path arc */}
                 <path
-                  d="M12 2L14.5 9.5H22L16 14L18.5 21.5L12 17L5.5 21.5L8 14L2 9.5H9.5L12 2Z"
-                  fill="#F59E0B"
-                  className="group-hover:scale-105 transition-transform duration-300 origin-center"
+                  d="M3 12C3 16.9706 7.02944 21 12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeDasharray="3 3"
+                  className="text-text-muted/30 group-hover:rotate-45 transition-transform duration-700 ease-in-out origin-center"
                 />
-                {/* Secondary Cyan Star (Albireo B) offset */}
+                <path
+                  d="M5 9C6.5 6 9.5 4 13 4C17.4183 4 21 7.58172 21 12C21 15.5 19 18.5 16 20"
+                  stroke="var(--accent-gold)"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  className="group-hover:stroke-cygnus-gold-hover transition-colors"
+                />
+                {/* Primary Star (Albireo A) - Volt Glow */}
                 <circle
-                  cx="15"
-                  cy="15"
+                  cx="13"
+                  cy="4"
                   r="3.5"
-                  fill="#06B6D4"
-                  className="animate-pulse filter drop-shadow-[0_0_4px_rgba(6,182,212,0.8)]"
+                  fill="var(--accent-gold)"
+                  className="animate-pulse"
+                />
+                {/* Secondary Star (Albireo B) - Cyan */}
+                <circle
+                  cx="18"
+                  cy="15"
+                  r="2.2"
+                  fill="var(--color-electric-cyan)"
+                  className="filter drop-shadow-[0_0_4px_rgba(34,211,238,0.6)]"
                 />
               </svg>
             </div>
-            <span className="font-extrabold text-xl tracking-wider bg-gradient-to-r from-text-primary via-text-primary to-cygnus-gold bg-clip-text text-transparent group-hover:to-electric-cyan transition-all duration-300">
+            <span className="font-black text-lg tracking-[0.25em] bg-gradient-to-r from-text-primary via-text-primary to-cygnus-gold bg-clip-text text-transparent group-hover:to-electric-cyan transition-all duration-300">
               ALBIREO
             </span>
           </Link>

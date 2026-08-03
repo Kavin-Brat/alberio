@@ -5,6 +5,7 @@ import { Search, Calculator, ShieldAlert, Award, FileDown, ExternalLink, Refresh
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, Dot } from "recharts";
 import Badge from "@/components/ui/Badge";
 import FavoriteStar from "@/components/ui/FavoriteStar";
+import PageContainer from "@/components/layout/PageContainer";
 
 interface PropFirmPreset {
   id: string;
@@ -85,6 +86,13 @@ const PRESETS: PropFirmPreset[] = [
   }
 ];
 
+/**
+ * PropFirmMatrix Component
+ * 
+ * Interactive prop firm catalog and drawdown simulator.
+ * Allows users to search and compare prop firm challenge designs, filter by asset classes
+ * or evaluation counts, and load active rulesets into a simulated Monte Carlo drawdown generator.
+ */
 export default function PropFirmMatrix() {
   const [mounted, setMounted] = useState(false);
   
@@ -245,8 +253,7 @@ export default function PropFirmMatrix() {
   });
 
   return (
-    <div className="w-full flex-1 bg-albireo-blue px-4 lg:px-8 py-12 print:bg-white print:text-black">
-      <div className="max-w-[1600px] mx-auto flex flex-col gap-10">
+    <PageContainer className="print:bg-white print:text-black">
         
         {/* Header Title */}
         <div className="flex flex-col gap-2 border-b border-border-custom/50 pb-6 print:hidden">
@@ -746,7 +753,6 @@ export default function PropFirmMatrix() {
           </div>
         )}
 
-      </div>
-    </div>
+    </PageContainer>
   );
 }

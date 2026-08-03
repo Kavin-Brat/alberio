@@ -5,6 +5,13 @@ import { Calculator, ShieldAlert } from "lucide-react";
 
 type InstrumentType = "forex" | "gold" | "btc";
 
+/**
+ * PositionSizerWidget Component
+ * 
+ * Interactive position sizing calculator.
+ * Supports calculations for standard forex lot lots, gold ounces, and bitcoin contract scales,
+ * factoring in starting balance and custom stop loss parameters.
+ */
 export default function PositionSizerWidget() {
   const [balance, setBalance] = useState<number>(100000);
   const [riskPct, setRiskPct] = useState<number>(1);

@@ -3,6 +3,13 @@
 import { useState, useEffect } from "react";
 import { Calculator, AlertTriangle, CheckCircle } from "lucide-react";
 
+/**
+ * QuickDrawdownWidget Component
+ * 
+ * Embeddable Monte Carlo drawdown simulator.
+ * Helps traders visualize probability of breaching prop firm drawdown models 
+ * (static, trailing balance, and trailing equity) based on win rate, risk-reward ratios, and account size.
+ */
 export default function QuickDrawdownWidget() {
   const [balance, setBalance] = useState<number>(50000);
   const [drawdownType, setDrawdownType] = useState<"static" | "trailing-balance" | "trailing-equity">("trailing-equity");
