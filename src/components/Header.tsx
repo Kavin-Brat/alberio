@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown, Menu, X, Star, BarChart3, Calculator, PenTool, LayoutDashboard, Send } from "lucide-react";
+import ThemeToggle from "@/components/ThemeToggle";
+
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -160,6 +162,7 @@ export default function Header() {
 
           {/* Desktop Right CTAs */}
           <div className="hidden md:flex items-center gap-4">
+            <ThemeToggle />
             <Link
               href="/journal"
               className="text-text-primary hover:text-cygnus-gold transition-colors text-sm font-medium px-4 py-2 border border-transparent hover:border-border-custom rounded-lg bg-transparent"
@@ -228,6 +231,10 @@ export default function Header() {
             </Link>
 
             <div className="flex flex-col gap-3 pt-4 border-t border-border-custom">
+              <div className="flex items-center justify-between px-2 mb-1">
+                <span className="text-xs font-bold text-text-muted">Appearance</span>
+                <ThemeToggle />
+              </div>
               <Link
                 href="/journal"
                 className="w-full text-center py-2.5 rounded-lg border border-border-custom text-text-primary hover:bg-surface-card transition-colors font-medium text-sm"
