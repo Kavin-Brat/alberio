@@ -111,10 +111,25 @@ export default function PropFirmMatrix() {
 
   // Review Modal state
   const [selectedReview, setSelectedReview] = useState<PropFirmPreset | null>(null);
+  const [favorites, setFavorites] = useState<string[]>([]);
 
   useEffect(() => {
     setMounted(true);
+    const savedFavorites = localStorage.getItem("albireo_firm_favorites");
+    if (savedFavorites) {
+      try {
+        setFavorites(JSON.parse(savedFavorites));
+      } catch (e) {}
+    }
   }, []);
+
+  const toggleFavorite = (firmId: string) => {
+    const updated = favorites.includes(firmId)
+      ? favorites.filter((id) => id !== firmId)
+      : [...favorites, firmId];
+    setFavorites(updated);
+    localStorage.setItem("albireo_firm_favorites", JSON.stringify(updated));
+  };
 
   // Run equity curve simulation
   const runSimulationCurve = () => {
@@ -588,20 +603,39 @@ export default function PropFirmMatrix() {
                 {/* Top Info */}
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase text-cygnus-gold bg-cygnus-gold/15 border border-cygnus-gold/25 px-2.5 py-0.5 rounded-full">
+                    <span className="dark-tag gold-highlight">
                       {firm.tag}
                     </span>
-                    <div className="flex items-center gap-1 text-xs font-semibold text-text-primary">
-                      <Star className="w-3.5 h-3.5 text-cygnus-gold fill-current" />
-                      {firm.rating}
+                    
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => toggleFavorite(firm.id)}
+                        title={favorites.includes(firm.id) ? "Remove from Favorites" : "Add to Favorites"}
+                        className="p-1 hover:bg-albireo-blue rounded-md transition-colors focus:outline-none"
+                      >
+                        <Star
+                          className={`w-4 h-4 favorite-icon ${
+                            favorites.includes(firm.id) ? "active" : ""
+                          }`}
+                        />
+                      </button>
+                      <div className="flex items-center gap-1 text-xs font-semibold text-text-primary">
+                        <Star className="w-3.5 h-3.5 text-cygnus-gold fill-current" />
+                        {firm.rating}
+                      </div>
                     </div>
                   </div>
 
-                  <div className="mt-1">
+                  <div className="mt-1 flex flex-col gap-2">
                     <h3 className="text-xl font-extrabold text-text-primary">{firm.name}</h3>
-                    <span className="text-xs text-text-muted font-medium uppercase tracking-wide">
-                      {firm.market.replace("-", " & ")}
-                    </span>
+                    <div className="flex flex-wrap gap-1.5 items-center">
+                      <span className="dark-tag">
+                        {firm.market.replace("-", " & ")}
+                      </span>
+                      <span className="dark-tag font-bold uppercase text-[9px]">
+                        {firm.steps}
+                      </span>
+                    </div>
                   </div>
 
                   {/* Body Metrics */}
