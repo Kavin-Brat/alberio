@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { Search, Calculator, ShieldAlert, Award, FileDown, ExternalLink, RefreshCw, Info, Star } from "lucide-react";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, Dot } from "recharts";
+import Badge from "@/components/ui/Badge";
+import FavoriteStar from "@/components/ui/FavoriteStar";
 
 interface PropFirmPreset {
   id: string;
@@ -603,22 +605,16 @@ export default function PropFirmMatrix() {
                 {/* Top Info */}
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-between">
-                    <span className="dark-tag gold-highlight">
+                    <Badge variant="gold">
                       {firm.tag}
-                    </span>
+                    </Badge>
                     
                     <div className="flex items-center gap-2">
-                      <button
+                      <FavoriteStar
+                        active={favorites.includes(firm.id)}
                         onClick={() => toggleFavorite(firm.id)}
                         title={favorites.includes(firm.id) ? "Remove from Favorites" : "Add to Favorites"}
-                        className="p-1 hover:bg-albireo-blue rounded-md transition-colors focus:outline-none"
-                      >
-                        <Star
-                          className={`w-4 h-4 favorite-icon ${
-                            favorites.includes(firm.id) ? "active" : ""
-                          }`}
-                        />
-                      </button>
+                      />
                       <div className="flex items-center gap-1 text-xs font-semibold text-text-primary">
                         <Star className="w-3.5 h-3.5 text-cygnus-gold fill-current" />
                         {firm.rating}
@@ -629,12 +625,12 @@ export default function PropFirmMatrix() {
                   <div className="mt-1 flex flex-col gap-2">
                     <h3 className="text-xl font-extrabold text-text-primary">{firm.name}</h3>
                     <div className="flex flex-wrap gap-1.5 items-center">
-                      <span className="dark-tag">
+                      <Badge>
                         {firm.market.replace("-", " & ")}
-                      </span>
-                      <span className="dark-tag font-bold uppercase text-[9px]">
+                      </Badge>
+                      <Badge className="font-bold uppercase text-[9px]">
                         {firm.steps}
-                      </span>
+                      </Badge>
                     </div>
                   </div>
 

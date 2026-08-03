@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Plus, Trash2, Edit2, TrendingUp, BarChart3, Clock, AlertTriangle, Calendar, RefreshCw, X, FileText, CheckCircle } from "lucide-react";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Legend, Cell } from "recharts";
+import KPICard from "@/components/dashboard/KPICard";
 
 interface Trade {
   id: string;
@@ -329,52 +330,37 @@ export default function TradeJournal() {
 
         {/* SECTION 1: KEY PERFORMANCE METRICS BANNER */}
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-          
-          {/* Net PnL Card */}
-          <div className="bg-surface-card border border-border-custom rounded-2xl p-5 flex flex-col justify-between">
-            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Net P&L</span>
-            <span className={`text-xl md:text-2xl font-black mt-2 ${totalPnL >= 0 ? "text-profit" : "text-loss"}`}>
-              {totalPnL >= 0 ? "+" : ""}${totalPnL.toLocaleString()}
-            </span>
-            <span className="text-[10px] text-text-muted/70 mt-1">{totalTrades} logged positions</span>
-          </div>
-
-          {/* Win Rate Card */}
-          <div className="bg-surface-card border border-border-custom rounded-2xl p-5 flex flex-col justify-between">
-            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Win Rate</span>
-            <span className="text-xl md:text-2xl font-black text-text-primary mt-2">
-              {winRate}%
-            </span>
-            <span className="text-[10px] text-text-muted/70 mt-1">{winTrades} winning trades</span>
-          </div>
-
-          {/* Profit Factor Card */}
-          <div className="bg-surface-card border border-border-custom rounded-2xl p-5 flex flex-col justify-between">
-            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Profit Factor</span>
-            <span className="text-xl md:text-2xl font-black text-electric-cyan mt-2">
-              {profitFactor}
-            </span>
-            <span className="text-[10px] text-text-muted/70 mt-1">Ratio of wins to losses</span>
-          </div>
-
-          {/* Avg Risk Reward Card */}
-          <div className="bg-surface-card border border-border-custom rounded-2xl p-5 flex flex-col justify-between">
-            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Avg Risk-Reward</span>
-            <span className="text-xl md:text-2xl font-black text-cygnus-gold mt-2">
-              1:{avgRR}
-            </span>
-            <span className="text-[10px] text-text-muted/70 mt-1">Projected average target</span>
-          </div>
-
-          {/* Max Drawdown Card */}
-          <div className="bg-surface-card border border-border-custom rounded-2xl p-5 flex flex-col justify-between col-span-2 lg:col-span-1">
-            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Max Drawdown</span>
-            <span className="text-xl md:text-2xl font-black text-loss mt-2">
-              -${maxDD.toLocaleString()}
-            </span>
-            <span className="text-[10px] text-text-muted/70 mt-1">Peak-to-valley variance</span>
-          </div>
-
+          <KPICard
+            label="Net P&L"
+            value={`${totalPnL >= 0 ? "+" : ""}${totalPnL.toLocaleString()}`}
+            subtext={`${totalTrades} logged positions`}
+            valueColor={totalPnL >= 0 ? "text-profit" : "text-loss"}
+            topAccent={true}
+          />
+          <KPICard
+            label="Win Rate"
+            value={`${winRate}%`}
+            subtext={`${winTrades} winning trades`}
+          />
+          <KPICard
+            label="Profit Factor"
+            value={profitFactor}
+            subtext="Ratio of wins to losses"
+            valueColor="text-electric-cyan"
+          />
+          <KPICard
+            label="Avg Risk-Reward"
+            value={`1:${avgRR}`}
+            subtext="Projected average target"
+            valueColor="text-cygnus-gold"
+          />
+          <KPICard
+            label="Max Drawdown"
+            value={`-$${maxDD.toLocaleString()}`}
+            subtext="Peak-to-valley variance"
+            valueColor="text-loss"
+            className="col-span-2 lg:col-span-1"
+          />
         </div>
 
         {/* SECTION 2: PERFORMANCE CHARTS GRID */}

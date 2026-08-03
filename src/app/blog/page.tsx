@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, BookOpen, Clock, Compass, Tag, Calendar, User } from "lucide-react";
 import { BLOG_POSTS } from "@/data/blogPosts";
-import PositionSizerWidget from "@/components/PositionSizerWidget";
+import PositionSizerWidget from "@/components/dashboard/PositionSizerWidget";
 
 export default function BlogArchive() {
   const featuredPost = BLOG_POSTS.find((post) => post.featured) || BLOG_POSTS[0];

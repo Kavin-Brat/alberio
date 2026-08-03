@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Calculator, ShieldAlert, Award } from "lucide-react";
+import { Calculator, ShieldAlert } from "lucide-react";
 
 type InstrumentType = "forex" | "gold" | "btc";
 

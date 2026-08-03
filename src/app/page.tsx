@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Code2, LineChart, Compass, GitMerge, Send, MessageSquare, Terminal, Award, ShieldCheck, Users } from "lucide-react";
-import QuickDrawdownWidget from "@/components/QuickDrawdownWidget";
+import QuickDrawdownWidget from "@/components/dashboard/QuickDrawdownWidget";
 
 const Linkedin = (props: React.SVGProps<SVGSVGElement>) => (
   <svg

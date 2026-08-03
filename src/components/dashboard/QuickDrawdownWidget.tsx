@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Calculator, AlertTriangle, CheckCircle, HelpCircle } from "lucide-react";
+import { Calculator, AlertTriangle, CheckCircle } from "lucide-react";
 
 export default function QuickDrawdownWidget() {
   const [balance, setBalance] = useState<number>(50000);

@@ -1,3 +1,6 @@
+"use client";
+
+import React from "react";
 import Link from "next/link";
 import { Send, MessageSquare, Star, ShieldAlert } from "lucide-react";
 

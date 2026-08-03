@@ -3,9 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, Menu, X, Star, BarChart3, Calculator, PenTool, LayoutDashboard, Send } from "lucide-react";
-import ThemeToggle from "@/components/ThemeToggle";
-
+import { ChevronDown, Menu, X, Star, BarChart3, Calculator, PenTool, Send } from "lucide-react";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

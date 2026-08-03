@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Clock, Calendar, Tag, Send, MessageSquare, List } from "lucide-react";
 import { BLOG_POSTS } from "@/data/blogPosts";
-import PositionSizerWidget from "@/components/PositionSizerWidget";
+import PositionSizerWidget from "@/components/dashboard/PositionSizerWidget";
 
 const Linkedin = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
