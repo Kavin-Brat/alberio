@@ -22,13 +22,13 @@ export default function Home() {
   return (
     <div className="flex flex-col w-full overflow-hidden">
       {/* HERO SECTION */}
-      <section className="relative w-full pt-20 pb-16 md:pt-32 md:pb-24 px-4 sm:px-6 lg:px-8 border-b border-slate-200/20 dark:border-slate-800/10 scroll-mt-20">
+      <section className="relative w-full pt-10 pb-16 md:pt-16 md:pb-24 px-4 sm:px-6 lg:px-8 border-b border-slate-200/20 dark:border-slate-800/10 scroll-mt-20">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(6,182,212,0.08),transparent_45%)] pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(245,158,11,0.05),transparent_40%)] pointer-events-none" />
 
-        <div className="max-w-[1600px] mx-auto flex flex-col items-center text-center">
+        <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-card border border-border-custom text-xs font-semibold text-cygnus-gold mb-6 animate-fade-in">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 dark:bg-white/5 backdrop-blur-sm border border-slate-200/20 dark:border-white/10 text-xs font-semibold text-cygnus-gold mb-6 animate-fade-in">
             <Terminal className="w-3.5 h-3.5" />
             <span>Software Engineering Precision</span>
             <span className="text-text-muted/40">|</span>
@@ -59,14 +59,14 @@ export default function Home() {
             </Link>
             <Link
               href="#journey"
-              className="w-full sm:w-auto bg-surface-card hover:bg-surface-card/85 text-text-primary hover:text-white px-8 py-4 rounded-xl text-base font-bold border border-border-custom hover:border-text-muted/40 transition-all duration-200 flex items-center justify-center gap-2"
+              className="w-full sm:w-auto bg-white/5 dark:bg-white/5 backdrop-blur-sm hover:bg-white/10 text-text-primary hover:text-white px-8 py-4 rounded-xl text-base font-bold border border-slate-200/20 dark:border-white/10 hover:border-white/20 transition-all duration-200 flex items-center justify-center gap-2"
             >
               Explore Founder's Journey
             </Link>
           </div>
 
           {/* Real-time Stats Ticker */}
-          <div className="mt-16 w-full max-w-5xl border-t border-b border-border-custom/50 py-6 px-4 grid grid-cols-1 md:grid-cols-3 gap-6 bg-surface-card/20 backdrop-blur-sm rounded-xl">
+          <div className="mt-16 w-full max-w-5xl border-t border-b border-slate-200/20 dark:border-white/5 py-6 px-4 grid grid-cols-1 md:grid-cols-3 gap-6 bg-white/5 dark:bg-white/5 backdrop-blur-sm rounded-xl">
             <div className="flex flex-col items-center md:border-r border-border-custom/40">
               <span className="text-2xl md:text-3xl font-extrabold text-cygnus-gold">$10M+</span>
               <span className="text-xs text-text-muted uppercase tracking-wider font-semibold mt-1">
@@ -92,8 +92,8 @@ export default function Home() {
       </section>
 
       {/* QUICK TOOL CALCULATOR EMBED */}
-      <section className="w-full py-16 px-4 sm:px-6 lg:px-8 bg-albireo-blue relative">
-        <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <section className="w-full py-20 px-4 sm:px-6 lg:px-8 border-b border-slate-200/20 dark:border-slate-800/10 relative">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-5 flex flex-col gap-5">
             <span className="text-xs font-bold uppercase tracking-widest text-electric-cyan">
               Live Widget Preview
@@ -135,7 +135,7 @@ export default function Home() {
 
       {/* FEATURE MATRIX (4 PILLARS) */}
       <section className="w-full py-20 px-4 sm:px-6 lg:px-8 border-t border-b border-slate-200/20 dark:border-slate-800/10 scroll-mt-20">
-        <div className="max-w-[1600px] mx-auto">
+        <div className="max-w-7xl mx-auto">
           <div className="flex flex-col items-center text-center mb-16">
             <span className="text-xs font-bold uppercase tracking-widest text-cygnus-gold">
               Core Platform Capabilities
@@ -191,7 +191,7 @@ export default function Home() {
             </div>
 
             {/* Card 4 */}
-            <div className="bg-surface-card border border-border-custom/75 p-8 rounded-2xl hover:border-cygnus-gold/30 hover:shadow-xl hover:shadow-cygnus-gold/5 group transition-all duration-300">
+            <div className="bg-slate-50/20 dark:bg-slate-900/10 backdrop-blur-sm border border-slate-200/30 dark:border-slate-800/40 p-8 rounded-2xl hover:border-cygnus-gold/40 hover:shadow-xl hover:shadow-cygnus-gold/5 group transition-all duration-300">
               <div className="p-3 bg-cygnus-gold/10 text-cygnus-gold rounded-xl w-fit mb-6 group-hover:scale-110 transition-transform">
                 <GitMerge className="w-6 h-6" />
               </div>
@@ -207,11 +207,11 @@ export default function Home() {
       </section>
 
       {/* FOUNDER'S JOURNEY */}
-      <section id="journey" className="w-full py-20 px-4 sm:px-6 lg:px-8 bg-albireo-blue relative scroll-mt-24">
+      <section id="journey" className="w-full py-20 px-4 sm:px-6 lg:px-8 relative scroll-mt-24">
         {/* Visual background lines */}
         <div className="absolute left-1/2 transform -translate-x-1/2 top-40 bottom-24 w-0.5 bg-gradient-to-b from-cygnus-gold/60 via-border-custom to-electric-cyan/60 hidden md:block" />
 
-        <div className="max-w-[1600px] mx-auto relative">
+        <div className="max-w-7xl mx-auto relative">
           <div className="flex flex-col items-center text-center mb-20">
             <span className="text-xs font-bold uppercase tracking-widest text-cygnus-gold">
               The Journey

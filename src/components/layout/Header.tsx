@@ -70,7 +70,7 @@ export default function Header() {
     }`;
 
   return (
-    <header className="fixed top-0 w-full z-50 flex flex-col">
+    <header className="sticky top-0 w-full z-50 flex flex-col">
       {/* Announcement Banner */}
       <div className="w-full bg-gradient-to-r from-cygnus-gold/20 via-albireo-blue to-electric-cyan/20 border-b border-border-custom py-2 px-4 text-center text-xs md:text-sm font-medium text-text-primary">
         Joined 1,000+ traders scaling prop firm challenges.{" "}
@@ -86,7 +86,7 @@ export default function Header() {
 
       {/* Main Navigation — glassmorphic bar */}
       <nav className="w-full bg-slate-100/40 dark:bg-slate-950/20 backdrop-blur-md border-b border-b-[0.5px] border-slate-200/10 dark:border-white/5 transition-all duration-300 px-4 sm:px-6 lg:px-8 py-4">
-        <div className="max-w-[1600px] mx-auto flex items-center justify-between">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo: Binary Star SVG + ALBIREO + amber trailing dot */}
           <Link href="/" className="flex items-center gap-2.5 group">
             <div className="relative flex items-center justify-center w-8 h-8">
