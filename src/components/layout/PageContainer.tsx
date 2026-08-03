@@ -17,7 +17,7 @@ export default function PageContainer({
 }: PageContainerProps) {
   return (
     <div className={`w-full flex-1 px-4 sm:px-6 lg:px-8 py-12 relative z-10 ${className}`}>
-      <div className="max-w-7xl mx-auto flex flex-col gap-10">
+      <div className="w-full max-w-7xl mx-auto flex flex-col gap-10">
         {children}
       </div>
     </div>

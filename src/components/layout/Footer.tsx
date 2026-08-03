@@ -25,7 +25,7 @@ export default function Footer() {
 
   return (
     <footer className="w-full border-t border-slate-200/20 dark:border-slate-800/10 bg-slate-50/10 dark:bg-slate-900/5 backdrop-blur-md pt-16 pb-8 px-4 sm:px-6 lg:px-8 mt-auto relative z-10">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+      <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
         {/* Column 1: Brand & Risk Disclosure */}
         <div className="flex flex-col gap-4">
           <Link href="/" className="flex items-center gap-2.5 group">
@@ -183,7 +183,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar — 3-col: copyright · built-with · social icons */}
-      <div className="max-w-7xl mx-auto pt-8 border-t border-slate-200/20 dark:border-slate-800/10 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="w-full max-w-7xl mx-auto pt-8 border-t border-slate-200/20 dark:border-slate-800/10 flex flex-col md:flex-row items-center justify-between gap-4">
         <span className="text-xs text-text-muted order-3 md:order-1">
           &copy; {currentYear} Albireo. All rights reserved.
         </span>

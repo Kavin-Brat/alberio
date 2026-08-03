@@ -41,18 +41,24 @@ export default function Header() {
     setIsDropdownOpen(false);
   }, [pathname]);
 
-  // Update sliding pill indicator to the active nav link
+  // Update sliding pill indicator to the active nav link (handles window resizing)
   useEffect(() => {
-    if (!navRef.current) return;
-    const activeLink = navRef.current.querySelector<HTMLElement>("[data-active='true']");
-    if (activeLink) {
-      const navRect = navRef.current.getBoundingClientRect();
-      const linkRect = activeLink.getBoundingClientRect();
-      setPillStyle({
-        left: linkRect.left - navRect.left,
-        width: linkRect.width,
-      });
-    }
+    const updatePill = () => {
+      if (!navRef.current) return;
+      const activeLink = navRef.current.querySelector<HTMLElement>("[data-active='true']");
+      if (activeLink) {
+        const navRect = navRef.current.getBoundingClientRect();
+        const linkRect = activeLink.getBoundingClientRect();
+        setPillStyle({
+          left: linkRect.left - navRect.left,
+          width: linkRect.width,
+        });
+      }
+    };
+
+    updatePill();
+    window.addEventListener("resize", updatePill);
+    return () => window.removeEventListener("resize", updatePill);
   }, [pathname]);
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
@@ -86,7 +92,7 @@ export default function Header() {
 
       {/* Main Navigation — glassmorphic bar */}
       <nav className="w-full bg-slate-100/40 dark:bg-slate-950/20 backdrop-blur-md border-b border-b-[0.5px] border-slate-200/10 dark:border-white/5 transition-all duration-300 px-4 sm:px-6 lg:px-8 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="w-full max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo: Binary Star SVG + ALBIREO + amber trailing dot */}
           <Link href="/" className="flex items-center gap-2.5 group">
             <div className="relative flex items-center justify-center w-8 h-8">
