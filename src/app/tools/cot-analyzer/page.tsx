@@ -217,7 +217,7 @@ export default function CotAnalyzer() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Charts (Left - 8 Cols) */}
-          <div className="lg:col-span-8 flex flex-col gap-6">
+          <div className="lg:col-span-8 min-w-0 flex flex-col gap-6">
             
             {/* Top Chart: Raw Contract Amounts */}
             <div className="bg-surface-card border border-border-custom rounded-2xl p-5 md:p-6 flex flex-col gap-4">
@@ -237,7 +237,7 @@ export default function CotAnalyzer() {
                 </div>
               </div>
 
-              <div className="w-full h-64">
+              <div className="relative w-full h-64 min-w-0">
                 {mounted ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart
@@ -293,7 +293,7 @@ export default function CotAnalyzer() {
                 </div>
               </div>
 
-              <div className="w-full h-56">
+              <div className="relative w-full h-56 min-w-0">
                 {mounted ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart

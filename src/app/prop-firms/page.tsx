@@ -458,7 +458,7 @@ export default function PropFirmMatrix() {
           </div>
 
           {/* Simulator Visuals (Right - 7 Cols) */}
-          <div className="lg:col-span-7 bg-surface-card border border-border-custom rounded-2xl p-6 flex flex-col gap-6">
+          <div className="lg:col-span-7 min-w-0 bg-surface-card border border-border-custom rounded-2xl p-6 flex flex-col gap-6">
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
                 <h3 className="font-bold text-sm uppercase tracking-wider text-text-primary">
@@ -477,7 +477,7 @@ export default function PropFirmMatrix() {
             </div>
 
             {/* Custom Recharts Container */}
-            <div className="w-full h-72">
+            <div className="relative w-full h-72 min-w-0">
               {mounted ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart

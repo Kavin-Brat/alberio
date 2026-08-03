@@ -381,13 +381,13 @@ export default function TradeJournal() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Cumulative Equity Curve (8 Cols) */}
-          <div className="lg:col-span-8 bg-surface-card border border-border-custom rounded-2xl p-5 md:p-6 flex flex-col gap-4">
+          <div className="lg:col-span-8 min-w-0 bg-surface-card border border-border-custom rounded-2xl p-5 md:p-6 flex flex-col gap-4">
             <div>
               <h3 className="font-bold text-xs uppercase tracking-wider text-text-primary">Cumulative Net P&L Curve</h3>
               <span className="text-[11px] text-text-muted">Account growth trajectory over trade log history</span>
             </div>
 
-            <div className="w-full h-72 mt-2">
+            <div className="relative w-full h-72 min-w-0 mt-2">
               {mounted && trades.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
@@ -426,7 +426,7 @@ export default function TradeJournal() {
           </div>
 
           {/* Side Charts: Session Performance (4 Cols) */}
-          <div className="lg:col-span-4 grid grid-cols-1 gap-6">
+          <div className="lg:col-span-4 min-w-0 grid grid-cols-1 gap-6">
             
             {/* Session Win Rates */}
             <div className="bg-surface-card border border-border-custom rounded-2xl p-5 flex flex-col justify-between">
@@ -435,7 +435,7 @@ export default function TradeJournal() {
                 <span className="text-[10px] text-text-muted block mt-0.5">Performance breakdown by timezone</span>
               </div>
               
-              <div className="w-full h-40 mt-4">
+              <div className="relative w-full h-40 min-w-0 mt-4">
                 {mounted ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
@@ -471,7 +471,7 @@ export default function TradeJournal() {
                 <span className="text-[10px] text-text-muted block mt-0.5">Asset profit distribution</span>
               </div>
               
-              <div className="w-full h-40 mt-4">
+              <div className="relative w-full h-40 min-w-0 mt-4">
                 {mounted && assetData.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
@@ -518,15 +518,15 @@ export default function TradeJournal() {
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="border-b border-border-custom/50 text-text-muted font-bold">
-                  <th className="py-3 px-2">Date</th>
+                  <th className="py-3 px-2 hidden sm:table-cell">Date</th>
                   <th className="py-3 px-2">Symbol</th>
                   <th className="py-3 px-2">Type</th>
-                  <th className="py-3 px-2">Size</th>
-                  <th className="py-3 px-2">Entry & Exit</th>
+                  <th className="py-3 px-2 hidden md:table-cell">Size</th>
+                  <th className="py-3 px-2 hidden sm:table-cell">Entry & Exit</th>
                   <th className="py-3 px-2">P&L ($)</th>
-                  <th className="py-3 px-2">R:R</th>
-                  <th className="py-3 px-2">Strategy</th>
-                  <th className="py-3 px-2">Psychology</th>
+                  <th className="py-3 px-2 hidden md:table-cell">R:R</th>
+                  <th className="py-3 px-2 hidden md:table-cell">Strategy</th>
+                  <th className="py-3 px-2 hidden md:table-cell">Psychology</th>
                   <th className="py-3 px-2 text-right">Actions</th>
                 </tr>
               </thead>
@@ -540,7 +540,7 @@ export default function TradeJournal() {
                 ) : (
                   trades.map((trade) => (
                     <tr key={trade.id} className="hover:bg-albireo-blue/35 transition-colors">
-                      <td className="py-3 px-2 text-[10px] text-text-muted font-medium">
+                      <td className="py-3 px-2 text-[10px] text-text-muted font-medium hidden sm:table-cell">
                         {new Date(trade.date).toLocaleDateString("en-US", {
                           month: "2-digit",
                           day: "2-digit",
@@ -558,20 +558,20 @@ export default function TradeJournal() {
                           {trade.direction}
                         </span>
                       </td>
-                      <td className="py-3 px-2 font-medium">{trade.size} Lots</td>
-                      <td className="py-3 px-2 text-[11px] font-medium text-text-muted">
+                      <td className="py-3 px-2 font-medium hidden md:table-cell">{trade.size} Lots</td>
+                      <td className="py-3 px-2 text-[11px] font-medium text-text-muted hidden sm:table-cell">
                         <span>{trade.entryPrice}</span> &rarr; <span>{trade.exitPrice}</span>
                       </td>
                       <td className={`py-3 px-2 font-black ${trade.pnl >= 0 ? "text-profit" : "text-loss"}`}>
                         {trade.pnl >= 0 ? "+" : ""}${trade.pnl.toLocaleString()}
                       </td>
-                      <td className="py-3 px-2 font-bold text-cygnus-gold">1:{trade.rr}</td>
-                      <td className="py-3 px-2">
+                      <td className="py-3 px-2 font-bold text-cygnus-gold hidden md:table-cell">1:{trade.rr}</td>
+                      <td className="py-3 px-2 hidden md:table-cell">
                         <span className="bg-surface-card border border-border-custom px-2 py-0.5 rounded text-[10px] font-semibold text-text-primary">
                           {trade.strategy}
                         </span>
                       </td>
-                      <td className="py-3 px-2">
+                      <td className="py-3 px-2 hidden md:table-cell">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
                           trade.psychology === "Disciplined"
                             ? "bg-profit/10 text-profit"

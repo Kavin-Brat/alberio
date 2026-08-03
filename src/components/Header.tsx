@@ -33,7 +33,7 @@ export default function Header() {
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
   return (
-    <header className="w-full z-50 flex flex-col">
+    <header className="sticky top-0 w-full z-50 flex flex-col bg-albireo-blue/90 backdrop-blur-md">
       {/* Announcement Banner */}
       <div className="w-full bg-gradient-to-r from-cygnus-gold/20 via-albireo-blue to-electric-cyan/20 border-b border-border-custom py-2 px-4 text-center text-xs md:text-sm font-medium text-text-primary">
         Joined 1,000+ traders scaling prop firm challenges.{" "}
@@ -77,7 +77,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <div className="hidden md:flex items-center gap-8 font-medium text-sm text-text-muted">
+          <div className="hidden lg:flex items-center gap-8 font-medium text-sm text-text-muted">
             <Link
               href={pathname === "/" ? "#journey" : "/#journey"}
               className="hover:text-text-primary transition-colors hover:scale-105"
@@ -161,7 +161,7 @@ export default function Header() {
           </div>
 
           {/* Desktop Right CTAs */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-4">
             <ThemeToggle />
             <Link
               href="/journal"
@@ -180,7 +180,7 @@ export default function Header() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-text-muted hover:text-text-primary focus:outline-none"
+            className="lg:hidden p-2 text-text-muted hover:text-text-primary focus:outline-none"
           >
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -188,7 +188,7 @@ export default function Header() {
 
         {/* Mobile Dropdown Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden mt-4 pt-4 border-t border-border-custom flex flex-col gap-4 animate-in slide-in-from-top-5 duration-200">
+          <div className="lg:hidden mt-4 pt-4 border-t border-border-custom flex flex-col gap-4 animate-in slide-in-from-top-5 duration-200">
             <Link
               href={pathname === "/" ? "#journey" : "/#journey"}
               className="text-text-muted hover:text-text-primary py-2 text-base font-semibold"
