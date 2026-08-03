@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Calculator, ShieldAlert } from "lucide-react";
+import Card from "@/components/ui/Card";
 
 type InstrumentType = "forex" | "gold" | "btc";
 
@@ -49,7 +50,7 @@ export default function PositionSizerWidget() {
   }, [balance, riskPct, stopLoss, instrument]);
 
   return (
-    <div id="position-sizer" className="w-full bg-surface-card border border-border-custom rounded-2xl p-6 shadow-2xl relative my-8 scroll-mt-24">
+    <Card id="position-sizer" className="w-full shadow-2xl relative my-8 scroll-mt-24">
       {/* Background decoration */}
       <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-cygnus-gold/5 rounded-full blur-xl pointer-events-none" />
 
@@ -89,7 +90,7 @@ export default function PositionSizerWidget() {
                     key={inst}
                     type="button"
                     onClick={() => setInstrument(inst)}
-                    className={`text-[10px] font-bold py-2 rounded-lg border capitalize transition-all ${
+                    className={`text-[10px] font-bold py-2 rounded-lg border capitalize transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold ${
                       instrument === inst
                         ? "bg-cygnus-gold border-cygnus-gold text-albireo-blue shadow-lg shadow-cygnus-gold/25"
                         : "bg-albireo-blue border-border-custom text-text-muted hover:text-text-primary"
@@ -162,6 +163,6 @@ export default function PositionSizerWidget() {
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

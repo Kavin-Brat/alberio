@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { BarChart3, TrendingUp, Info, HelpCircle, AlertCircle, Compass } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, ReferenceLine } from "recharts";
 import PageContainer from "@/components/layout/PageContainer";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
 
 type AssetType = "EUR/USD" | "GBP/USD" | "Gold (XAU)" | "Crude Oil" | "S&P 500" | "Bitcoin";
 type TimeframeType = "6 Months" | "1 Year" | "3 Years";
@@ -171,7 +173,7 @@ export default function CotAnalyzer() {
         </div>
 
         {/* SECTION 1: ASSET & TIME SELECTORS */}
-        <div className="bg-surface-card border border-border-custom rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <Card className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <BarChart3 className="w-5 h-5 text-cygnus-gold" />
             <h2 className="font-bold text-sm uppercase tracking-wider text-text-primary">
@@ -206,7 +208,7 @@ export default function CotAnalyzer() {
                     key={tf}
                     type="button"
                     onClick={() => setSelectedTimeframe(tf)}
-                    className={`text-[10px] md:text-xs px-3 py-1 rounded-md font-bold transition-colors ${
+                    className={`text-[10px] md:text-xs px-3 py-1 rounded-md font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold ${
                       selectedTimeframe === tf
                         ? "bg-cygnus-gold text-albireo-blue shadow-sm"
                         : "text-text-muted hover:text-text-primary"
@@ -218,7 +220,7 @@ export default function CotAnalyzer() {
               </div>
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* SECTION 2: DUAL CHARTING PANEL */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -227,7 +229,7 @@ export default function CotAnalyzer() {
           <div className="lg:col-span-8 min-w-0 flex flex-col gap-6">
             
             {/* Top Chart: Raw Contract Amounts */}
-            <div className="bg-surface-card border border-border-custom rounded-2xl p-5 md:p-6 flex flex-col gap-4">
+            <Card className="flex flex-col gap-4">
               <div className="flex justify-between items-center">
                 <div>
                   <h3 className="font-bold text-xs uppercase tracking-wider text-text-primary">
@@ -285,10 +287,10 @@ export default function CotAnalyzer() {
                   </div>
                 )}
               </div>
-            </div>
+            </Card>
 
             {/* Bottom Chart: Net Speculator Positions */}
-            <div className="bg-surface-card border border-border-custom rounded-2xl p-5 md:p-6 flex flex-col gap-4">
+            <Card className="flex flex-col gap-4">
               <div className="flex justify-between items-center">
                 <div>
                   <h3 className="font-bold text-xs uppercase tracking-wider text-text-primary">
@@ -334,7 +336,7 @@ export default function CotAnalyzer() {
                   </div>
                 )}
               </div>
-            </div>
+            </Card>
 
           </div>
 
@@ -342,7 +344,7 @@ export default function CotAnalyzer() {
           <div className="lg:col-span-4 flex flex-col gap-6">
             
             {/* Automated Sentiment Box */}
-            <div className="bg-surface-card border border-border-custom rounded-2xl p-6 flex flex-col gap-4">
+            <Card className="flex flex-col gap-4">
               <h3 className="font-bold text-sm uppercase tracking-wider text-text-primary">
                 Automated Sentiment Analysis
               </h3>
@@ -366,10 +368,10 @@ export default function CotAnalyzer() {
                   </p>
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* Historical Statistics Table */}
-            <div className="bg-surface-card border border-border-custom rounded-2xl p-6 flex flex-col gap-4">
+            <Card className="flex flex-col gap-4">
               <h3 className="font-bold text-sm uppercase tracking-wider text-text-primary">
                 Positioning Details
               </h3>
@@ -406,10 +408,10 @@ export default function CotAnalyzer() {
                   </span>
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* Educational Note card */}
-            <div className="bg-gradient-to-br from-surface-card to-albireo-blue border border-border-custom rounded-2xl p-5 flex gap-3.5 items-start">
+            <Card className="bg-gradient-to-br from-surface-card to-albireo-blue flex gap-3.5 items-start">
               <Compass className="w-5 h-5 text-cygnus-gold shrink-0 mt-0.5" />
               <div className="flex flex-col gap-1.5 text-xs text-text-muted">
                 <span className="font-bold text-text-primary">What is COT data?</span>
@@ -417,7 +419,7 @@ export default function CotAnalyzer() {
                   The CFTC releases commitments of traders reports every Friday at 3:30 PM EST reflecting data from the preceding Tuesday. It exposes structural positioning layers of commercial entities (producers/banks) vs non-commercial spec funds.
                 </p>
               </div>
-            </div>
+            </Card>
 
           </div>
         </div>

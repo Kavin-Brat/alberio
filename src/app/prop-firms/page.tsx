@@ -6,6 +6,8 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tool
 import Badge from "@/components/ui/Badge";
 import FavoriteStar from "@/components/ui/FavoriteStar";
 import PageContainer from "@/components/layout/PageContainer";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
 
 interface PropFirmPreset {
   id: string;
@@ -269,7 +271,7 @@ export default function PropFirmMatrix() {
         </div>
 
         {/* SECTION 1: SEARCH & FILTER ENGINE */}
-        <div className="bg-surface-card border border-border-custom rounded-2xl p-6 flex flex-col gap-5 print:hidden">
+        <Card className="flex flex-col gap-5 print:hidden">
           <div className="flex items-center gap-3">
             <Search className="w-5 h-5 text-cygnus-gold" />
             <h2 className="font-bold text-sm uppercase tracking-wider text-text-primary">
@@ -351,13 +353,13 @@ export default function PropFirmMatrix() {
               </select>
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* SECTION 2: INTERACTIVE DRAWDOWN RULE SIMULATOR */}
         <div id="simulator" className="grid grid-cols-1 lg:grid-cols-12 gap-8 scroll-mt-24">
           
           {/* Simulator Inputs (Left - 5 Cols) */}
-          <div className="lg:col-span-5 bg-surface-card border border-border-custom rounded-2xl p-6 flex flex-col gap-5 print:hidden">
+          <Card className="lg:col-span-5 flex flex-col gap-5 print:hidden">
             <div className="flex items-center justify-between border-b border-border-custom/50 pb-3">
               <div className="flex items-center gap-2">
                 <Calculator className="w-5 h-5 text-cygnus-gold" />
@@ -426,7 +428,7 @@ export default function PropFirmMatrix() {
                     key={type}
                     type="button"
                     onClick={() => setSimDrawdownType(type)}
-                    className={`text-[10px] md:text-xs py-2.5 px-1 rounded-lg border font-bold capitalize transition-all duration-200 ${
+                    className={`text-[10px] md:text-xs py-2.5 px-1 rounded-lg border font-bold capitalize transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold ${
                       simDrawdownType === type
                         ? "bg-cygnus-gold border-cygnus-gold text-albireo-blue shadow-lg shadow-cygnus-gold/25"
                         : "bg-albireo-blue/50 border-border-custom text-text-muted hover:text-text-primary"
@@ -473,16 +475,17 @@ export default function PropFirmMatrix() {
               </div>
             </div>
 
-            <button
+            <Button
+              variant="secondary"
               onClick={runSimulationCurve}
-              className="mt-2 w-full flex items-center justify-center gap-2 py-3 bg-albireo-blue hover:bg-albireo-blue/70 text-text-primary border border-border-custom rounded-xl text-xs font-bold transition-all duration-200"
+              className="mt-2 w-full flex items-center justify-center gap-2 py-3"
             >
               <RefreshCw className="w-3.5 h-3.5" /> Re-Run 50-Trade Trial
-            </button>
-          </div>
+            </Button>
+          </Card>
 
           {/* Simulator Visuals (Right - 7 Cols) */}
-          <div className="lg:col-span-7 min-w-0 bg-surface-card border border-border-custom rounded-2xl p-6 flex flex-col gap-6">
+          <Card className="lg:col-span-7 min-w-0 flex flex-col gap-6">
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
                 <h3 className="font-bold text-sm uppercase tracking-wider text-text-primary">
@@ -492,12 +495,14 @@ export default function PropFirmMatrix() {
                   Visualizing account limits against simulated volatility
                 </span>
               </div>
-              <button
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={handleExport}
-                className="flex items-center gap-1.5 bg-albireo-blue hover:bg-albireo-blue/75 border border-border-custom text-text-primary hover:text-white px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors print:hidden"
+                className="flex items-center gap-1.5 print:hidden"
               >
                 <FileDown className="w-3.5 h-3.5 text-cygnus-gold" /> Export PDF
-              </button>
+              </Button>
             </div>
 
             {/* Custom Recharts Container */}
@@ -585,8 +590,7 @@ export default function PropFirmMatrix() {
                 </div>
               </div>
             </div>
-
-          </div>
+          </Card>
         </div>
 
         {/* SECTION 3: PROP FIRM CARDS GRID */}
@@ -602,9 +606,10 @@ export default function PropFirmMatrix() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {filteredPresets.map((firm) => (
-              <div
+              <Card
                 key={firm.id}
-                className="bg-surface-card border border-border-custom hover:border-cygnus-gold/40 p-6 rounded-2xl flex flex-col justify-between group transition-all duration-300 relative overflow-hidden"
+                hoverEffect={true}
+                className="flex flex-col justify-between group"
               >
                 {/* Glow */}
                 <div className="absolute -top-10 -right-10 w-24 h-24 bg-cygnus-gold/5 rounded-full blur-xl pointer-events-none group-hover:bg-cygnus-gold/10 transition-colors" />
@@ -666,24 +671,28 @@ export default function PropFirmMatrix() {
 
                 {/* Buttons */}
                 <div className="flex flex-col gap-2.5 mt-4">
-                  <button
+                  <Button
+                    variant="primary"
+                    size="sm"
                     onClick={() => {
                       loadPreset(firm);
                       const element = document.getElementById("simulator");
                       if (element) element.scrollIntoView({ behavior: "smooth" });
                     }}
-                    className="w-full py-2 bg-cygnus-gold text-albireo-blue font-extrabold rounded-lg text-xs shadow-md shadow-cygnus-gold/10 hover:shadow-cygnus-gold/25 transition-all flex items-center justify-center gap-1.5"
+                    className="w-full flex items-center justify-center gap-1.5"
                   >
                     <Calculator className="w-3.5 h-3.5" /> Simulate Rules
-                  </button>
+                  </Button>
                   
                   <div className="grid grid-cols-2 gap-2">
-                    <button
+                    <Button
+                      variant="secondary"
+                      size="sm"
                       onClick={() => setSelectedReview(firm)}
-                      className="py-1.5 bg-albireo-blue border border-border-custom hover:border-text-muted/40 text-text-muted hover:text-text-primary rounded-lg text-xs font-semibold transition-colors"
+                      className="w-full text-xs font-semibold"
                     >
                       Read Rules
-                    </button>
+                    </Button>
                     <a
                       href={firm.affiliateLink}
                       target="_blank"
@@ -694,7 +703,7 @@ export default function PropFirmMatrix() {
                     </a>
                   </div>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         </div>
@@ -702,15 +711,16 @@ export default function PropFirmMatrix() {
         {/* SECTION 4: RULE MODAL (Read Rules) */}
         {selectedReview && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-surface-card border border-border-custom rounded-2xl p-6 max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-200">
+            <Card className="max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-200">
               <div className="flex items-center justify-between border-b border-border-custom/50 pb-3">
                 <h3 className="text-lg font-bold text-text-primary">{selectedReview.name} Rule Guide</h3>
-                <button
+                <Button
+                  variant="secondary"
+                  size="sm"
                   onClick={() => setSelectedReview(null)}
-                  className="text-text-muted hover:text-text-primary font-bold text-sm bg-albireo-blue border border-border-custom/50 px-2 py-0.5 rounded"
                 >
                   Close
-                </button>
+                </Button>
               </div>
 
               <div className="flex flex-col gap-4 mt-4 text-sm text-text-muted leading-relaxed">
@@ -749,7 +759,7 @@ export default function PropFirmMatrix() {
                   Claim discount at {selectedReview.name} <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               </div>
-            </div>
+            </Card>
           </div>
         )}
 

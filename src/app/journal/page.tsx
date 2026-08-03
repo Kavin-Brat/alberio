@@ -5,6 +5,8 @@ import { Plus, Trash2, Edit2, TrendingUp, BarChart3, Clock, AlertTriangle, Calen
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Legend, Cell } from "recharts";
 import KPICard from "@/components/dashboard/KPICard";
 import PageContainer from "@/components/layout/PageContainer";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
 
 interface Trade {
   id: string;
@@ -328,12 +330,13 @@ export default function TradeJournal() {
               Track win ratios, profit factor curves, and psychology slips. Logs are persisted locally inside your browser storage for safety.
             </p>
           </div>
-          <button
+          <Button
+            variant="primary"
             onClick={handleNewTrade}
-            className="flex items-center gap-2 px-5 py-3 bg-cygnus-gold hover:bg-cygnus-gold/90 text-albireo-blue font-extrabold rounded-xl shadow-lg shadow-cygnus-gold/20 hover:shadow-cygnus-gold/35 transition-all self-start md:self-center"
+            className="flex items-center gap-2 self-start md:self-center"
           >
             <Plus className="w-4 h-4" /> Log Trade Record
-          </button>
+          </Button>
         </div>
 
         {/* SECTION 1: KEY PERFORMANCE METRICS BANNER */}
@@ -375,7 +378,7 @@ export default function TradeJournal() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Cumulative Equity Curve (8 Cols) */}
-          <div className="lg:col-span-8 min-w-0 bg-surface-card border border-border-custom rounded-2xl p-5 md:p-6 flex flex-col gap-4">
+          <Card className="lg:col-span-8 min-w-0 flex flex-col gap-4">
             <div>
               <h3 className="font-bold text-xs uppercase tracking-wider text-text-primary">Cumulative Net P&L Curve</h3>
               <span className="text-[11px] text-text-muted">Account growth trajectory over trade log history</span>
@@ -417,13 +420,13 @@ export default function TradeJournal() {
                 </div>
               )}
             </div>
-          </div>
+          </Card>
 
           {/* Side Charts: Session Performance (4 Cols) */}
           <div className="lg:col-span-4 min-w-0 grid grid-cols-1 gap-6">
             
             {/* Session Win Rates */}
-            <div className="bg-surface-card border border-border-custom rounded-2xl p-5 flex flex-col justify-between">
+            <Card className="flex flex-col justify-between">
               <div>
                 <h3 className="font-bold text-xs uppercase tracking-wider text-text-primary">Win Rate by Session</h3>
                 <span className="text-[10px] text-text-muted block mt-0.5">Performance breakdown by timezone</span>
@@ -456,10 +459,10 @@ export default function TradeJournal() {
                   </div>
                 )}
               </div>
-            </div>
+            </Card>
 
             {/* Asset P&L Distribution */}
-            <div className="bg-surface-card border border-border-custom rounded-2xl p-5 flex flex-col justify-between">
+            <Card className="flex flex-col justify-between">
               <div>
                 <h3 className="font-bold text-xs uppercase tracking-wider text-text-primary">P&L by Currency Pair</h3>
                 <span className="text-[10px] text-text-muted block mt-0.5">Asset profit distribution</span>
@@ -496,13 +499,13 @@ export default function TradeJournal() {
                   </div>
                 )}
               </div>
-            </div>
+            </Card>
 
           </div>
         </div>
 
         {/* SECTION 3: SORTABLE TRADE LOG TABLE */}
-        <div className="bg-surface-card border border-border-custom rounded-2xl p-6 flex flex-col gap-4">
+        <Card className="flex flex-col gap-4">
           <div className="flex items-center justify-between border-b border-border-custom/40 pb-3">
             <h3 className="font-bold text-base text-text-primary uppercase tracking-wider">Logged Positions</h3>
             <span className="text-xs text-text-muted">{trades.length} Positions total</span>
@@ -598,22 +601,23 @@ export default function TradeJournal() {
               </tbody>
             </table>
           </div>
-        </div>
+        </Card>
 
         {/* SECTION 4: INTERACTIVE LOG MODAL */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-surface-card border border-border-custom rounded-2xl p-6 max-w-xl w-full shadow-2xl animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+            <Card className="max-w-xl w-full shadow-2xl animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between border-b border-border-custom/50 pb-3">
                 <h3 className="text-base font-extrabold uppercase text-text-primary tracking-wide">
                   {editingTrade ? "Edit Position Log" : "Log New Position"}
                 </h3>
-                <button
+                <Button
+                  variant="secondary"
+                  size="sm"
                   onClick={() => setIsModalOpen(false)}
-                  className="p-1 hover:bg-albireo-blue border border-border-custom rounded text-text-muted hover:text-text-primary"
                 >
                   <X className="w-4 h-4" />
-                </button>
+                </Button>
               </div>
 
               <form onSubmit={handleSaveTrade} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -654,7 +658,7 @@ export default function TradeJournal() {
                     <button
                       type="button"
                       onClick={() => setDirection("LONG")}
-                      className={`py-2 border text-xs font-bold rounded-lg ${
+                      className={`py-2 border text-xs font-bold rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold ${
                         direction === "LONG"
                           ? "bg-profit/15 border-profit text-profit"
                           : "bg-albireo-blue/50 border-border-custom text-text-muted hover:text-text-primary"
@@ -665,7 +669,7 @@ export default function TradeJournal() {
                     <button
                       type="button"
                       onClick={() => setDirection("SHORT")}
-                      className={`py-2 border text-xs font-bold rounded-lg ${
+                      className={`py-2 border text-xs font-bold rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold ${
                         direction === "SHORT"
                           ? "bg-loss/15 border-loss text-loss"
                           : "bg-albireo-blue/50 border-border-custom text-text-muted hover:text-text-primary"
@@ -811,16 +815,17 @@ export default function TradeJournal() {
                 </div>
 
                 <div className="md:col-span-2 mt-4">
-                  <button
+                  <Button
                     type="submit"
-                    className="w-full py-3 bg-cygnus-gold text-albireo-blue font-extrabold rounded-xl text-xs shadow-md shadow-cygnus-gold/10 hover:shadow-cygnus-gold/25 transition-all uppercase tracking-wider"
+                    variant="primary"
+                    className="w-full uppercase tracking-wider"
                   >
                     {editingTrade ? "Update Trade Record" : "Save Trade Record"}
-                  </button>
+                  </Button>
                 </div>
 
               </form>
-            </div>
+            </Card>
           </div>
         )}
 

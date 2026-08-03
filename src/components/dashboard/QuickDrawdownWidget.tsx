@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Calculator, AlertTriangle, CheckCircle } from "lucide-react";
+import Card from "@/components/ui/Card";
 
 /**
  * QuickDrawdownWidget Component
@@ -95,7 +96,7 @@ export default function QuickDrawdownWidget() {
   };
 
   return (
-    <div className="w-full bg-surface-card border border-border-custom rounded-2xl p-6 lg:p-8 shadow-2xl relative overflow-hidden">
+    <Card className="w-full shadow-2xl relative overflow-hidden p-6 lg:p-8">
       {/* Visual background glow */}
       <div className="absolute -top-12 -right-12 w-32 h-32 bg-electric-cyan/10 rounded-full blur-2xl pointer-events-none"></div>
       
@@ -142,7 +143,7 @@ export default function QuickDrawdownWidget() {
                     key={type}
                     type="button"
                     onClick={() => setDrawdownType(type)}
-                    className={`text-[10px] md:text-xs py-2 px-1 rounded-lg border font-semibold capitalize transition-all duration-200 ${
+                    className={`text-[10px] md:text-xs py-2 px-1 rounded-lg border font-semibold capitalize transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold ${
                       drawdownType === type
                         ? "bg-cygnus-gold text-albireo-blue border-cygnus-gold shadow-lg shadow-cygnus-gold/25"
                         : "bg-albireo-blue/50 text-text-muted border-border-custom hover:bg-albireo-blue hover:text-text-primary"
@@ -270,6 +271,6 @@ export default function QuickDrawdownWidget() {
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
