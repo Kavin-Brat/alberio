@@ -26,7 +26,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(6,182,212,0.08),transparent_45%)] pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(245,158,11,0.05),transparent_40%)] pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
+        <div className="max-w-[1600px] mx-auto flex flex-col items-center text-center">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-card border border-border-custom text-xs font-semibold text-cygnus-gold mb-6 animate-fade-in">
             <Terminal className="w-3.5 h-3.5" />
@@ -93,7 +93,7 @@ export default function Home() {
 
       {/* QUICK TOOL CALCULATOR EMBED */}
       <section className="w-full py-16 px-4 lg:px-8 bg-albireo-blue relative">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-5 flex flex-col gap-5">
             <span className="text-xs font-bold uppercase tracking-widest text-electric-cyan">
               Live Widget Preview
@@ -135,7 +135,7 @@ export default function Home() {
 
       {/* FEATURE MATRIX (4 PILLARS) */}
       <section className="w-full py-20 px-4 lg:px-8 bg-surface-card/10 border-t border-b border-border-custom/30">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-[1600px] mx-auto">
           <div className="flex flex-col items-center text-center mb-16">
             <span className="text-xs font-bold uppercase tracking-widest text-cygnus-gold">
               Core Platform Capabilities
@@ -209,7 +209,7 @@ export default function Home() {
         {/* Visual background lines */}
         <div className="absolute left-1/2 transform -translate-x-1/2 top-40 bottom-24 w-0.5 bg-gradient-to-b from-cygnus-gold/60 via-border-custom to-electric-cyan/60 hidden md:block" />
 
-        <div className="max-w-7xl mx-auto relative">
+        <div className="max-w-[1600px] mx-auto relative">
           <div className="flex flex-col items-center text-center mb-20">
             <span className="text-xs font-bold uppercase tracking-widest text-cygnus-gold">
               The Journey

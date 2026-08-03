@@ -22,7 +22,7 @@ export default function Footer() {
 
   return (
     <footer className="w-full bg-albireo-blue border-t border-border-custom pt-16 pb-8 px-4 lg:px-8 mt-auto">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+      <div className="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
         {/* Column 1: Brand & Risk Disclosure */}
         <div className="flex flex-col gap-4">
           <Link href="/" className="flex items-center gap-2 group">
@@ -159,7 +159,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="max-w-7xl mx-auto pt-8 border-t border-border-custom/30 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="max-w-[1600px] mx-auto pt-8 border-t border-border-custom/30 flex flex-col md:flex-row items-center justify-between gap-4">
         <span className="text-xs text-text-muted">
           &copy; {currentYear} Albireo. All rights reserved. Built with precision for prop challenge success.
         </span>

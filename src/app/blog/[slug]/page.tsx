@@ -34,7 +34,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   return (
     <div className="w-full flex-1 bg-albireo-blue px-4 lg:px-8 py-12">
-      <div className="max-w-7xl mx-auto flex flex-col gap-6">
+      <div className="max-w-[1600px] mx-auto flex flex-col gap-6">
         
         {/* Back Link */}
         <Link

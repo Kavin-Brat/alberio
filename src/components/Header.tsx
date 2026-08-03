@@ -49,7 +49,7 @@ export default function Header() {
 
       {/* Main Navigation */}
       <nav className="w-full bg-albireo-blue/80 backdrop-blur-md border-b border-border-custom px-4 lg:px-8 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="max-w-[1600px] mx-auto flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
             <div className="relative flex items-center justify-center w-8 h-8">

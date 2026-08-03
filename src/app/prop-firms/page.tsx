@@ -229,7 +229,7 @@ export default function PropFirmMatrix() {
 
   return (
     <div className="w-full flex-1 bg-albireo-blue px-4 lg:px-8 py-12 print:bg-white print:text-black">
-      <div className="max-w-7xl mx-auto flex flex-col gap-10">
+      <div className="max-w-[1600px] mx-auto flex flex-col gap-10">
         
         {/* Header Title */}
         <div className="flex flex-col gap-2 border-b border-border-custom/50 pb-6 print:hidden">

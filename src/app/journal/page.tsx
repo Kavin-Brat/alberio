@@ -304,7 +304,7 @@ export default function TradeJournal() {
 
   return (
     <div className="w-full flex-1 bg-albireo-blue px-4 lg:px-8 py-12">
-      <div className="max-w-7xl mx-auto flex flex-col gap-8">
+      <div className="max-w-[1600px] mx-auto flex flex-col gap-8">
         
         {/* Header Dashboard section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border-custom/50 pb-6">
