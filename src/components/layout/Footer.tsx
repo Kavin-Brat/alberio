@@ -24,7 +24,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full bg-albireo-blue border-t border-border-custom pt-16 pb-8 px-4 lg:px-8 mt-auto">
+    <footer className="w-full bg-albireo-blue border-t border-border-custom pt-16 pb-8 px-4 sm:px-6 lg:px-8 mt-auto">
       <div className="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
         {/* Column 1: Brand & Risk Disclosure */}
         <div className="flex flex-col gap-4">
