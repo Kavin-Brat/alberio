@@ -16,7 +16,7 @@ export function Footer() {
             </span>
           </Link>
           <p className="text-sm text-muted-foreground max-w-sm leading-relaxed font-light">
-            Enterprise quantitative prop firm drawdown analytics engineered with zero-trust architecture.
+            Enterprise quantitative prop firm drawdown analytics built with zero-trust risk architecture.
           </p>
           <div className="flex items-center gap-4 text-xs text-primary uppercase tracking-wider font-semibold">
             <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4" /> 100% Rule Compliance</span>

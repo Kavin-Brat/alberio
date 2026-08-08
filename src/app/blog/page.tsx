@@ -21,7 +21,7 @@ export default function BlogArchive() {
           Prop Trading Insights & Math Guides
         </h1>
         <p className="text-light-purple text-sm md:text-base max-w-2xl leading-relaxed">
-          Written by a software engineer obsessed with order books. Detailed breakdowns on trailing liquidation models, contract multipliers, and risk systems.
+          Written by a trader obsessed with order books. Detailed breakdowns on trailing liquidation models, contract multipliers, and risk systems.
         </p>
       </div>
 

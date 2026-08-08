@@ -130,7 +130,7 @@ export default function Home() {
               Core Architecture
             </span>
             <h2 className="text-3xl md:text-4xl font-sora font-bold text-foreground mt-3 tracking-tight">
-              Engineered Systems for Scaling Traders
+              Quantitative Systems for Scaling Traders
             </h2>
             <div className="w-12 h-1 bg-primary rounded-full mt-4 shadow-[0_0_10px_rgba(34,230,0,0.5)]" />
             <p className="max-w-xl text-sm md:text-base text-muted-foreground mt-4 leading-relaxed font-light">
@@ -190,15 +190,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FOUNDER & ORGANIZATION STORY TIMELINE */}
+      {/* FOUNDER & STORY TIMELINE */}
       <section id="journey" className="w-full py-24 px-6 relative scroll-mt-24 bg-background">
         <div className="max-w-7xl mx-auto relative">
           <div className="flex flex-col items-center text-center mb-16">
             <span className="text-xs font-sora font-bold uppercase tracking-widest text-primary">
-              Our Organization Story
+              Our Story
             </span>
             <h2 className="text-3xl md:text-4xl font-sora font-bold text-foreground mt-3 tracking-tight">
-              Bridging Software Engineering & Institutional Alpha
+              Bridging Quantitative Logic & Institutional Alpha
             </h2>
             <p className="max-w-2xl text-sm md:text-base text-muted-foreground mt-4 leading-relaxed font-light">
               Albireo was founded with a singular purpose: empowering traders with zero-dependency algorithmic risk guardians, Monte Carlo stress-testing, and real-time ECN terminal execution.
@@ -217,7 +217,7 @@ export default function Home() {
                     Democratizing Institutional Risk Systems for Scaling Traders
                   </h3>
                   <p className="text-sm text-muted-foreground leading-relaxed font-light mt-2">
-                    Albireo was born when our core engineering team realized that over 90% of prop-firm evaluation candidates fail not because of bad market direction bias, but due to opaque trailing drawdown traps, margin blindness, and unmanaged tail risks. Obsessed with market microstructure and statistical probability, we built Albireo—a zero-dependency quantitative suite and ECN trading terminal that equips traders with Monte Carlo stress-testing, live compliance auditing, and real-time margin risk gauges to master evaluation math and protect capital.
+                    Albireo was born when our core trading team realized that over 90% of prop-firm evaluation candidates fail not because of bad market direction bias, but due to opaque trailing drawdown traps, margin blindness, and unmanaged tail risks. Obsessed with market microstructure and statistical probability, we built Albireo—a zero-dependency quantitative suite and ECN trading terminal that equips traders with Monte Carlo stress-testing, live compliance auditing, and real-time margin risk gauges to master evaluation math and protect capital.
                   </p>
                 </div>
               </div>

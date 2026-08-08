@@ -133,7 +133,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             </div>
 
             <p className="text-xs text-text-muted leading-relaxed">
-              Former backend engineer who transitioned into full-time mechanical futures & forex trading. Building Albireo to resolve trading math deficits.
+              Full-time mechanical futures & forex trader. Building Albireo to resolve trading math deficits.
             </p>
 
             <div className="flex flex-col gap-2 w-full mt-2">

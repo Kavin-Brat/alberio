@@ -16,8 +16,8 @@ Albireo bridges the gap between complex quantitative financial modeling and reta
 
 ---
 
-### Our Organization Story
-Albireo was born when our core engineering team realized that over 90% of prop-firm evaluation candidates fail not because of bad market direction bias, but due to opaque trailing drawdown traps, margin blindness, and unmanaged tail risks. Obsessed with market microstructure and statistical probability, we built Albireo—a zero-dependency quantitative suite and ECN trading terminal that equips traders with Monte Carlo stress-testing, live compliance auditing, and real-time margin risk gauges to master evaluation math and protect capital.
+### Our Story
+Albireo was born when our core trading team realized that over 90% of prop-firm evaluation candidates fail not because of bad market direction bias, but due to opaque trailing drawdown traps, margin blindness, and unmanaged tail risks. Obsessed with market microstructure and statistical probability, we built Albireo—a zero-dependency quantitative suite and ECN trading terminal that equips traders with Monte Carlo stress-testing, live compliance auditing, and real-time margin risk gauges to master evaluation math and protect capital.
 
 ## 2. Problem Statement: Market Inefficiencies Solved
 
