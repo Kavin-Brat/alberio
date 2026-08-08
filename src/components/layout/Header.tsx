@@ -76,16 +76,6 @@ export default function Header() {
             Story
           </Link>
 
-          <Link
-            href="/terminal"
-            className={cn(
-              "font-sora text-xs tracking-widest uppercase transition-colors hover:text-foreground flex items-center gap-1.5",
-              isActive("/terminal") ? "text-primary font-semibold" : "text-muted-foreground"
-            )}
-          >
-            <TerminalIcon className="w-3.5 h-3.5 text-primary" /> Terminal
-          </Link>
-
           {/* Tools Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button
@@ -198,19 +188,6 @@ export default function Header() {
             Blog & Guides
           </Link>
         </nav>
-
-        {/* Right CTA Button */}
-        <div className="hidden md:flex items-center gap-4">
-          <Link href="/terminal">
-            <Button
-              variant="navCta"
-              size="lg"
-              className="hidden md:inline-flex rounded-lg uppercase text-xs tracking-widest px-6"
-            >
-              Terminal
-            </Button>
-          </Link>
-        </div>
 
         {/* Mobile Menu Toggle */}
         <button

@@ -60,17 +60,11 @@ export default function Home() {
             className="opacity-0 animate-fade-up flex flex-wrap gap-3 font-bold"
             style={{ animationDelay: "0.7s" }}
           >
-            <Link
-              href="/terminal"
-              className="pointer-events-auto bg-primary text-primary-foreground px-6 py-3 md:px-8 md:py-4 text-sm rounded-sm hover:brightness-110 transition-all active:scale-[0.97] font-sora font-semibold uppercase tracking-wider flex items-center gap-2"
-            >
-              <Terminal className="w-4 h-4" /> Open ECN Terminal
-            </Link>
             <button
               onClick={() => document.getElementById("preview")?.scrollIntoView({ behavior: "smooth" })}
-              className="pointer-events-auto bg-white text-background px-6 py-3 md:px-8 md:py-4 text-sm rounded-sm cursor-pointer hover:brightness-90 transition-all active:scale-[0.97] font-sora font-semibold uppercase tracking-wider"
+              className="pointer-events-auto bg-primary text-primary-foreground px-6 py-3 md:px-8 md:py-4 text-sm rounded-sm cursor-pointer hover:brightness-110 transition-all active:scale-[0.97] font-sora font-semibold uppercase tracking-wider shadow-[0_0_20px_rgba(34,230,0,0.3)]"
             >
-              Our Simulator
+              Explore
             </button>
           </div>
 
