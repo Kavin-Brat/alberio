@@ -133,12 +133,12 @@ export default function CotAnalyzer() {
               onChange={(e) => setSelectedAsset(e.target.value as AssetType)}
               className="bg-hero-bg border border-border rounded-sm px-3 py-1.5 text-xs font-bold text-foreground focus:outline-hidden focus:border-primary"
             >
-              <option value="EUR/USD">EUR/USD (Euro)</option>
-              <option value="GBP/USD">GBP/USD (Pound)</option>
-              <option value="Gold (XAU)">Gold (XAU)</option>
-              <option value="Crude Oil">Crude Oil (WTI)</option>
-              <option value="S&P 500">S&P 500 (Index)</option>
-              <option value="Bitcoin">Bitcoin (BTC)</option>
+              <option value="EUR/USD" className="bg-[#0b0c0e] text-[#f5f5f5]">EUR/USD (Euro)</option>
+              <option value="GBP/USD" className="bg-[#0b0c0e] text-[#f5f5f5]">GBP/USD (Pound)</option>
+              <option value="Gold (XAU)" className="bg-[#0b0c0e] text-[#f5f5f5]">Gold (XAU)</option>
+              <option value="Crude Oil" className="bg-[#0b0c0e] text-[#f5f5f5]">Crude Oil (WTI)</option>
+              <option value="S&P 500" className="bg-[#0b0c0e] text-[#f5f5f5]">S&P 500 (Index)</option>
+              <option value="Bitcoin" className="bg-[#0b0c0e] text-[#f5f5f5]">Bitcoin (BTC)</option>
             </select>
           </div>
 

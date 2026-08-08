@@ -294,15 +294,15 @@ export default function TradeJournal() {
   return (
     <PageContainer>
       {/* Header Title */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-cyber-cyan/15 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-6">
         <div className="flex flex-col gap-1.5">
-          <span className="text-xs font-heading font-bold text-cyber-cyan uppercase tracking-widest">
+          <span className="text-xs font-sora font-bold text-primary uppercase tracking-widest">
             Quantitative Performance Metrics
           </span>
-          <h1 className="text-3xl md:text-5xl font-heading font-bold text-white tracking-tight">
+          <h1 className="text-3xl md:text-5xl font-sora font-bold text-foreground tracking-tight">
             Trading Journal & Analytics
           </h1>
-          <p className="text-light-purple text-xs md:text-sm max-w-xl leading-relaxed">
+          <p className="text-muted-foreground text-xs md:text-sm max-w-xl leading-relaxed">
             Track win ratios, profit factor curves, and psychology slips. Logs are persisted locally inside your browser storage for safety.
           </p>
         </div>
@@ -321,7 +321,7 @@ export default function TradeJournal() {
           label="Net P&L"
           value={`${totalPnL >= 0 ? "+" : ""}${totalPnL.toLocaleString()}`}
           subtext={`${totalTrades} logged positions`}
-          valueColor={totalPnL >= 0 ? "text-cyber-cyan text-glow-cyan" : "text-loss"}
+          valueColor={totalPnL >= 0 ? "text-primary text-glow-green" : "text-loss"}
           topAccent={true}
         />
         <KPICard
@@ -333,13 +333,13 @@ export default function TradeJournal() {
           label="Profit Factor"
           value={profitFactor}
           subtext="Ratio of wins to losses"
-          valueColor="text-electric-cyan"
+          valueColor="text-primary"
         />
         <KPICard
           label="Avg Risk-Reward"
           value={`1:${avgRR}`}
           subtext="Projected average target"
-          valueColor="text-cyber-cyan"
+          valueColor="text-primary"
         />
         <KPICard
           label="Max Drawdown"
@@ -475,15 +475,15 @@ export default function TradeJournal() {
 
       {/* TRADE LOG TABLE */}
       <GlassCard className="flex flex-col gap-4">
-        <div className="flex items-center justify-between border-b border-cyber-cyan/15 pb-3">
-          <h3 className="font-heading font-bold text-base text-white uppercase tracking-wider">Logged Positions</h3>
-          <span className="text-xs text-light-purple">{trades.length} Positions total</span>
+        <div className="flex items-center justify-between border-b border-border pb-3">
+          <h3 className="font-sora font-bold text-base text-foreground uppercase tracking-wider">Logged Positions</h3>
+          <span className="text-xs text-muted-foreground">{trades.length} Positions total</span>
         </div>
 
         <div className="overflow-x-auto w-full">
           <table className="w-full text-left text-xs border-collapse font-sans">
             <thead>
-              <tr className="border-b border-cyber-cyan/15 text-light-purple font-heading font-bold uppercase tracking-wider text-[10px]">
+              <tr className="border-b border-border text-muted-foreground font-sora font-bold uppercase tracking-wider text-[10px]">
                 <th className="py-3 px-2 hidden sm:table-cell">Date</th>
                 <th className="py-3 px-2">Symbol</th>
                 <th className="py-3 px-2">Type</th>
@@ -496,17 +496,17 @@ export default function TradeJournal() {
                 <th className="py-3 px-2 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-cyber-cyan/10 text-white">
+            <tbody className="divide-y divide-border text-foreground">
               {trades.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="py-8 text-center text-light-purple font-heading">
+                  <td colSpan={10} className="py-8 text-center text-muted-foreground font-sora">
                     No trades logged yet. Click "+ Log Position Record" to record one!
                   </td>
                 </tr>
               ) : (
                 trades.map((trade) => (
-                  <tr key={trade.id} className="hover:bg-cyber-cyan/5 transition-colors">
-                    <td className="py-3 px-2 text-[10px] text-light-purple font-medium hidden sm:table-cell">
+                  <tr key={trade.id} className="hover:bg-primary/5 transition-colors">
+                    <td className="py-3 px-2 text-[10px] text-muted-foreground font-medium hidden sm:table-cell">
                       {new Date(trade.date).toLocaleDateString("en-US", {
                         month: "2-digit",
                         day: "2-digit",
@@ -514,9 +514,9 @@ export default function TradeJournal() {
                         minute: "2-digit"
                       })}
                     </td>
-                    <td className="py-3 px-2 font-heading font-bold text-white">{trade.symbol}</td>
+                    <td className="py-3 px-2 font-sora font-bold text-foreground">{trade.symbol}</td>
                     <td className="py-3 px-2">
-                      <span className={`px-2 py-0.5 rounded-xs text-[10px] font-heading font-bold ${
+                      <span className={`px-2 py-0.5 rounded-xs text-[10px] font-sora font-bold ${
                         trade.direction === "LONG"
                           ? "bg-profit/15 text-profit border border-profit/30"
                           : "bg-loss/15 text-loss border border-loss/30"
@@ -525,24 +525,24 @@ export default function TradeJournal() {
                       </span>
                     </td>
                     <td className="py-3 px-2 font-medium hidden md:table-cell">{trade.size} Lots</td>
-                    <td className="py-3 px-2 text-[11px] font-medium text-light-purple hidden sm:table-cell">
+                    <td className="py-3 px-2 text-[11px] font-medium text-muted-foreground hidden sm:table-cell">
                       <span>{trade.entryPrice}</span> &rarr; <span>{trade.exitPrice}</span>
                     </td>
-                    <td className={`py-3 px-2 font-heading font-bold ${trade.pnl >= 0 ? "text-cyber-cyan text-glow-cyan" : "text-loss"}`}>
+                    <td className={`py-3 px-2 font-sora font-bold ${trade.pnl >= 0 ? "text-primary text-glow-green" : "text-loss"}`}>
                       {trade.pnl >= 0 ? "+" : ""}${trade.pnl.toLocaleString()}
                     </td>
-                    <td className="py-3 px-2 font-heading font-bold text-cyber-cyan hidden md:table-cell">1:{trade.rr}</td>
+                    <td className="py-3 px-2 font-sora font-bold text-primary hidden md:table-cell">1:{trade.rr}</td>
                     <td className="py-3 px-2 hidden md:table-cell">
-                      <span className="bg-primary-dark border border-cyber-cyan/20 px-2 py-0.5 rounded-xs text-[10px] font-heading font-semibold text-white">
+                      <span className="bg-hero-bg border border-border px-2 py-0.5 rounded-xs text-[10px] font-sora font-semibold text-foreground">
                         {trade.strategy}
                       </span>
                     </td>
                     <td className="py-3 px-2 hidden md:table-cell">
-                      <span className={`px-2 py-0.5 rounded-xs text-[10px] font-heading font-semibold ${
+                      <span className={`px-2 py-0.5 rounded-xs text-[10px] font-sora font-semibold ${
                         trade.psychology === "Disciplined"
                           ? "bg-profit/10 text-profit"
                           : trade.psychology === "Early Exit"
-                          ? "bg-electric-cyan/10 text-electric-cyan"
+                          ? "bg-primary/10 text-primary"
                           : "bg-loss/10 text-loss"
                       }`}>
                         {trade.psychology}
@@ -552,13 +552,13 @@ export default function TradeJournal() {
                       <div className="flex justify-end gap-2">
                         <button
                           onClick={() => handleEditTrade(trade)}
-                          className="p-1 hover:bg-primary-dark border border-transparent hover:border-cyber-cyan/30 rounded-xs text-light-purple hover:text-cyber-cyan transition-colors cursor-pointer"
+                          className="p-1 hover:bg-hero-bg border border-transparent hover:border-primary/30 rounded-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleDeleteTrade(trade.id)}
-                          className="p-1 hover:bg-primary-dark border border-transparent hover:border-loss/30 rounded-xs text-light-purple hover:text-loss transition-colors cursor-pointer"
+                          className="p-1 hover:bg-hero-bg border border-transparent hover:border-loss/30 rounded-xs text-muted-foreground hover:text-loss transition-colors cursor-pointer"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -575,9 +575,9 @@ export default function TradeJournal() {
       {/* LOG MODAL */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <GlassCard className="max-w-xl w-full border-cyber-cyan/40 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-cyber-cyan/15 pb-3">
-              <h3 className="text-base font-heading font-bold uppercase text-white tracking-wider">
+          <GlassCard className="max-w-xl w-full border-primary/40 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <h3 className="text-base font-sora font-bold uppercase text-foreground tracking-wider">
                 {editingTrade ? "Edit Position Log" : "Log New Position"}
               </h3>
               <Button
@@ -589,36 +589,36 @@ export default function TradeJournal() {
               </Button>
             </div>
 
-            <form onSubmit={handleSaveTrade} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 font-heading">
+            <form onSubmit={handleSaveTrade} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 font-sora">
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-light-purple uppercase">Symbol / Pair</label>
+                <label className="text-[10px] font-bold text-muted-foreground uppercase">Symbol / Pair</label>
                 <select
                   value={symbol}
                   onChange={(e) => setSymbol(e.target.value)}
-                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary font-sora"
                 >
-                  <option value="EUR/USD">EUR/USD</option>
-                  <option value="GBP/USD">GBP/USD</option>
-                  <option value="Gold (XAU)">Gold (XAU)</option>
-                  <option value="Crude Oil">Crude Oil</option>
-                  <option value="Bitcoin">Bitcoin</option>
-                  <option value="S&P 500">S&P 500</option>
+                  <option value="EUR/USD" className="bg-[#0b0c0e] text-[#f5f5f5]">EUR/USD</option>
+                  <option value="GBP/USD" className="bg-[#0b0c0e] text-[#f5f5f5]">GBP/USD</option>
+                  <option value="Gold (XAU)" className="bg-[#0b0c0e] text-[#f5f5f5]">Gold (XAU)</option>
+                  <option value="Crude Oil" className="bg-[#0b0c0e] text-[#f5f5f5]">Crude Oil</option>
+                  <option value="Bitcoin" className="bg-[#0b0c0e] text-[#f5f5f5]">Bitcoin</option>
+                  <option value="S&P 500" className="bg-[#0b0c0e] text-[#f5f5f5]">S&P 500</option>
                 </select>
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-light-purple uppercase">Execution Date</label>
+                <label className="text-[10px] font-bold text-muted-foreground uppercase">Execution Date</label>
                 <input
                   type="datetime-local"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-1.5 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-1.5 text-xs text-foreground focus:outline-hidden focus:border-primary"
                   required
                 />
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-light-purple uppercase">Direction</label>
+                <label className="text-[10px] font-bold text-muted-foreground uppercase">Direction</label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
@@ -626,7 +626,7 @@ export default function TradeJournal() {
                     className={`py-2 border text-xs font-bold rounded-sm cursor-pointer ${
                       direction === "LONG"
                         ? "bg-profit/15 border-profit text-profit"
-                        : "bg-primary-dark border-cyber-cyan/20 text-light-purple hover:text-white"
+                        : "bg-hero-bg border-border text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     LONG
@@ -637,7 +637,7 @@ export default function TradeJournal() {
                     className={`py-2 border text-xs font-bold rounded-sm cursor-pointer ${
                       direction === "SHORT"
                         ? "bg-loss/15 border-loss text-loss"
-                        : "bg-primary-dark border-cyber-cyan/20 text-light-purple hover:text-white"
+                        : "bg-hero-bg border-border text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     SHORT
@@ -646,126 +646,126 @@ export default function TradeJournal() {
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-light-purple uppercase">Lot / Contract Size</label>
+                <label className="text-[10px] font-bold text-muted-foreground uppercase">Lot / Contract Size</label>
                 <input
                   type="number"
                   step="0.01"
                   value={size}
                   onChange={(e) => setSize(Number(e.target.value))}
-                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary"
                   required
                 />
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-light-purple uppercase">Entry Price</label>
+                <label className="text-[10px] font-bold text-muted-foreground uppercase">Entry Price</label>
                 <input
                   type="number"
                   step="0.00001"
                   value={entryPrice}
                   onChange={(e) => setEntryPrice(Number(e.target.value))}
-                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary"
                   required
                 />
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-light-purple uppercase">Exit Price</label>
+                <label className="text-[10px] font-bold text-muted-foreground uppercase">Exit Price</label>
                 <input
                   type="number"
                   step="0.00001"
                   value={exitPrice}
                   onChange={(e) => setExitPrice(Number(e.target.value))}
-                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary"
                   required
                 />
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-light-purple uppercase">Stop Loss (SL)</label>
+                <label className="text-[10px] font-bold text-muted-foreground uppercase">Stop Loss (SL)</label>
                 <input
                   type="number"
                   step="0.00001"
                   value={stopLoss}
                   onChange={(e) => setStopLoss(Number(e.target.value))}
-                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary"
                   required
                 />
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-light-purple uppercase">Take Profit (TP)</label>
+                <label className="text-[10px] font-bold text-muted-foreground uppercase">Take Profit (TP)</label>
                 <input
                   type="number"
                   step="0.00001"
                   value={takeProfit}
                   onChange={(e) => setTakeProfit(Number(e.target.value))}
-                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary"
                   required
                 />
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-light-purple uppercase">Realized PnL ($)</label>
+                <label className="text-[10px] font-bold text-muted-foreground uppercase">Realized PnL ($)</label>
                 <input
                   type="number"
                   value={pnl}
                   onChange={(e) => setPnl(Number(e.target.value))}
-                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary"
                   required
                 />
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-light-purple uppercase">Strategy setup</label>
+                <label className="text-[10px] font-bold text-muted-foreground uppercase">Strategy setup</label>
                 <select
                   value={strategy}
                   onChange={(e) => setStrategy(e.target.value)}
-                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary font-sora"
                 >
-                  <option value="Order Block">Order Block</option>
-                  <option value="Fair Value Gap">Fair Value Gap</option>
-                  <option value="Breakout">Breakout</option>
-                  <option value="Trend">Trend Following</option>
+                  <option value="Order Block" className="bg-[#0b0c0e] text-[#f5f5f5]">Order Block</option>
+                  <option value="Fair Value Gap" className="bg-[#0b0c0e] text-[#f5f5f5]">Fair Value Gap</option>
+                  <option value="Breakout" className="bg-[#0b0c0e] text-[#f5f5f5]">Breakout</option>
+                  <option value="Trend" className="bg-[#0b0c0e] text-[#f5f5f5]">Trend Following</option>
                 </select>
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-light-purple uppercase">Psychological State</label>
+                <label className="text-[10px] font-bold text-muted-foreground uppercase">Psychological State</label>
                 <select
                   value={psychology}
                   onChange={(e) => setPsychology(e.target.value)}
-                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary font-sora"
                 >
-                  <option value="Disciplined">Disciplined (System Exited)</option>
-                  <option value="FOMO">FOMO (Fear of Missing Out)</option>
-                  <option value="Revenge Trade">Revenge Trade</option>
-                  <option value="Early Exit">Early Exit (Fear of loss)</option>
+                  <option value="Disciplined" className="bg-[#0b0c0e] text-[#f5f5f5]">Disciplined (System Exited)</option>
+                  <option value="FOMO" className="bg-[#0b0c0e] text-[#f5f5f5]">FOMO (Fear of Missing Out)</option>
+                  <option value="Revenge Trade" className="bg-[#0b0c0e] text-[#f5f5f5]">Revenge Trade</option>
+                  <option value="Early Exit" className="bg-[#0b0c0e] text-[#f5f5f5]">Early Exit (Fear of loss)</option>
                 </select>
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-light-purple uppercase">Trading Session</label>
+                <label className="text-[10px] font-bold text-muted-foreground uppercase">Trading Session</label>
                 <select
                   value={session}
                   onChange={(e) => setSession(e.target.value as any)}
-                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary font-sora"
                 >
-                  <option value="London">London (Open/Overlap)</option>
-                  <option value="New York">New York (Open/News)</option>
-                  <option value="Tokyo">Tokyo (Asian range)</option>
-                  <option value="Sydney">Sydney</option>
+                  <option value="London" className="bg-[#0b0c0e] text-[#f5f5f5]">London (Open/Overlap)</option>
+                  <option value="New York" className="bg-[#0b0c0e] text-[#f5f5f5]">New York (Open/News)</option>
+                  <option value="Tokyo" className="bg-[#0b0c0e] text-[#f5f5f5]">Tokyo (Asian range)</option>
+                  <option value="Sydney" className="bg-[#0b0c0e] text-[#f5f5f5]">Sydney</option>
                 </select>
               </div>
 
               <div className="md:col-span-2 flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-light-purple uppercase">Execution Notes</label>
+                <label className="text-[10px] font-bold text-muted-foreground uppercase">Execution Notes</label>
                 <textarea
                   rows={2}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Confluence factors, news events..."
-                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white placeholder:text-light-purple/40 focus:outline-hidden focus:border-cyber-cyan"
+                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground/40 focus:outline-hidden focus:border-primary"
                 />
               </div>
 

@@ -37,7 +37,7 @@ export function LeverageGauge({
           className="bg-secondary border border-border text-xs font-mono font-bold text-primary rounded-xs px-2 py-1 focus:outline-hidden cursor-pointer"
         >
           {LEVERAGE_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
+            <option key={opt.value} value={opt.value} className="bg-[#0b0c0e] text-[#f5f5f5]">
               {opt.label}
             </option>
           ))}
