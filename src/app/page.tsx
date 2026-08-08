@@ -16,7 +16,7 @@ const LinkedinIcon = (props: React.SVGProps<SVGSVGElement>) => (
 export default function Home() {
   return (
     <div className="flex flex-col w-full overflow-hidden bg-hero-bg text-foreground font-sora">
-      
+
       {/* HERO SECTION - FULL SCREEN WITH BOTTOM-LEFT CONTENT ANCHOR & FLUID TYPOGRAPHY */}
       <section className="relative min-h-[calc(100vh-6rem)] flex items-end bg-hero-bg overflow-hidden">
         {/* Visual Atmospheric Background Grid Overlay */}
@@ -30,7 +30,7 @@ export default function Home() {
 
         {/* Content Container anchored at bottom-left */}
         <div className="relative z-10 pointer-events-none w-full max-w-[90%] sm:max-w-md lg:max-w-2xl px-6 md:px-10 pb-12 md:pb-16 pt-12">
-          
+
           {/* Heading */}
           <h1
             className="opacity-0 animate-fade-up text-[clamp(3rem,8vw,6rem)] font-bold leading-[1.05] tracking-[-0.05em] text-foreground mb-2 md:mb-4 uppercase"
