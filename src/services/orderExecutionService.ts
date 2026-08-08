@@ -6,6 +6,8 @@
  *   margin validation, position management, and PnL accounting.
  * - Liskov Substitution Principle (LSP): Consistently calculates position outcomes regardless
  *   of order type or asset class.
+ * - Immutability Guaranteed: Returns new position object copies on tick recalculations
+ *   to prevent React read-only state mutation errors.
  */
 
 import {
@@ -15,6 +17,11 @@ import {
   AccountSummary,
   ForexQuote,
 } from '@/types/tradeflow';
+import {
+  DEFAULT_INITIAL_BALANCE,
+  STANDARD_CONTRACT_SIZE,
+  ECN_COMMISSION_PER_LOT,
+} from '@/constants/tradeflow';
 import { forexPriceService } from './forexPriceService';
 
 type PositionsCallback = (positions: Position[]) => void;
@@ -25,8 +32,8 @@ class OrderExecutionService {
 
   private positions: Position[] = [];
   private history: Position[] = [];
-  private initialBalance: number = 100000; // $100,000 Starting ECN Capital
-  private currentBalance: number = 100000;
+  private initialBalance: number = DEFAULT_INITIAL_BALANCE;
+  private currentBalance: number = DEFAULT_INITIAL_BALANCE;
 
   private positionsSubscribers: Set<PositionsCallback> = new Set();
   private accountSubscribers: Set<AccountSummaryCallback> = new Set();
@@ -54,12 +61,8 @@ class OrderExecutionService {
       return { success: false, message: `Market quote unavailable for ${request.symbol}` };
     }
 
-    // Determine execution entry price (Buy executes at Ask, Sell executes at Bid)
     const entryPrice = request.side === 'BUY' ? quote.ask : quote.bid;
-
-    // Calculate required margin (Contract Size: 1 Lot = 100,000 units)
-    const contractSize = 100000;
-    const notionalValue = request.volumeLots * contractSize * entryPrice;
+    const notionalValue = request.volumeLots * STANDARD_CONTRACT_SIZE * entryPrice;
     const requiredMargin = notionalValue / request.leverage;
 
     const currentSummary = this.getAccountSummary();
@@ -67,7 +70,6 @@ class OrderExecutionService {
       return { success: false, message: `Insufficient Free Margin! Required: $${requiredMargin.toFixed(2)}` };
     }
 
-    // Calculate SL/TP prices if specified
     const pipStep = request.symbol === 'USD/JPY' ? 0.01 : 0.0001;
     let stopLossPrice: number | undefined;
     let takeProfitPrice: number | undefined;
@@ -97,12 +99,12 @@ class OrderExecutionService {
       realizedPnL: 0,
       marginUsed: parseFloat(requiredMargin.toFixed(2)),
       swapFee: 0,
-      commission: parseFloat((request.volumeLots * 3.50).toFixed(2)), // $3.50 per lot ECN commission
+      commission: parseFloat((request.volumeLots * ECN_COMMISSION_PER_LOT).toFixed(2)),
       openTime: Date.now(),
       status: 'OPEN',
     };
 
-    this.positions.push(newPosition);
+    this.positions = [...this.positions, newPosition];
     this.notifySubscribers();
 
     return {
@@ -113,7 +115,7 @@ class OrderExecutionService {
   }
 
   /**
-   * Closes an active open trade position
+   * Closes an active open trade position immutably
    */
   public closePosition(positionId: string): { success: boolean; message: string } {
     const index = this.positions.findIndex((p) => p.id === positionId);
@@ -121,39 +123,47 @@ class OrderExecutionService {
       return { success: false, message: 'Position not found' };
     }
 
-    const pos = this.positions[index];
-    pos.closeTime = Date.now();
-    pos.status = 'CLOSED';
-    pos.realizedPnL = pos.unrealizedPnL - pos.commission;
+    const targetPos = this.positions[index];
+    const closedPos: Position = {
+      ...targetPos,
+      closeTime: Date.now(),
+      status: 'CLOSED',
+      realizedPnL: targetPos.unrealizedPnL - targetPos.commission,
+    };
 
-    this.currentBalance += pos.realizedPnL;
-    this.history.unshift(pos);
-    this.positions.splice(index, 1);
+    this.currentBalance += closedPos.realizedPnL;
+    this.history = [closedPos, ...this.history];
+    this.positions = this.positions.filter((p) => p.id !== positionId);
 
     this.notifySubscribers();
     return {
       success: true,
-      message: `Closed Position #${pos.id} (${pos.symbol}) with PnL: $${pos.realizedPnL.toFixed(2)}`,
+      message: `Closed Position #${closedPos.id} (${closedPos.symbol}) with PnL: $${closedPos.realizedPnL.toFixed(2)}`,
     };
   }
 
   /**
-   * Recalculates position PnL based on live tick updates
+   * Recalculates position PnL based on live tick updates immutably
    */
   private recalculatePositions(quotes: Map<CurrencyPairSymbol, ForexQuote>): void {
-    this.positions.forEach((pos) => {
+    if (this.positions.length === 0) return;
+
+    this.positions = this.positions.map((pos) => {
       const quote = quotes.get(pos.symbol);
-      if (!quote) return;
+      if (!quote) return pos;
 
       const currentMark = pos.side === 'BUY' ? quote.bid : quote.ask;
-      pos.currentPrice = currentMark;
-
-      const contractSize = 100000;
       const priceDelta = pos.side === 'BUY'
         ? currentMark - pos.entryPrice
         : pos.entryPrice - currentMark;
 
-      pos.unrealizedPnL = parseFloat((priceDelta * pos.volumeLots * contractSize).toFixed(2));
+      const unrealizedPnL = parseFloat((priceDelta * pos.volumeLots * STANDARD_CONTRACT_SIZE).toFixed(2));
+
+      return {
+        ...pos,
+        currentPrice: currentMark,
+        unrealizedPnL,
+      };
     });
 
     this.notifySubscribers();

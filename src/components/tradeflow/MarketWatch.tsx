@@ -4,14 +4,14 @@
  * Tradeflow Global - Real-Time MarketWatch Panel
  * 
  * SOLID Principles Applied:
- * - Single Responsibility Principle (SRP): Renders the pair watchlist, live bid/ask quotes,
- *   spreads, and 24h percentage changes.
+ * - Single Responsibility Principle (SRP): Renders the pair watchlist container, header,
+ *   and delegates row rendering to MarketWatchItem sub-component.
  */
 
 import React from "react";
 import { CurrencyPairSymbol, ForexQuote } from "@/types/tradeflow";
-import { TrendingUp, TrendingDown, Shield } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Shield } from "lucide-react";
+import MarketWatchItem from "./MarketWatchItem";
 
 interface MarketWatchProps {
   quotes: Map<CurrencyPairSymbol, ForexQuote>;
@@ -45,66 +45,16 @@ export function MarketWatch({ quotes, selectedSymbol, onSelectSymbol }: MarketWa
         <div className="col-span-2 text-right">Spread</div>
       </div>
 
-      {/* Watchlist Symbol Items */}
+      {/* Watchlist Symbol Items List */}
       <div className="flex-1 overflow-y-auto divide-y divide-border/40">
-        {symbolList.map((quote) => {
-          const isSelected = quote.symbol === selectedSymbol;
-          const isUp = quote.priceDirection === "UP";
-          const isDown = quote.priceDirection === "DOWN";
-
-          return (
-            <button
-              key={quote.symbol}
-              onClick={() => onSelectSymbol(quote.symbol)}
-              className={cn(
-                "w-full grid grid-cols-12 items-center px-4 py-3 text-left transition-all duration-200 cursor-pointer group hover:bg-muted/40",
-                isSelected ? "bg-primary/10 border-l-2 border-primary" : "bg-transparent"
-              )}
-            >
-              {/* Symbol & 24h Change */}
-              <div className="col-span-4 flex flex-col">
-                <span className={cn(
-                  "text-xs font-bold tracking-tight transition-colors",
-                  isSelected ? "text-primary" : "text-foreground group-hover:text-primary"
-                )}>
-                  {quote.symbol}
-                </span>
-                <span className={cn(
-                  "text-[10px] font-medium flex items-center gap-0.5",
-                  quote.changePercent24h >= 0 ? "text-profit" : "text-loss"
-                )}>
-                  {quote.changePercent24h >= 0 ? (
-                    <TrendingUp className="w-2.5 h-2.5" />
-                  ) : (
-                    <TrendingDown className="w-2.5 h-2.5" />
-                  )}
-                  {quote.changePercent24h >= 0 ? "+" : ""}{quote.changePercent24h}%
-                </span>
-              </div>
-
-              {/* Bid Quote */}
-              <div className={cn(
-                "col-span-3 text-right text-xs font-mono font-medium transition-colors rounded-xs px-1 py-0.5",
-                isUp ? "bg-profit/20 text-profit font-bold animate-pulse" : isDown ? "bg-loss/20 text-loss font-bold animate-pulse" : "text-foreground"
-              )}>
-                {quote.bid.toFixed(quote.symbol === "USD/JPY" ? 3 : 5)}
-              </div>
-
-              {/* Ask Quote */}
-              <div className={cn(
-                "col-span-3 text-right text-xs font-mono font-medium transition-colors rounded-xs px-1 py-0.5",
-                isUp ? "bg-profit/20 text-profit font-bold animate-pulse" : isDown ? "bg-loss/20 text-loss font-bold animate-pulse" : "text-foreground"
-              )}>
-                {quote.ask.toFixed(quote.symbol === "USD/JPY" ? 3 : 5)}
-              </div>
-
-              {/* Spread Pips */}
-              <div className="col-span-2 text-right text-[10px] font-mono text-muted-foreground">
-                {quote.spreadPips}p
-              </div>
-            </button>
-          );
-        })}
+        {symbolList.map((quote) => (
+          <MarketWatchItem
+            key={quote.symbol}
+            quote={quote}
+            isSelected={quote.symbol === selectedSymbol}
+            onSelect={() => onSelectSymbol(quote.symbol)}
+          />
+        ))}
       </div>
     </div>
   );

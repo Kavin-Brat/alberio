@@ -8,12 +8,14 @@
  *   consumers can register without modifying tick generator logic.
  * - Dependency Inversion Principle (DIP): Components depend on abstract quote state callbacks
  *   rather than raw internal interval timers.
+ * - Complete Defensive Cloning: Clones object references before handing them to subscribers or React state
+ *   to permanently prevent React 19 / Turbopack Strict Mode read-only object mutation errors.
  */
 
 import { CurrencyPairSymbol, ForexQuote, CandlestickBar } from '@/types/tradeflow';
+import { CURRENCY_PAIR_SPECS } from '@/constants/tradeflow';
 
 type QuoteCallback = (quotes: Map<CurrencyPairSymbol, ForexQuote>) => void;
-type CandleCallback = (symbol: CurrencyPairSymbol, candles: CandlestickBar[]) => void;
 
 class ForexPriceService {
   private static instance: ForexPriceService;
@@ -21,7 +23,6 @@ class ForexPriceService {
   private quotes: Map<CurrencyPairSymbol, ForexQuote> = new Map();
   private candleHistory: Map<CurrencyPairSymbol, CandlestickBar[]> = new Map();
   private quoteSubscribers: Set<QuoteCallback> = new Set();
-  private candleSubscribers: Set<CandleCallback> = new Set();
   private intervalId: NodeJS.Timeout | null = null;
 
   private constructor() {
@@ -38,31 +39,20 @@ class ForexPriceService {
   }
 
   /**
-   * Initializes institutional ECN base prices and tight spreads
+   * Initializes institutional ECN base prices and tight spreads from centralized constants
    */
   private initializeDefaultQuotes(): void {
-    const basePairs: Array<{ symbol: CurrencyPairSymbol; baseBid: number; spread: number }> = [
-      { symbol: 'EUR/USD', baseBid: 1.08542, spread: 0.4 },
-      { symbol: 'GBP/USD', baseBid: 1.26895, spread: 0.6 },
-      { symbol: 'USD/JPY', baseBid: 154.625, spread: 0.5 },
-      { symbol: 'AUD/USD', baseBid: 0.65820, spread: 0.7 },
-      { symbol: 'USD/CAD', baseBid: 1.36450, spread: 0.8 },
-      { symbol: 'XAU/USD', baseBid: 2432.80, spread: 1.2 },
-      { symbol: 'BTC/USD', baseBid: 64250.0, spread: 5.0 },
-    ];
-
     const now = Date.now();
-    basePairs.forEach(({ symbol, baseBid, spread }) => {
-      const pipMultiplier = symbol === 'USD/JPY' ? 0.01 : symbol === 'XAU/USD' || symbol === 'BTC/USD' ? 0.1 : 0.0001;
-      const ask = parseFloat((baseBid + spread * pipMultiplier).toFixed(symbol === 'USD/JPY' ? 3 : 5));
+    CURRENCY_PAIR_SPECS.forEach((spec) => {
+      const ask = parseFloat((spec.baseBid + spec.spreadPips * spec.pipStep).toFixed(spec.decimals));
 
-      this.quotes.set(symbol, {
-        symbol,
-        bid: baseBid,
+      this.quotes.set(spec.symbol, {
+        symbol: spec.symbol,
+        bid: spec.baseBid,
         ask,
-        spreadPips: spread,
-        high24h: parseFloat((baseBid * 1.0085).toFixed(5)),
-        low24h: parseFloat((baseBid * 0.9915).toFixed(5)),
+        spreadPips: spec.spreadPips,
+        high24h: parseFloat((spec.baseBid * 1.0085).toFixed(spec.decimals)),
+        low24h: parseFloat((spec.baseBid * 0.9915).toFixed(spec.decimals)),
         changePercent24h: +0.42,
         lastUpdated: now,
         priceDirection: 'SAME',
@@ -71,14 +61,13 @@ class ForexPriceService {
   }
 
   /**
-   * Pre-populates 30 historical candlestick bars for chart rendering
+   * Pre-populates historical candlestick bars for chart rendering
    */
   private initializeDefaultCandles(): void {
-    const symbols: CurrencyPairSymbol[] = ['EUR/USD', 'GBP/USD', 'USD/JPY', 'AUD/USD', 'USD/CAD', 'XAU/USD', 'BTC/USD'];
     const now = Date.now();
 
-    symbols.forEach((symbol) => {
-      const quote = this.quotes.get(symbol)!;
+    CURRENCY_PAIR_SPECS.forEach((spec) => {
+      const quote = this.quotes.get(spec.symbol)!;
       let currentPrice = quote.bid;
       const bars: CandlestickBar[] = [];
 
@@ -87,9 +76,9 @@ class ForexPriceService {
         const volatility = currentPrice * 0.0012;
         const open = currentPrice;
         const delta = (Math.random() - 0.49) * volatility;
-        const close = parseFloat((open + delta).toFixed(5));
-        const high = parseFloat((Math.max(open, close) + Math.random() * volatility * 0.5).toFixed(5));
-        const low = parseFloat((Math.min(open, close) - Math.random() * volatility * 0.5).toFixed(5));
+        const close = parseFloat((open + delta).toFixed(spec.decimals));
+        const high = parseFloat((Math.max(open, close) + Math.random() * volatility * 0.5).toFixed(spec.decimals));
+        const low = parseFloat((Math.min(open, close) - Math.random() * volatility * 0.5).toFixed(spec.decimals));
         const volume = Math.floor(Math.random() * 800 + 200);
 
         bars.push({
@@ -100,14 +89,14 @@ class ForexPriceService {
           low,
           close,
           volume,
-          ema20: parseFloat((close * (1 + (Math.random() - 0.5) * 0.0005)).toFixed(5)),
-          ema50: parseFloat((close * (1 + (Math.random() - 0.5) * 0.001)).toFixed(5)),
+          ema20: parseFloat((close * (1 + (Math.random() - 0.5) * 0.0005)).toFixed(spec.decimals)),
+          ema50: parseFloat((close * (1 + (Math.random() - 0.5) * 0.001)).toFixed(spec.decimals)),
           rsi14: Math.floor(40 + Math.random() * 30),
         });
 
         currentPrice = close;
       }
-      this.candleHistory.set(symbol, bars);
+      this.candleHistory.set(spec.symbol, bars);
     });
   }
 
@@ -117,36 +106,35 @@ class ForexPriceService {
   private startPriceSimulationStream(): void {
     this.intervalId = setInterval(() => {
       const now = Date.now();
-      const updatedPairs: CurrencyPairSymbol[] = [];
 
-      this.quotes.forEach((quote, symbol) => {
-        const isJpy = symbol === 'USD/JPY';
-        const isCryptoGold = symbol === 'XAU/USD' || symbol === 'BTC/USD';
-        const pipStep = isJpy ? 0.01 : isCryptoGold ? 0.2 : 0.0001;
+      CURRENCY_PAIR_SPECS.forEach((spec) => {
+        const quote = this.quotes.get(spec.symbol);
+        if (!quote) return;
 
-        // Random micro-price movement
+        // Random micro-price movement using centralized pair specs
+        const isCryptoGold = spec.symbol.includes('XAU') || spec.symbol.includes('BTC');
         const deltaPips = (Math.random() - 0.495) * (isCryptoGold ? 3 : 1.5);
-        const newBidRaw = quote.bid + deltaPips * pipStep;
-        const decimals = isJpy ? 3 : isCryptoGold ? 2 : 5;
-        const newBid = parseFloat(newBidRaw.toFixed(decimals));
-        const newAsk = parseFloat((newBid + quote.spreadPips * pipStep).toFixed(decimals));
+        const newBidRaw = quote.bid + deltaPips * spec.pipStep;
+        const newBid = parseFloat(newBidRaw.toFixed(spec.decimals));
+        const newAsk = parseFloat((newBid + quote.spreadPips * spec.pipStep).toFixed(spec.decimals));
 
         const direction: 'UP' | 'DOWN' | 'SAME' =
           newBid > quote.bid ? 'UP' : newBid < quote.bid ? 'DOWN' : 'SAME';
 
         const updatedQuote: ForexQuote = {
-          ...quote,
+          symbol: quote.symbol,
           bid: newBid,
           ask: newAsk,
+          spreadPips: quote.spreadPips,
           high24h: Math.max(quote.high24h, newBid),
           low24h: Math.min(quote.low24h, newBid),
+          changePercent24h: quote.changePercent24h,
           priceDirection: direction,
           lastUpdated: now,
         };
 
-        this.quotes.set(symbol, updatedQuote);
-        this.updateLatestCandleBar(symbol, newBid);
-        updatedPairs.push(symbol);
+        this.quotes.set(spec.symbol, updatedQuote);
+        this.updateLatestCandleBar(spec.symbol, newBid);
       });
 
       this.notifySubscribers();
@@ -154,40 +142,64 @@ class ForexPriceService {
   }
 
   /**
-   * Appends or updates the active minute candlestick bar
+   * Appends or updates the active minute candlestick bar immutably
    */
   private updateLatestCandleBar(symbol: CurrencyPairSymbol, newPrice: number): void {
     const bars = this.candleHistory.get(symbol);
     if (!bars || bars.length === 0) return;
 
-    const lastBar = bars[bars.length - 1];
-    lastBar.high = Math.max(lastBar.high, newPrice);
-    lastBar.low = Math.min(lastBar.low, newPrice);
-    lastBar.close = newPrice;
-    lastBar.volume += Math.floor(Math.random() * 5 + 1);
+    const lastIndex = bars.length - 1;
+    const lastBar = bars[lastIndex];
+
+    const updatedBar: CandlestickBar = {
+      timestamp: lastBar.timestamp,
+      timeLabel: lastBar.timeLabel,
+      open: lastBar.open,
+      high: Math.max(lastBar.high, newPrice),
+      low: Math.min(lastBar.low, newPrice),
+      close: newPrice,
+      volume: lastBar.volume + Math.floor(Math.random() * 5 + 1),
+      ema20: lastBar.ema20,
+      ema50: lastBar.ema50,
+      rsi14: lastBar.rsi14,
+    };
+
+    const newBars = [...bars];
+    newBars[lastIndex] = updatedBar;
+    this.candleHistory.set(symbol, newBars);
   }
 
   /**
-   * Observers notification dispatch
+   * Observers notification dispatch with cloned quote objects
    */
   private notifySubscribers(): void {
-    this.quoteSubscribers.forEach((callback) => callback(this.quotes));
+    const subscriberMap = new Map<CurrencyPairSymbol, ForexQuote>();
+    this.quotes.forEach((quote, sym) => {
+      subscriberMap.set(sym, { ...quote });
+    });
+    this.quoteSubscribers.forEach((callback) => callback(subscriberMap));
   }
 
   // Public API Methods
 
   public subscribeQuotes(callback: QuoteCallback): () => void {
     this.quoteSubscribers.add(callback);
-    callback(this.quotes);
+    const initialMap = new Map<CurrencyPairSymbol, ForexQuote>();
+    this.quotes.forEach((quote, sym) => {
+      initialMap.set(sym, { ...quote });
+    });
+    callback(initialMap);
     return () => this.quoteSubscribers.delete(callback);
   }
 
   public getQuote(symbol: CurrencyPairSymbol): ForexQuote | undefined {
-    return this.quotes.get(symbol);
+    const q = this.quotes.get(symbol);
+    return q ? { ...q } : undefined;
   }
 
   public getCandles(symbol: CurrencyPairSymbol): CandlestickBar[] {
-    return this.candleHistory.get(symbol) || [];
+    const bars = this.candleHistory.get(symbol) || [];
+    return bars.map((bar) => ({ ...bar }));
   }
 }
 

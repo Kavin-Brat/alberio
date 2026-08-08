@@ -31,7 +31,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-hero-bg text-foreground font-sora antialiased selection:bg-primary selection:text-primary-foreground">
         <ThemeProvider>
           <Header />
-          <main className="flex-1 w-full flex flex-col relative z-10">
+          <main className="flex-1 w-full flex flex-col relative z-10 pt-20 md:pt-24">
             {children}
           </main>
           <Footer />

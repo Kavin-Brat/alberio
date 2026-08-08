@@ -5,14 +5,15 @@
  * 
  * SOLID Principles Applied:
  * - Single Responsibility Principle (SRP): Handles order ticket parameter input,
- *   margin calculation, stop loss/take profit pips valuation, and execution triggers.
+ *   stop loss/take profit valuation, and delegates leverage calculation to LeverageGauge.
  */
 
 import React, { useState } from "react";
 import { CurrencyPairSymbol, ForexQuote, TradeSide, OrderType, AccountSummary } from "@/types/tradeflow";
-import { Zap, ArrowUpRight, ArrowDownRight, AlertCircle, ShieldAlert, CheckCircle2 } from "lucide-react";
+import { Zap, ArrowUpRight, ArrowDownRight, ShieldAlert, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Button from "@/components/ui/Button";
+import LeverageGauge from "./LeverageGauge";
 
 interface OrderEntryTicketProps {
   symbol: CurrencyPairSymbol;
@@ -36,7 +37,7 @@ export function OrderEntryTicket({
   onExecuteOrder,
 }: OrderEntryTicketProps) {
   const [side, setSide] = useState<TradeSide>("BUY");
-  const [orderType, setOrderType] = useState<OrderType>("MARKET");
+  const [orderType] = useState<OrderType>("MARKET");
   const [lots, setLots] = useState<number>(0.1);
   const [leverage, setLeverage] = useState<number>(100);
   const [stopLossPips, setStopLossPips] = useState<number>(20);
@@ -50,7 +51,6 @@ export function OrderEntryTicket({
   // Margin calculation (1 Lot = 100,000 units)
   const notionalValue = lots * 100000 * entryPrice;
   const requiredMargin = notionalValue / leverage;
-  const marginRatioPercent = accountSummary.freeMargin > 0 ? (requiredMargin / accountSummary.freeMargin) * 100 : 0;
 
   // Risk / Reward Calculation ($ value per pip = lots * $10 for standard pair)
   const pipValueUSD = lots * 10;
@@ -152,19 +152,19 @@ export function OrderEntryTicket({
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setLots(parseFloat((lots + 0.01).toFixed(2)))}
-                className="px-2 py-1 bg-hero-bg border border-border hover:border-primary text-xs font-mono text-foreground rounded-xs"
+                className="px-2 py-1 bg-hero-bg border border-border hover:border-primary text-xs font-mono text-foreground rounded-xs cursor-pointer"
               >
                 +0.01
               </button>
               <button
                 onClick={() => setLots(parseFloat((lots + 0.1).toFixed(2)))}
-                className="px-2 py-1 bg-hero-bg border border-border hover:border-primary text-xs font-mono text-foreground rounded-xs"
+                className="px-2 py-1 bg-hero-bg border border-border hover:border-primary text-xs font-mono text-foreground rounded-xs cursor-pointer"
               >
                 +0.1
               </button>
               <button
                 onClick={() => setLots(parseFloat((lots + 1.0).toFixed(2)))}
-                className="px-2 py-1 bg-hero-bg border border-border hover:border-primary text-xs font-mono text-foreground rounded-xs"
+                className="px-2 py-1 bg-hero-bg border border-border hover:border-primary text-xs font-mono text-foreground rounded-xs cursor-pointer"
               >
                 +1.0
               </button>
@@ -172,38 +172,13 @@ export function OrderEntryTicket({
           </div>
         </div>
 
-        {/* Leverage & Margin Requirement Gauge */}
-        <div className="p-3 bg-hero-bg/60 border border-border rounded-md flex flex-col gap-2">
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground font-medium">FINANCIAL LEVERAGE</span>
-            <select
-              value={leverage}
-              onChange={(e) => setLeverage(Number(e.target.value))}
-              className="bg-secondary border border-border text-xs font-mono font-bold text-primary rounded-xs px-2 py-1 focus:outline-hidden cursor-pointer"
-            >
-              <option value={30}>1:30 (Retail)</option>
-              <option value={50}>1:50 (Standard)</option>
-              <option value={100}>1:100 (Pro)</option>
-              <option value={500}>1:500 (Max ECN)</option>
-            </select>
-          </div>
-
-          <div className="flex items-center justify-between text-xs font-mono">
-            <span className="text-muted-foreground">Required Margin:</span>
-            <span className="text-foreground font-bold">${requiredMargin.toFixed(2)}</span>
-          </div>
-
-          {/* Margin Utilization Progress */}
-          <div className="w-full h-1.5 bg-hero-bg rounded-full overflow-hidden border border-border">
-            <div
-              className={cn(
-                "h-full transition-all duration-300",
-                marginRatioPercent > 80 ? "bg-loss" : marginRatioPercent > 50 ? "bg-yellow-500" : "bg-primary"
-              )}
-              style={{ width: `${Math.min(100, marginRatioPercent)}%` }}
-            />
-          </div>
-        </div>
+        {/* Leverage & Margin Requirement Gauge Sub-Component */}
+        <LeverageGauge
+          leverage={leverage}
+          onLeverageChange={setLeverage}
+          requiredMargin={requiredMargin}
+          freeMargin={accountSummary.freeMargin}
+        />
 
         {/* Risk Management: SL & TP */}
         <div className="grid grid-cols-2 gap-3">

@@ -73,7 +73,7 @@ export function Footer() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground font-light">
-        <p>© {currentYear} ALBIREO. All rights reserved. Columbus, OH.</p>
+        <p>© {currentYear} ALBIREO. All rights reserved. Hosur, TN.</p>
         <p className="flex items-center gap-1">
           Architected with precision <Heart className="h-3.5 w-3.5 text-primary fill-primary animate-pulse" />
         </p>

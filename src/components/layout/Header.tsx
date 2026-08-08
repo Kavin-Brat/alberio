@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, Menu, BarChart3, Calculator, PenTool, Send } from "lucide-react";
+import { ChevronDown, Menu, BarChart3, Calculator, PenTool, Terminal as TerminalIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Button from "@/components/ui/Button";
 import { MobileNav } from "./MobileNav";
@@ -57,10 +57,10 @@ export default function Header() {
             : "bg-transparent border-b border-transparent"
         )}
       >
-        {/* Left Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
+        {/* Left Logo - Fixed to reliably link to Homepage / */}
+        <Link href="/" className="flex items-center gap-2 group cursor-pointer">
           <span className="font-sora text-xl font-semibold tracking-tight text-foreground uppercase">
-            TRADEFLOW<span className="text-primary"> GLOBAL</span>
+            ALBIREO<span className="text-primary">.</span>
           </span>
         </Link>
 
@@ -74,6 +74,16 @@ export default function Header() {
             )}
           >
             Story
+          </Link>
+
+          <Link
+            href="/terminal"
+            className={cn(
+              "font-sora text-xs tracking-widest uppercase transition-colors hover:text-foreground flex items-center gap-1.5",
+              isActive("/terminal") ? "text-primary font-semibold" : "text-muted-foreground"
+            )}
+          >
+            <TerminalIcon className="w-3.5 h-3.5 text-primary" /> Terminal
           </Link>
 
           {/* Tools Dropdown */}
@@ -90,6 +100,32 @@ export default function Header() {
 
             {isDropdownOpen && (
               <div className="absolute left-0 mt-3 w-64 bg-secondary border border-border rounded-lg shadow-2xl p-2 flex flex-col gap-1 backdrop-blur-xl animate-fade-in">
+                <Link
+                  href="/tools"
+                  className="flex items-center gap-3 p-2.5 rounded-md hover:bg-muted transition-colors group"
+                >
+                  <BarChart3 className="w-4 h-4 text-primary" />
+                  <div>
+                    <div className="font-sora text-xs font-semibold text-foreground group-hover:text-primary transition-colors">
+                      Quant Software Suite
+                    </div>
+                    <div className="text-[10px] text-muted-foreground">Compliance & Monte Carlo</div>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/terminal"
+                  className="flex items-center gap-3 p-2.5 rounded-md hover:bg-muted transition-colors group"
+                >
+                  <TerminalIcon className="w-4 h-4 text-primary" />
+                  <div>
+                    <div className="font-sora text-xs font-semibold text-foreground group-hover:text-primary transition-colors">
+                      ECN Trading Terminal
+                    </div>
+                    <div className="text-[10px] text-muted-foreground">Real-time order execution</div>
+                  </div>
+                </Link>
+
                 <Link
                   href="/prop-firms"
                   className="flex items-center gap-3 p-2.5 rounded-md hover:bg-muted transition-colors group"
@@ -165,14 +201,15 @@ export default function Header() {
 
         {/* Right CTA Button */}
         <div className="hidden md:flex items-center gap-4">
-          <Button
-            variant="navCta"
-            size="lg"
-            className="hidden md:inline-flex rounded-lg uppercase text-xs tracking-widest px-6"
-            onClick={() => window.location.href = "/journal"}
-          >
-            Get Quote
-          </Button>
+          <Link href="/terminal">
+            <Button
+              variant="navCta"
+              size="lg"
+              className="hidden md:inline-flex rounded-lg uppercase text-xs tracking-widest px-6"
+            >
+              Terminal
+            </Button>
+          </Link>
         </div>
 
         {/* Mobile Menu Toggle */}

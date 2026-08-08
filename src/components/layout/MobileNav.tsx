@@ -77,15 +77,23 @@ export function MobileNav({ isOpen, onClose, pathname }: MobileNavProps) {
 
             {/* Tools Submenu */}
             <motion.div variants={linkVariants} className="flex flex-col gap-2 pt-2 border-t border-cyber-cyan/10">
-              <span className="text-[10px] font-heading font-bold uppercase tracking-widest text-cyber-cyan/70">
-                Tools & Calculators
+              <span className="text-[10px] font-sora font-bold uppercase tracking-widest text-primary/70">
+                Tools & Terminal
               </span>
+              <Link
+                href="/terminal"
+                onClick={onClose}
+                className="flex items-center gap-3 py-2 text-sm text-foreground hover:text-primary transition-colors"
+              >
+                <BarChart3 className="w-4 h-4 text-primary" />
+                ECN Trading Terminal
+              </Link>
               <Link
                 href="/prop-firms"
                 onClick={onClose}
-                className="flex items-center gap-3 py-2 text-sm text-light-purple hover:text-cyber-cyan transition-colors"
+                className="flex items-center gap-3 py-2 text-sm text-foreground hover:text-primary transition-colors"
               >
-                <Calculator className="w-4 h-4 text-cyber-cyan" />
+                <Calculator className="w-4 h-4 text-primary" />
                 Drawdown Simulator
               </Link>
               <Link

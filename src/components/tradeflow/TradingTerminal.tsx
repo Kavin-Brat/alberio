@@ -28,7 +28,7 @@ export function TradingTerminal() {
   const { positions, history, accountSummary, executeOrder, closePosition } = useTradePositions();
 
   return (
-    <div className="flex flex-col w-full h-[calc(100vh-5rem)] bg-hero-bg text-foreground font-sora p-4 gap-4 overflow-hidden">
+    <div className="flex flex-col w-full h-auto lg:h-[calc(100vh-7rem)] bg-hero-bg text-foreground font-sora p-4 gap-4 overflow-hidden">
       {/* TOP ACCOUNT SUMMARY METRICS TICKER BAR */}
       <div className="w-full bg-secondary-dark border border-border rounded-lg px-6 py-3 flex flex-wrap items-center justify-between gap-4 shadow-xl">
         <div className="flex items-center gap-3">
@@ -37,7 +37,7 @@ export function TradingTerminal() {
           </div>
           <div>
             <h1 className="text-sm font-extrabold tracking-tight text-foreground uppercase flex items-center gap-2">
-              TRADEFLOW <span className="text-primary">GLOBAL</span>
+              ALBIREO <span className="text-primary">TERMINAL</span>
             </h1>
             <p className="text-[10px] text-muted-foreground font-light">Institutional ECN Forex Terminal</p>
           </div>
