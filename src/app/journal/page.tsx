@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Trash2, Edit2, TrendingUp, BarChart3, Clock, AlertTriangle, Calendar, RefreshCw, X, FileText, CheckCircle } from "lucide-react";
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Legend, Cell } from "recharts";
+import { Plus, Trash2, Edit2, X } from "lucide-react";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Cell } from "recharts";
 import KPICard from "@/components/dashboard/KPICard";
 import PageContainer from "@/components/layout/PageContainer";
 import Button from "@/components/ui/Button";
-import Card from "@/components/ui/Card";
+import { GlassCard } from "@/components/ui/Card";
 
 interface Trade {
   id: string;
@@ -114,14 +114,6 @@ const DEFAULT_TRADES: Trade[] = [
   }
 ];
 
-/**
- * TradeJournal Component
- * 
- * Reusable SaaS Trade Journal dashboard.
- * Evaluates performance analytics (Net P&L, Win Rate, Profit Factor, Max Drawdown metrics),
- * renders chronological equity curves and session win rates using Recharts,
- * and handles adding, editing, and deleting local trade records.
- */
 export default function TradeJournal() {
   const [mounted, setMounted] = useState(false);
   const [trades, setTrades] = useState<Trade[]>([]);
@@ -143,7 +135,6 @@ export default function TradeJournal() {
   const [session, setSession] = useState<"London" | "New York" | "Tokyo" | "Sydney">("London");
   const [notes, setNotes] = useState("");
 
-  // Load from local storage
   useEffect(() => {
     setMounted(true);
     const localData = localStorage.getItem("albireo_trade_log");
@@ -159,13 +150,11 @@ export default function TradeJournal() {
     }
   }, []);
 
-  // Sync to local storage
   const saveToLocalStorage = (updatedTrades: Trade[]) => {
     setTrades(updatedTrades);
     localStorage.setItem("albireo_trade_log", JSON.stringify(updatedTrades));
   };
 
-  // Reset form to defaults
   const resetForm = () => {
     setSymbol("EUR/USD");
     setDirection("LONG");
@@ -183,13 +172,11 @@ export default function TradeJournal() {
     setEditingTrade(null);
   };
 
-  // Trigger modal for New Trade
   const handleNewTrade = () => {
     resetForm();
     setIsModalOpen(true);
   };
 
-  // Trigger modal for Edit Trade
   const handleEditTrade = (trade: Trade) => {
     setEditingTrade(trade);
     setSymbol(trade.symbol);
@@ -208,11 +195,9 @@ export default function TradeJournal() {
     setIsModalOpen(true);
   };
 
-  // Handle Save
   const handleSaveTrade = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Auto-calculate risk/reward if possible
     const diff = Math.abs(entryPrice - stopLoss);
     const reward = Math.abs(exitPrice - entryPrice);
     const calculatedRR = diff > 0 ? parseFloat((reward / diff).toFixed(1)) : 1.0;
@@ -247,7 +232,6 @@ export default function TradeJournal() {
     resetForm();
   };
 
-  // Handle Delete
   const handleDeleteTrade = (id: string) => {
     if (confirm("Are you sure you want to delete this trade log?")) {
       const updatedList = trades.filter((t) => t.id !== id);
@@ -255,7 +239,6 @@ export default function TradeJournal() {
     }
   };
 
-  // Metrics Calculations
   const totalPnL = trades.reduce((sum, t) => sum + t.pnl, 0);
   const totalTrades = trades.length;
   const winTrades = trades.filter((t) => t.pnl > 0).length;
@@ -267,11 +250,9 @@ export default function TradeJournal() {
   
   const avgRR = totalTrades > 0 ? parseFloat((trades.reduce((sum, t) => sum + t.rr, 0) / totalTrades).toFixed(1)) : 0;
 
-  // Drawdown experienced logic
   let peak = 0;
   let runningBal = 0;
   let maxDD = 0;
-  // Sort trades by date for chronological curve calculations
   const sortedTrades = [...trades].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   
   sortedTrades.forEach((t) => {
@@ -281,7 +262,6 @@ export default function TradeJournal() {
     if (currentDD > maxDD) maxDD = currentDD;
   });
 
-  // 1. Recharts Equity Curve Data
   let cumulativePnL = 0;
   const equityCurveData = sortedTrades.map((t, idx) => {
     cumulativePnL += t.pnl;
@@ -291,10 +271,8 @@ export default function TradeJournal() {
       "Cumulative P&L": cumulativePnL
     };
   });
-  // Prefix starting point
   equityCurveData.unshift({ index: 0, date: "Start", "Cumulative P&L": 0 });
 
-  // 2. Recharts Session Win Rate Data
   const sessions = ["London", "New York", "Tokyo", "Sydney"] as const;
   const sessionData = sessions.map((sess) => {
     const sessionTrades = trades.filter((t) => t.session === sess);
@@ -304,7 +282,6 @@ export default function TradeJournal() {
     return { name: sess, "Win Rate %": rate, count: totalSess };
   });
 
-  // 3. Recharts P&L by Currency Pair
   const pairPnLMap: Record<string, number> = {};
   trades.forEach((t) => {
     pairPnLMap[t.symbol] = (pairPnLMap[t.symbol] || 0) + t.pnl;
@@ -316,519 +293,498 @@ export default function TradeJournal() {
 
   return (
     <PageContainer>
-        
-        {/* Header Dashboard section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border-custom/50 pb-6">
-          <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-bold text-profit uppercase tracking-widest">
-              Performance metrics & analytics
-            </span>
-            <h1 className="text-3xl md:text-5xl font-black text-text-primary tracking-tight">
-              SaaS Trade Journal
-            </h1>
-            <p className="text-text-muted text-xs md:text-sm max-w-xl">
-              Track win ratios, profit factor curves, and psychology slips. Logs are persisted locally inside your browser storage for safety.
-            </p>
+      {/* Header Title */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-cyber-cyan/15 pb-6">
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs font-heading font-bold text-cyber-cyan uppercase tracking-widest">
+            Quantitative Performance Metrics
+          </span>
+          <h1 className="text-3xl md:text-5xl font-heading font-bold text-white tracking-tight">
+            Trading Journal & Analytics
+          </h1>
+          <p className="text-light-purple text-xs md:text-sm max-w-xl leading-relaxed">
+            Track win ratios, profit factor curves, and psychology slips. Logs are persisted locally inside your browser storage for safety.
+          </p>
+        </div>
+        <Button
+          variant="cyber"
+          onClick={handleNewTrade}
+          className="flex items-center gap-2 self-start md:self-center"
+        >
+          <Plus className="w-4 h-4" /> Log Position Record
+        </Button>
+      </div>
+
+      {/* KPI METRICS */}
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        <KPICard
+          label="Net P&L"
+          value={`${totalPnL >= 0 ? "+" : ""}${totalPnL.toLocaleString()}`}
+          subtext={`${totalTrades} logged positions`}
+          valueColor={totalPnL >= 0 ? "text-cyber-cyan text-glow-cyan" : "text-loss"}
+          topAccent={true}
+        />
+        <KPICard
+          label="Win Rate"
+          value={`${winRate}%`}
+          subtext={`${winTrades} winning trades`}
+        />
+        <KPICard
+          label="Profit Factor"
+          value={profitFactor}
+          subtext="Ratio of wins to losses"
+          valueColor="text-electric-cyan"
+        />
+        <KPICard
+          label="Avg Risk-Reward"
+          value={`1:${avgRR}`}
+          subtext="Projected average target"
+          valueColor="text-cyber-cyan"
+        />
+        <KPICard
+          label="Max Drawdown"
+          value={`-$${maxDD.toLocaleString()}`}
+          subtext="Peak-to-valley variance"
+          valueColor="text-loss"
+          className="col-span-2 lg:col-span-1"
+        />
+      </div>
+
+      {/* CHARTS GRID */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <GlassCard className="lg:col-span-8 min-w-0 flex flex-col gap-4">
+          <div>
+            <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-white">Cumulative Net P&L Curve</h3>
+            <span className="text-[11px] text-light-purple">Account growth trajectory over trade log history</span>
           </div>
-          <Button
-            variant="primary"
-            onClick={handleNewTrade}
-            className="flex items-center gap-2 self-start md:self-center"
-          >
-            <Plus className="w-4 h-4" /> Log Trade Record
-          </Button>
-        </div>
 
-        {/* SECTION 1: KEY PERFORMANCE METRICS BANNER */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-          <KPICard
-            label="Net P&L"
-            value={`${totalPnL >= 0 ? "+" : ""}${totalPnL.toLocaleString()}`}
-            subtext={`${totalTrades} logged positions`}
-            valueColor={totalPnL >= 0 ? "text-profit" : "text-loss"}
-            topAccent={true}
-          />
-          <KPICard
-            label="Win Rate"
-            value={`${winRate}%`}
-            subtext={`${winTrades} winning trades`}
-          />
-          <KPICard
-            label="Profit Factor"
-            value={profitFactor}
-            subtext="Ratio of wins to losses"
-            valueColor="text-electric-cyan"
-          />
-          <KPICard
-            label="Avg Risk-Reward"
-            value={`1:${avgRR}`}
-            subtext="Projected average target"
-            valueColor="text-cygnus-gold"
-          />
-          <KPICard
-            label="Max Drawdown"
-            value={`-$${maxDD.toLocaleString()}`}
-            subtext="Peak-to-valley variance"
-            valueColor="text-loss"
-            className="col-span-2 lg:col-span-1"
-          />
-        </div>
+          <div className="relative w-full h-72 min-w-0 mt-2">
+            {mounted && trades.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={equityCurveData}
+                  margin={{ top: 10, right: 10, left: 10, bottom: 0 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1a1d24" />
+                  <XAxis dataKey="date" stroke="#c5c6c7" fontSize={9} />
+                  <YAxis
+                    stroke="#c5c6c7"
+                    fontSize={9}
+                    tickFormatter={(value) => `${value >= 0 ? "+" : ""}$${value}`}
+                  />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: "#111318", borderColor: "#66fcf1" }}
+                    labelStyle={{ color: "#ffffff" }}
+                    itemStyle={{ color: "#66fcf1" }}
+                    formatter={(value: any) => [`$${value.toLocaleString()}`, "PnL"]}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="Cumulative P&L"
+                    stroke="#66fcf1"
+                    strokeWidth={2.5}
+                    dot={{ r: 4, strokeWidth: 1 }}
+                    activeDot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="w-full h-full bg-primary-dark/50 rounded-sm flex items-center justify-center text-light-purple text-xs font-heading">
+                {trades.length === 0 ? "Log trades to build your growth curve" : "Loading charts..."}
+              </div>
+            )}
+          </div>
+        </GlassCard>
 
-        {/* SECTION 2: PERFORMANCE CHARTS GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
-          {/* Cumulative Equity Curve (8 Cols) */}
-          <Card className="lg:col-span-8 min-w-0 flex flex-col gap-4">
+        <div className="lg:col-span-4 min-w-0 grid grid-cols-1 gap-6">
+          <GlassCard className="flex flex-col justify-between">
             <div>
-              <h3 className="font-bold text-xs uppercase tracking-wider text-text-primary">Cumulative Net P&L Curve</h3>
-              <span className="text-[11px] text-text-muted">Account growth trajectory over trade log history</span>
+              <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-white">Win Rate by Session</h3>
+              <span className="text-[10px] text-light-purple block mt-0.5">Performance breakdown by timezone</span>
             </div>
-
-            <div className="relative w-full h-72 min-w-0 mt-2">
-              {mounted && trades.length > 0 ? (
+            
+            <div className="relative w-full h-40 min-w-0 mt-4">
+              {mounted ? (
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    data={equityCurveData}
-                    margin={{ top: 10, right: 10, left: 10, bottom: 0 }}
+                  <BarChart
+                    data={sessionData}
+                    margin={{ top: 5, right: 0, left: -20, bottom: 0 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                    <XAxis dataKey="date" stroke="#94A3B8" fontSize={9} />
-                    <YAxis
-                      stroke="#94A3B8"
-                      fontSize={9}
-                      tickFormatter={(value) => `${value >= 0 ? "+" : ""}$${value}`}
-                    />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#1a1d24" />
+                    <XAxis dataKey="name" stroke="#c5c6c7" fontSize={9} />
+                    <YAxis stroke="#c5c6c7" fontSize={9} unit="%" domain={[0, 100]} />
                     <Tooltip
-                      contentStyle={{ backgroundColor: "#1E293B", borderColor: "#334155" }}
-                      labelStyle={{ color: "#F8FAFC" }}
-                      itemStyle={{ color: "#06B6D4" }}
-                      formatter={(value: any) => [`$${value.toLocaleString()}`, "PnL"]}
+                      contentStyle={{ backgroundColor: "#111318", borderColor: "#66fcf1" }}
+                      formatter={(v: any) => [`${v}%`, "Win Rate"]}
                     />
-                    <Line
-                      type="monotone"
-                      dataKey="Cumulative P&L"
-                      stroke="#06B6D4"
-                      strokeWidth={2.5}
-                      dot={{ r: 4, strokeWidth: 1 }}
-                      activeDot={{ r: 6 }}
-                    />
-                  </LineChart>
+                    <Bar dataKey="Win Rate %" fill="#66fcf1" radius={[2, 2, 0, 0]}>
+                      {sessionData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.name === "London" ? "#66fcf1" : entry.name === "New York" ? "#45a29e" : "#10b981"} />
+                      ))}
+                    </Bar>
+                  </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="w-full h-full bg-albireo-blue/30 rounded-xl flex items-center justify-center text-text-muted text-xs">
-                  {trades.length === 0 ? "Log trades to build your growth curve" : "Loading charts..."}
+                <div className="w-full h-full bg-primary-dark/50 rounded-sm flex items-center justify-center text-light-purple text-xs font-heading">
+                  Loading...
                 </div>
               )}
             </div>
-          </Card>
+          </GlassCard>
 
-          {/* Side Charts: Session Performance (4 Cols) */}
-          <div className="lg:col-span-4 min-w-0 grid grid-cols-1 gap-6">
+          <GlassCard className="flex flex-col justify-between">
+            <div>
+              <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-white">P&L by Currency Pair</h3>
+              <span className="text-[10px] text-light-purple block mt-0.5">Asset profit distribution</span>
+            </div>
             
-            {/* Session Win Rates */}
-            <Card className="flex flex-col justify-between">
-              <div>
-                <h3 className="font-bold text-xs uppercase tracking-wider text-text-primary">Win Rate by Session</h3>
-                <span className="text-[10px] text-text-muted block mt-0.5">Performance breakdown by timezone</span>
-              </div>
-              
-              <div className="relative w-full h-40 min-w-0 mt-4">
-                {mounted ? (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={sessionData}
-                      margin={{ top: 5, right: 0, left: -20, bottom: 0 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                      <XAxis dataKey="name" stroke="#94A3B8" fontSize={9} />
-                      <YAxis stroke="#94A3B8" fontSize={9} unit="%" domain={[0, 100]} />
-                      <Tooltip
-                        contentStyle={{ backgroundColor: "#1E293B", borderColor: "#334155" }}
-                        formatter={(v: any) => [`${v}%`, "Win Rate"]}
-                      />
-                      <Bar dataKey="Win Rate %" fill="#F59E0B" radius={[3, 3, 0, 0]}>
-                        {sessionData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.name === "London" ? "#06B6D4" : entry.name === "New York" ? "#F59E0B" : "#10B981"} />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                ) : (
-                  <div className="w-full h-full bg-albireo-blue/30 rounded-xl flex items-center justify-center text-text-muted text-xs">
-                    Loading...
-                  </div>
-                )}
-              </div>
-            </Card>
+            <div className="relative w-full h-40 min-w-0 mt-4">
+              {mounted && assetData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={assetData}
+                    layout="vertical"
+                    margin={{ top: 5, right: 5, left: -10, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#1a1d24" />
+                    <XAxis type="number" stroke="#c5c6c7" fontSize={9} />
+                    <YAxis type="category" dataKey="name" stroke="#c5c6c7" fontSize={9} />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: "#111318", borderColor: "#66fcf1" }}
+                      formatter={(v: any) => [`$${v}`, "P&L"]}
+                    />
+                    <Bar dataKey="Net P&L" radius={[0, 2, 2, 0]}>
+                      {assetData.map((entry: any, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={entry["Net P&L"] >= 0 ? "#10b981" : "#ef4444"}
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="w-full h-full bg-primary-dark/50 rounded-sm flex items-center justify-center text-light-purple text-xs font-heading">
+                  {trades.length === 0 ? "Log trades to analyze pairs" : "Loading..."}
+                </div>
+              )}
+            </div>
+          </GlassCard>
+        </div>
+      </div>
 
-            {/* Asset P&L Distribution */}
-            <Card className="flex flex-col justify-between">
-              <div>
-                <h3 className="font-bold text-xs uppercase tracking-wider text-text-primary">P&L by Currency Pair</h3>
-                <span className="text-[10px] text-text-muted block mt-0.5">Asset profit distribution</span>
-              </div>
-              
-              <div className="relative w-full h-40 min-w-0 mt-4">
-                {mounted && assetData.length > 0 ? (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={assetData}
-                      layout="vertical"
-                      margin={{ top: 5, right: 5, left: -10, bottom: 5 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                      <XAxis type="number" stroke="#94A3B8" fontSize={9} />
-                      <YAxis type="category" dataKey="name" stroke="#94A3B8" fontSize={9} />
-                      <Tooltip
-                        contentStyle={{ backgroundColor: "#1E293B", borderColor: "#334155" }}
-                        formatter={(v: any) => [`$${v}`, "P&L"]}
-                      />
-                      <Bar dataKey="Net P&L" radius={[0, 3, 3, 0]}>
-                        {assetData.map((entry: any, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={entry["Net P&L"] >= 0 ? "#10B981" : "#EF4444"}
-                          />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                ) : (
-                  <div className="w-full h-full bg-albireo-blue/30 rounded-xl flex items-center justify-center text-text-muted text-xs">
-                    {trades.length === 0 ? "Log trades to analyze pairs" : "Loading..."}
-                  </div>
-                )}
-              </div>
-            </Card>
-
-          </div>
+      {/* TRADE LOG TABLE */}
+      <GlassCard className="flex flex-col gap-4">
+        <div className="flex items-center justify-between border-b border-cyber-cyan/15 pb-3">
+          <h3 className="font-heading font-bold text-base text-white uppercase tracking-wider">Logged Positions</h3>
+          <span className="text-xs text-light-purple">{trades.length} Positions total</span>
         </div>
 
-        {/* SECTION 3: SORTABLE TRADE LOG TABLE */}
-        <Card className="flex flex-col gap-4">
-          <div className="flex items-center justify-between border-b border-border-custom/40 pb-3">
-            <h3 className="font-bold text-base text-text-primary uppercase tracking-wider">Logged Positions</h3>
-            <span className="text-xs text-text-muted">{trades.length} Positions total</span>
-          </div>
-
-          <div className="overflow-x-auto w-full">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="border-b border-border-custom/50 text-text-muted font-bold">
-                  <th className="py-3 px-2 hidden sm:table-cell">Date</th>
-                  <th className="py-3 px-2">Symbol</th>
-                  <th className="py-3 px-2">Type</th>
-                  <th className="py-3 px-2 hidden md:table-cell">Size</th>
-                  <th className="py-3 px-2 hidden sm:table-cell">Entry & Exit</th>
-                  <th className="py-3 px-2">P&L ($)</th>
-                  <th className="py-3 px-2 hidden md:table-cell">R:R</th>
-                  <th className="py-3 px-2 hidden md:table-cell">Strategy</th>
-                  <th className="py-3 px-2 hidden md:table-cell">Psychology</th>
-                  <th className="py-3 px-2 text-right">Actions</th>
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-left text-xs border-collapse font-sans">
+            <thead>
+              <tr className="border-b border-cyber-cyan/15 text-light-purple font-heading font-bold uppercase tracking-wider text-[10px]">
+                <th className="py-3 px-2 hidden sm:table-cell">Date</th>
+                <th className="py-3 px-2">Symbol</th>
+                <th className="py-3 px-2">Type</th>
+                <th className="py-3 px-2 hidden md:table-cell">Size</th>
+                <th className="py-3 px-2 hidden sm:table-cell">Entry & Exit</th>
+                <th className="py-3 px-2">P&L ($)</th>
+                <th className="py-3 px-2 hidden md:table-cell">R:R</th>
+                <th className="py-3 px-2 hidden md:table-cell">Strategy</th>
+                <th className="py-3 px-2 hidden md:table-cell">Psychology</th>
+                <th className="py-3 px-2 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-cyber-cyan/10 text-white">
+              {trades.length === 0 ? (
+                <tr>
+                  <td colSpan={10} className="py-8 text-center text-light-purple font-heading">
+                    No trades logged yet. Click "+ Log Position Record" to record one!
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-border-custom/30 text-text-primary/95">
-                {trades.length === 0 ? (
-                  <tr>
-                    <td colSpan={10} className="py-8 text-center text-text-muted">
-                      No trades logged yet. Click "+ Log Trade" to record one!
+              ) : (
+                trades.map((trade) => (
+                  <tr key={trade.id} className="hover:bg-cyber-cyan/5 transition-colors">
+                    <td className="py-3 px-2 text-[10px] text-light-purple font-medium hidden sm:table-cell">
+                      {new Date(trade.date).toLocaleDateString("en-US", {
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit"
+                      })}
+                    </td>
+                    <td className="py-3 px-2 font-heading font-bold text-white">{trade.symbol}</td>
+                    <td className="py-3 px-2">
+                      <span className={`px-2 py-0.5 rounded-xs text-[10px] font-heading font-bold ${
+                        trade.direction === "LONG"
+                          ? "bg-profit/15 text-profit border border-profit/30"
+                          : "bg-loss/15 text-loss border border-loss/30"
+                      }`}>
+                        {trade.direction}
+                      </span>
+                    </td>
+                    <td className="py-3 px-2 font-medium hidden md:table-cell">{trade.size} Lots</td>
+                    <td className="py-3 px-2 text-[11px] font-medium text-light-purple hidden sm:table-cell">
+                      <span>{trade.entryPrice}</span> &rarr; <span>{trade.exitPrice}</span>
+                    </td>
+                    <td className={`py-3 px-2 font-heading font-bold ${trade.pnl >= 0 ? "text-cyber-cyan text-glow-cyan" : "text-loss"}`}>
+                      {trade.pnl >= 0 ? "+" : ""}${trade.pnl.toLocaleString()}
+                    </td>
+                    <td className="py-3 px-2 font-heading font-bold text-cyber-cyan hidden md:table-cell">1:{trade.rr}</td>
+                    <td className="py-3 px-2 hidden md:table-cell">
+                      <span className="bg-primary-dark border border-cyber-cyan/20 px-2 py-0.5 rounded-xs text-[10px] font-heading font-semibold text-white">
+                        {trade.strategy}
+                      </span>
+                    </td>
+                    <td className="py-3 px-2 hidden md:table-cell">
+                      <span className={`px-2 py-0.5 rounded-xs text-[10px] font-heading font-semibold ${
+                        trade.psychology === "Disciplined"
+                          ? "bg-profit/10 text-profit"
+                          : trade.psychology === "Early Exit"
+                          ? "bg-electric-cyan/10 text-electric-cyan"
+                          : "bg-loss/10 text-loss"
+                      }`}>
+                        {trade.psychology}
+                      </span>
+                    </td>
+                    <td className="py-3 px-2 text-right">
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => handleEditTrade(trade)}
+                          className="p-1 hover:bg-primary-dark border border-transparent hover:border-cyber-cyan/30 rounded-xs text-light-purple hover:text-cyber-cyan transition-colors cursor-pointer"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTrade(trade.id)}
+                          className="p-1 hover:bg-primary-dark border border-transparent hover:border-loss/30 rounded-xs text-light-purple hover:text-loss transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
-                ) : (
-                  trades.map((trade) => (
-                    <tr key={trade.id} className="hover:bg-albireo-blue/35 transition-colors">
-                      <td className="py-3 px-2 text-[10px] text-text-muted font-medium hidden sm:table-cell">
-                        {new Date(trade.date).toLocaleDateString("en-US", {
-                          month: "2-digit",
-                          day: "2-digit",
-                          hour: "2-digit",
-                          minute: "2-digit"
-                        })}
-                      </td>
-                      <td className="py-3 px-2 font-bold text-text-primary">{trade.symbol}</td>
-                      <td className="py-3 px-2">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold ${
-                          trade.direction === "LONG"
-                            ? "bg-profit/15 text-profit border border-profit/20"
-                            : "bg-loss/15 text-loss border border-loss/20"
-                        }`}>
-                          {trade.direction}
-                        </span>
-                      </td>
-                      <td className="py-3 px-2 font-medium hidden md:table-cell">{trade.size} Lots</td>
-                      <td className="py-3 px-2 text-[11px] font-medium text-text-muted hidden sm:table-cell">
-                        <span>{trade.entryPrice}</span> &rarr; <span>{trade.exitPrice}</span>
-                      </td>
-                      <td className={`py-3 px-2 font-black ${trade.pnl >= 0 ? "text-profit" : "text-loss"}`}>
-                        {trade.pnl >= 0 ? "+" : ""}${trade.pnl.toLocaleString()}
-                      </td>
-                      <td className="py-3 px-2 font-bold text-cygnus-gold hidden md:table-cell">1:{trade.rr}</td>
-                      <td className="py-3 px-2 hidden md:table-cell">
-                        <span className="bg-surface-card border border-border-custom px-2 py-0.5 rounded text-[10px] font-semibold text-text-primary">
-                          {trade.strategy}
-                        </span>
-                      </td>
-                      <td className="py-3 px-2 hidden md:table-cell">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
-                          trade.psychology === "Disciplined"
-                            ? "bg-profit/10 text-profit"
-                            : trade.psychology === "Early Exit"
-                            ? "bg-electric-cyan/10 text-electric-cyan"
-                            : "bg-loss/10 text-loss"
-                        }`}>
-                          {trade.psychology}
-                        </span>
-                      </td>
-                      <td className="py-3 px-2 text-right">
-                        <div className="flex justify-end gap-2">
-                          <button
-                            onClick={() => handleEditTrade(trade)}
-                            className="p-1 hover:bg-surface-card border border-transparent hover:border-border-custom rounded text-text-muted hover:text-cygnus-gold transition-colors"
-                          >
-                            <Edit2 className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteTrade(trade.id)}
-                            className="p-1 hover:bg-surface-card border border-transparent hover:border-border-custom rounded text-text-muted hover:text-loss transition-colors"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </Card>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </GlassCard>
 
-        {/* SECTION 4: INTERACTIVE LOG MODAL */}
-        {isModalOpen && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <Card className="max-w-xl w-full shadow-2xl animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between border-b border-border-custom/50 pb-3">
-                <h3 className="text-base font-extrabold uppercase text-text-primary tracking-wide">
-                  {editingTrade ? "Edit Position Log" : "Log New Position"}
-                </h3>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setIsModalOpen(false)}
+      {/* LOG MODAL */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <GlassCard className="max-w-xl w-full border-cyber-cyan/40 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-cyber-cyan/15 pb-3">
+              <h3 className="text-base font-heading font-bold uppercase text-white tracking-wider">
+                {editingTrade ? "Edit Position Log" : "Log New Position"}
+              </h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsModalOpen(false)}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+
+            <form onSubmit={handleSaveTrade} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 font-heading">
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-light-purple uppercase">Symbol / Pair</label>
+                <select
+                  value={symbol}
+                  onChange={(e) => setSymbol(e.target.value)}
+                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
                 >
-                  <X className="w-4 h-4" />
-                </Button>
+                  <option value="EUR/USD">EUR/USD</option>
+                  <option value="GBP/USD">GBP/USD</option>
+                  <option value="Gold (XAU)">Gold (XAU)</option>
+                  <option value="Crude Oil">Crude Oil</option>
+                  <option value="Bitcoin">Bitcoin</option>
+                  <option value="S&P 500">S&P 500</option>
+                </select>
               </div>
 
-              <form onSubmit={handleSaveTrade} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                
-                {/* Symbol */}
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-bold text-text-muted uppercase">Symbol / Pair</label>
-                  <select
-                    value={symbol}
-                    onChange={(e) => setSymbol(e.target.value)}
-                    className="w-full bg-albireo-blue border border-border-custom rounded-lg px-3 py-2 text-xs text-text-primary focus:outline-none focus:border-cygnus-gold"
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-light-purple uppercase">Execution Date</label>
+                <input
+                  type="datetime-local"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-1.5 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-light-purple uppercase">Direction</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setDirection("LONG")}
+                    className={`py-2 border text-xs font-bold rounded-sm cursor-pointer ${
+                      direction === "LONG"
+                        ? "bg-profit/15 border-profit text-profit"
+                        : "bg-primary-dark border-cyber-cyan/20 text-light-purple hover:text-white"
+                    }`}
                   >
-                    <option value="EUR/USD">EUR/USD</option>
-                    <option value="GBP/USD">GBP/USD</option>
-                    <option value="Gold (XAU)">Gold (XAU)</option>
-                    <option value="Crude Oil">Crude Oil</option>
-                    <option value="Bitcoin">Bitcoin</option>
-                    <option value="S&P 500">S&P 500</option>
-                  </select>
-                </div>
-
-                {/* Date */}
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-bold text-text-muted uppercase">Execution Date</label>
-                  <input
-                    type="datetime-local"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    className="w-full bg-albireo-blue border border-border-custom rounded-lg px-3 py-1.5 text-xs text-text-primary focus:outline-none focus:border-cygnus-gold"
-                    required
-                  />
-                </div>
-
-                {/* Direction */}
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-bold text-text-muted uppercase">Direction</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setDirection("LONG")}
-                      className={`py-2 border text-xs font-bold rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold ${
-                        direction === "LONG"
-                          ? "bg-profit/15 border-profit text-profit"
-                          : "bg-albireo-blue/50 border-border-custom text-text-muted hover:text-text-primary"
-                      }`}
-                    >
-                      LONG
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setDirection("SHORT")}
-                      className={`py-2 border text-xs font-bold rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold ${
-                        direction === "SHORT"
-                          ? "bg-loss/15 border-loss text-loss"
-                          : "bg-albireo-blue/50 border-border-custom text-text-muted hover:text-text-primary"
-                      }`}
-                    >
-                      SHORT
-                    </button>
-                  </div>
-                </div>
-
-                {/* Size */}
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-bold text-text-muted uppercase">Lot / Contract Size</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={size}
-                    onChange={(e) => setSize(Number(e.target.value))}
-                    className="w-full bg-albireo-blue border border-border-custom rounded-lg px-3 py-2 text-xs text-text-primary focus:outline-none focus:border-cygnus-gold"
-                    required
-                  />
-                </div>
-
-                {/* Entry Price */}
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-bold text-text-muted uppercase">Entry Price</label>
-                  <input
-                    type="number"
-                    step="0.00001"
-                    value={entryPrice}
-                    onChange={(e) => setEntryPrice(Number(e.target.value))}
-                    className="w-full bg-albireo-blue border border-border-custom rounded-lg px-3 py-2 text-xs text-text-primary focus:outline-none focus:border-cygnus-gold"
-                    required
-                  />
-                </div>
-
-                {/* Exit Price */}
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-bold text-text-muted uppercase">Exit Price</label>
-                  <input
-                    type="number"
-                    step="0.00001"
-                    value={exitPrice}
-                    onChange={(e) => setExitPrice(Number(e.target.value))}
-                    className="w-full bg-albireo-blue border border-border-custom rounded-lg px-3 py-2 text-xs text-text-primary focus:outline-none focus:border-cygnus-gold"
-                    required
-                  />
-                </div>
-
-                {/* Stop Loss */}
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-bold text-text-muted uppercase">Stop Loss (SL)</label>
-                  <input
-                    type="number"
-                    step="0.00001"
-                    value={stopLoss}
-                    onChange={(e) => setStopLoss(Number(e.target.value))}
-                    className="w-full bg-albireo-blue border border-border-custom rounded-lg px-3 py-2 text-xs text-text-primary focus:outline-none focus:border-cygnus-gold"
-                    required
-                  />
-                </div>
-
-                {/* Take Profit */}
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-bold text-text-muted uppercase">Take Profit (TP)</label>
-                  <input
-                    type="number"
-                    step="0.00001"
-                    value={takeProfit}
-                    onChange={(e) => setTakeProfit(Number(e.target.value))}
-                    className="w-full bg-albireo-blue border border-border-custom rounded-lg px-3 py-2 text-xs text-text-primary focus:outline-none focus:border-cygnus-gold"
-                    required
-                  />
-                </div>
-
-                {/* Realized PnL */}
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-bold text-text-muted uppercase">Realized PnL ($)</label>
-                  <input
-                    type="number"
-                    value={pnl}
-                    onChange={(e) => setPnl(Number(e.target.value))}
-                    className="w-full bg-albireo-blue border border-border-custom rounded-lg px-3 py-2 text-xs text-text-primary focus:outline-none focus:border-cygnus-gold"
-                    required
-                  />
-                </div>
-
-                {/* Strategy Tag */}
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-bold text-text-muted uppercase">Strategy setup</label>
-                  <select
-                    value={strategy}
-                    onChange={(e) => setStrategy(e.target.value)}
-                    className="w-full bg-albireo-blue border border-border-custom rounded-lg px-3 py-2 text-xs text-text-primary focus:outline-none focus:border-cygnus-gold"
+                    LONG
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDirection("SHORT")}
+                    className={`py-2 border text-xs font-bold rounded-sm cursor-pointer ${
+                      direction === "SHORT"
+                        ? "bg-loss/15 border-loss text-loss"
+                        : "bg-primary-dark border-cyber-cyan/20 text-light-purple hover:text-white"
+                    }`}
                   >
-                    <option value="Order Block">Order Block</option>
-                    <option value="Fair Value Gap">Fair Value Gap</option>
-                    <option value="Breakout">Breakout</option>
-                    <option value="Trend">Trend Following</option>
-                  </select>
+                    SHORT
+                  </button>
                 </div>
+              </div>
 
-                {/* Psychology Tag */}
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-bold text-text-muted uppercase">Psychological State</label>
-                  <select
-                    value={psychology}
-                    onChange={(e) => setPsychology(e.target.value)}
-                    className="w-full bg-albireo-blue border border-border-custom rounded-lg px-3 py-2 text-xs text-text-primary focus:outline-none focus:border-cygnus-gold"
-                  >
-                    <option value="Disciplined">Disciplined (System Exited)</option>
-                    <option value="FOMO">FOMO (Fear of Missing Out)</option>
-                    <option value="Revenge Trade">Revenge Trade</option>
-                    <option value="Early Exit">Early Exit (Fear of loss)</option>
-                  </select>
-                </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-light-purple uppercase">Lot / Contract Size</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={size}
+                  onChange={(e) => setSize(Number(e.target.value))}
+                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                  required
+                />
+              </div>
 
-                {/* Session */}
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-bold text-text-muted uppercase">Trading Session</label>
-                  <select
-                    value={session}
-                    onChange={(e) => setSession(e.target.value as any)}
-                    className="w-full bg-albireo-blue border border-border-custom rounded-lg px-3 py-2 text-xs text-text-primary focus:outline-none focus:border-cygnus-gold"
-                  >
-                    <option value="London">London (Open/Overlap)</option>
-                    <option value="New York">New York (Open/News)</option>
-                    <option value="Tokyo">Tokyo (Asian range)</option>
-                    <option value="Sydney">Sydney (Asian open)</option>
-                  </select>
-                </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-light-purple uppercase">Entry Price</label>
+                <input
+                  type="number"
+                  step="0.00001"
+                  value={entryPrice}
+                  onChange={(e) => setEntryPrice(Number(e.target.value))}
+                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                  required
+                />
+              </div>
 
-                {/* Notes */}
-                <div className="flex flex-col gap-1 md:col-span-2">
-                  <label className="text-[10px] font-bold text-text-muted uppercase">Trade Notes & Reflections</label>
-                  <textarea
-                    rows={3}
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    placeholder="e.g. Price mitigated supply range, entered on lower-timeframe shift..."
-                    className="w-full bg-albireo-blue border border-border-custom rounded-lg px-3 py-2 text-xs text-text-primary focus:outline-none focus:border-cygnus-gold placeholder:text-text-muted/40"
-                  />
-                </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-light-purple uppercase">Exit Price</label>
+                <input
+                  type="number"
+                  step="0.00001"
+                  value={exitPrice}
+                  onChange={(e) => setExitPrice(Number(e.target.value))}
+                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                  required
+                />
+              </div>
 
-                <div className="md:col-span-2 mt-4">
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    className="w-full uppercase tracking-wider"
-                  >
-                    {editingTrade ? "Update Trade Record" : "Save Trade Record"}
-                  </Button>
-                </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-light-purple uppercase">Stop Loss (SL)</label>
+                <input
+                  type="number"
+                  step="0.00001"
+                  value={stopLoss}
+                  onChange={(e) => setStopLoss(Number(e.target.value))}
+                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                  required
+                />
+              </div>
 
-              </form>
-            </Card>
-          </div>
-        )}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-light-purple uppercase">Take Profit (TP)</label>
+                <input
+                  type="number"
+                  step="0.00001"
+                  value={takeProfit}
+                  onChange={(e) => setTakeProfit(Number(e.target.value))}
+                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                  required
+                />
+              </div>
 
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-light-purple uppercase">Realized PnL ($)</label>
+                <input
+                  type="number"
+                  value={pnl}
+                  onChange={(e) => setPnl(Number(e.target.value))}
+                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-light-purple uppercase">Strategy setup</label>
+                <select
+                  value={strategy}
+                  onChange={(e) => setStrategy(e.target.value)}
+                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                >
+                  <option value="Order Block">Order Block</option>
+                  <option value="Fair Value Gap">Fair Value Gap</option>
+                  <option value="Breakout">Breakout</option>
+                  <option value="Trend">Trend Following</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-light-purple uppercase">Psychological State</label>
+                <select
+                  value={psychology}
+                  onChange={(e) => setPsychology(e.target.value)}
+                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                >
+                  <option value="Disciplined">Disciplined (System Exited)</option>
+                  <option value="FOMO">FOMO (Fear of Missing Out)</option>
+                  <option value="Revenge Trade">Revenge Trade</option>
+                  <option value="Early Exit">Early Exit (Fear of loss)</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-light-purple uppercase">Trading Session</label>
+                <select
+                  value={session}
+                  onChange={(e) => setSession(e.target.value as any)}
+                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white focus:outline-hidden focus:border-cyber-cyan"
+                >
+                  <option value="London">London (Open/Overlap)</option>
+                  <option value="New York">New York (Open/News)</option>
+                  <option value="Tokyo">Tokyo (Asian range)</option>
+                  <option value="Sydney">Sydney</option>
+                </select>
+              </div>
+
+              <div className="md:col-span-2 flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-light-purple uppercase">Execution Notes</label>
+                <textarea
+                  rows={2}
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Confluence factors, news events..."
+                  className="w-full bg-primary-dark border border-cyber-cyan/20 rounded-sm px-3 py-2 text-xs text-white placeholder:text-light-purple/40 focus:outline-hidden focus:border-cyber-cyan"
+                />
+              </div>
+
+              <div className="md:col-span-2 flex justify-end gap-3 mt-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" variant="cyber">
+                  Save Position Log
+                </Button>
+              </div>
+            </form>
+          </GlassCard>
+        </div>
+      )}
     </PageContainer>
   );
 }
