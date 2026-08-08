@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#16181f"/>
+      <stop offset="100%" stop-color="#0a0b0e"/>
+    </radialGradient>
+    
+    <!-- Primary Vibrant Green Metallic Gradient -->
+    <linearGradient id="greenGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="50%" stop-color="#57F287"/>
+      <stop offset="100%" stop-color="#bbf7d0"/>
+    </linearGradient>
+
+    <!-- Silver Accent Gradient -->
+    <linearGradient id="silverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#94a3b8"/>
+      <stop offset="100%" stop-color="#475569"/>
+    </linearGradient>
+
+    <!-- Glowing Outer Aura -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Background Base Circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#bgGrad)" stroke="#22e600" stroke-opacity="0.3" stroke-width="6"/>
+
+  <!-- Outer Interwoven Orbit Ring -->
+  <circle cx="256" cy="256" r="190" fill="none" stroke="url(#silverGrad)" stroke-width="4" stroke-dasharray="12 8" opacity="0.4"/>
+
+  <!-- Stylized Geometric 'A' Constellation Emblem -->
+  <g filter="url(#glow)">
+    <!-- Left Rising Facet Pillar -->
+    <path d="M 170 380 L 236 120 L 266 120 L 210 380 Z" fill="url(#silverGrad)"/>
+    
+    <!-- Right Upward Arrow Facet Pillar -->
+    <path d="M 342 380 L 276 120 L 246 120 L 302 380 Z" fill="url(#greenGrad)"/>
+
+    <!-- Rising Financial Candlestick Arrow Peak -->
+    <path d="M 256 70 L 296 150 L 216 150 Z" fill="url(#greenGrad)"/>
+
+    <!-- Central Interlocking Bridge Beam -->
+    <path d="M 185 290 L 327 290 L 312 320 L 200 320 Z" fill="url(#greenGrad)"/>
+
+    <!-- Candlestick Top & Bottom Wicks -->
+    <line x1="256" y1="40" x2="256" y2="70" stroke="#57F287" stroke-width="8" stroke-linecap="round"/>
+    <line x1="256" y1="380" x2="256" y2="420" stroke="#57F287" stroke-width="8" stroke-linecap="round"/>
+  </g>
+</svg>

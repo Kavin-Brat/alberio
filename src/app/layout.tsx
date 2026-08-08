@@ -5,15 +5,50 @@ import Footer from "@/components/layout/Footer";
 import { ThemeProvider } from "@/components/theme/ThemeContext";
 
 export const metadata: Metadata = {
-  title: "Albireo | Next-Generation Trading Intelligence & Prop Firm Analytics",
-  description: "Institutional-grade prop firm drawdown analytics, sentiment tracking, and risk management systems engineered for scaling traders.",
-  keywords: ["prop firm simulator", "drawdown calculator", "COT report analyzer", "trade journal", "FTMO calculator", "trading tools"],
+  title: {
+    default: "Albireo | Institutional Trading Intelligence & ECN Terminal",
+    template: "%s | Albireo Platform",
+  },
+  description:
+    "Institutional-grade prop firm drawdown analytics, 1,000-iteration Monte Carlo stress-testing, session volatility profiles, and real-time ECN Forex terminal.",
+  keywords: [
+    "prop firm simulator",
+    "drawdown calculator",
+    "COT report analyzer",
+    "trade journal",
+    "FTMO calculator",
+    "ECN trading terminal",
+    "Monte Carlo stress test",
+    "Forex risk management",
+    "Albireo trading",
+  ],
+  authors: [{ name: "Kavin B Albireo", url: "https://t.me/+e5tkgGVt5mIxZjI1" }],
+  creator: "Kavin B Albireo",
+  publisher: "Albireo Systems",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
   openGraph: {
-    title: "Albireo | Next-Generation Trading Intelligence",
-    description: "Institutional-grade prop firm drawdown analytics, sentiment tracking, and risk management systems engineered for scaling traders.",
+    title: "Albireo | Institutional Trading Intelligence & ECN Terminal",
+    description:
+      "Institutional-grade prop firm drawdown analytics, Monte Carlo stress-testing, session volatility profiles, and real-time ECN Forex trading.",
+    siteName: "Albireo Platform",
     type: "website",
     locale: "en_US",
-  }
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Albireo | Trading Intelligence & ECN Terminal",
+    description:
+      "Institutional-grade prop firm drawdown analytics, Monte Carlo stress-testing, and real-time ECN Forex trading.",
+    creator: "@KavinBAlbireo",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
@@ -24,6 +59,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full dark" data-theme="dark">
       <head>
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
