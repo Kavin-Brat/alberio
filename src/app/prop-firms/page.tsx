@@ -487,25 +487,25 @@ export default function PropFirmMatrix() {
                   data={simulationData}
                   margin={{ top: 10, right: 10, left: 10, bottom: 0 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1a1d24" />
-                  <XAxis dataKey="tradeNum" stroke="#c5c6c7" fontSize={10} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                  <XAxis dataKey="tradeNum" stroke="hsl(0 0% 40%)" fontSize={10} />
                   <YAxis
-                    stroke="#c5c6c7"
+                    stroke="hsl(0 0% 40%)"
                     fontSize={10}
                     domain={["auto", "auto"]}
                     tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
                   />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#111318", borderColor: "#66fcf1" }}
+                    contentStyle={{ backgroundColor: "#0d0e12", borderColor: "#333", color: "#fff" }}
                     labelStyle={{ color: "#ffffff" }}
-                    itemStyle={{ color: "#66fcf1" }}
+                    itemStyle={{ color: "#57F287" }}
                     formatter={(value: any) => [`$${value.toLocaleString()}`, ""]}
                   />
                   <Legend wrapperStyle={{ fontSize: "11px", paddingTop: 10 }} />
                   <Line
                     type="monotone"
                     dataKey="Balance"
-                    stroke="#66fcf1"
+                    stroke="#57F287"
                     strokeWidth={2.5}
                     dot={false}
                     activeDot={{ r: 6 }}

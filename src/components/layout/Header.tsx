@@ -205,7 +205,6 @@ export default function Header() {
           <MobileNav
             isOpen={isMobileMenuOpen}
             onClose={() => setIsMobileMenuOpen(false)}
-            pathname={pathname}
           />
         )}
       </AnimatePresence>

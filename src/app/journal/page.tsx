@@ -365,23 +365,23 @@ export default function TradeJournal() {
                   data={equityCurveData}
                   margin={{ top: 10, right: 10, left: 10, bottom: 0 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1a1d24" />
-                  <XAxis dataKey="date" stroke="#c5c6c7" fontSize={9} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                  <XAxis dataKey="date" stroke="hsl(0 0% 40%)" fontSize={9} />
                   <YAxis
-                    stroke="#c5c6c7"
+                    stroke="hsl(0 0% 40%)"
                     fontSize={9}
                     tickFormatter={(value) => `${value >= 0 ? "+" : ""}$${value}`}
                   />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#111318", borderColor: "#66fcf1" }}
+                    contentStyle={{ backgroundColor: "#0d0e12", borderColor: "#333", color: "#fff" }}
                     labelStyle={{ color: "#ffffff" }}
-                    itemStyle={{ color: "#66fcf1" }}
+                    itemStyle={{ color: "#57F287" }}
                     formatter={(value: any) => [`$${value.toLocaleString()}`, "PnL"]}
                   />
                   <Line
                     type="monotone"
                     dataKey="Cumulative P&L"
-                    stroke="#66fcf1"
+                    stroke="#57F287"
                     strokeWidth={2.5}
                     dot={{ r: 4, strokeWidth: 1 }}
                     activeDot={{ r: 6 }}
@@ -389,7 +389,7 @@ export default function TradeJournal() {
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <div className="w-full h-full bg-primary-dark/50 rounded-sm flex items-center justify-center text-light-purple text-xs font-heading">
+              <div className="w-full h-full bg-hero-bg/50 rounded-sm flex items-center justify-center text-muted-foreground text-xs font-sora">
                 {trades.length === 0 ? "Log trades to build your growth curve" : "Loading charts..."}
               </div>
             )}
@@ -397,10 +397,10 @@ export default function TradeJournal() {
         </GlassCard>
 
         <div className="lg:col-span-4 min-w-0 grid grid-cols-1 gap-6">
-          <GlassCard className="flex flex-col justify-between">
+          <GlassCard className="flex flex-col justify-between font-sora">
             <div>
-              <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-white">Win Rate by Session</h3>
-              <span className="text-[10px] text-light-purple block mt-0.5">Performance breakdown by timezone</span>
+              <h3 className="font-bold text-xs uppercase tracking-wider text-foreground">Win Rate by Session</h3>
+              <span className="text-[10px] text-muted-foreground block mt-0.5">Performance breakdown by timezone</span>
             </div>
             
             <div className="relative w-full h-40 min-w-0 mt-4">
@@ -410,16 +410,16 @@ export default function TradeJournal() {
                     data={sessionData}
                     margin={{ top: 5, right: 0, left: -20, bottom: 0 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1a1d24" />
-                    <XAxis dataKey="name" stroke="#c5c6c7" fontSize={9} />
-                    <YAxis stroke="#c5c6c7" fontSize={9} unit="%" domain={[0, 100]} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <XAxis dataKey="name" stroke="hsl(0 0% 40%)" fontSize={9} />
+                    <YAxis stroke="hsl(0 0% 40%)" fontSize={9} unit="%" domain={[0, 100]} />
                     <Tooltip
-                      contentStyle={{ backgroundColor: "#111318", borderColor: "#66fcf1" }}
+                      contentStyle={{ backgroundColor: "#0d0e12", borderColor: "#333", color: "#fff" }}
                       formatter={(v: any) => [`${v}%`, "Win Rate"]}
                     />
-                    <Bar dataKey="Win Rate %" fill="#66fcf1" radius={[2, 2, 0, 0]}>
+                    <Bar dataKey="Win Rate %" radius={[2, 2, 0, 0]}>
                       {sessionData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.name === "London" ? "#66fcf1" : entry.name === "New York" ? "#45a29e" : "#10b981"} />
+                        <Cell key={`cell-${index}`} fill={entry.name === "London" ? "#57F287" : entry.name === "New York" ? "#F59E0B" : "#94A3B8"} />
                       ))}
                     </Bar>
                   </BarChart>
@@ -432,10 +432,10 @@ export default function TradeJournal() {
             </div>
           </GlassCard>
 
-          <GlassCard className="flex flex-col justify-between">
+          <GlassCard className="flex flex-col justify-between font-sora">
             <div>
-              <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-white">P&L by Currency Pair</h3>
-              <span className="text-[10px] text-light-purple block mt-0.5">Asset profit distribution</span>
+              <h3 className="font-bold text-xs uppercase tracking-wider text-foreground">P&L by Currency Pair</h3>
+              <span className="text-[10px] text-muted-foreground block mt-0.5">Asset profit distribution</span>
             </div>
             
             <div className="relative w-full h-40 min-w-0 mt-4">
@@ -446,25 +446,25 @@ export default function TradeJournal() {
                     layout="vertical"
                     margin={{ top: 5, right: 5, left: -10, bottom: 5 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1a1d24" />
-                    <XAxis type="number" stroke="#c5c6c7" fontSize={9} />
-                    <YAxis type="category" dataKey="name" stroke="#c5c6c7" fontSize={9} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <XAxis type="number" stroke="hsl(0 0% 40%)" fontSize={9} />
+                    <YAxis type="category" dataKey="name" stroke="hsl(0 0% 40%)" fontSize={9} />
                     <Tooltip
-                      contentStyle={{ backgroundColor: "#111318", borderColor: "#66fcf1" }}
+                      contentStyle={{ backgroundColor: "#0d0e12", borderColor: "#333", color: "#fff" }}
                       formatter={(v: any) => [`$${v}`, "P&L"]}
                     />
                     <Bar dataKey="Net P&L" radius={[0, 2, 2, 0]}>
                       {assetData.map((entry: any, index) => (
                         <Cell
                           key={`cell-${index}`}
-                          fill={entry["Net P&L"] >= 0 ? "#10b981" : "#ef4444"}
+                          fill={entry["Net P&L"] >= 0 ? "#57F287" : "#ef4444"}
                         />
                       ))}
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="w-full h-full bg-primary-dark/50 rounded-sm flex items-center justify-center text-light-purple text-xs font-heading">
+                <div className="w-full h-full bg-hero-bg/50 rounded-sm flex items-center justify-center text-muted-foreground text-xs font-sora">
                   {trades.length === 0 ? "Log trades to analyze pairs" : "Loading..."}
                 </div>
               )}

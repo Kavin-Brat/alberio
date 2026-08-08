@@ -10,7 +10,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 /**
  * Reusable Glassmorphism Card Component
- * Styled using deneb's cyber-dark aesthetic.
+ * Styled using Albireo's dark charcoal & luminous green aesthetic.
  */
 export function GlassCard({
   hoverEffect = true,
@@ -22,10 +22,10 @@ export function GlassCard({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-xl bg-secondary-dark/70 border border-cyber-cyan/15 backdrop-blur-md p-6 transition-all duration-300",
+        "relative overflow-hidden rounded-xl bg-secondary-dark/70 border border-border/80 backdrop-blur-md p-6 transition-all duration-300",
         hoverEffect &&
-          "hover:border-cyber-cyan/40 hover:shadow-[0_0_25px_rgba(102,252,241,0.15)] hover:-translate-y-1",
-        topAccent && "border-t-2 border-t-cyber-cyan",
+          "hover:border-primary/50 hover:shadow-[0_0_25px_rgba(34,230,0,0.15)] hover:-translate-y-1",
+        topAccent && "border-t-2 border-t-primary",
         className
       )}
       {...props}

@@ -56,7 +56,7 @@ export const BLOG_POSTS: BlogPost[] = [
 
       <h2 id="mathematical-example" class="text-xl font-bold text-text-primary mt-8 mb-4 border-b border-border-custom pb-2">Mathematical Case Study</h2>
       <p>Let's represent this programmatically. A trader takes 3 sequential trades risking 1% with 1:2 Risk-Reward:</p>
-      <div class="bg-albireo-blue border border-border-custom p-4 rounded-xl my-4 font-mono text-xs">
+      <div class="bg-hero-bg border border-border p-4 rounded-xl my-4 font-mono text-xs text-foreground">
         Trade 1: WIN. Balance $102k. Floating peak $103k. Limit = $97k.<br/>
         Trade 2: LOSS. Balance $101k. Limit remains $97k.<br/>
         Trade 3: LOSS. Balance $100k. Limit remains $97k. Buffer is now just 3%!

@@ -43,8 +43,11 @@
   --color-ring: hsl(119 99% 46%);
   --color-nav-button: hsl(0 0% 18%);
 
+  /* Harmonized Palette Mapping (Green, White, Charcoal) */
   --color-cyber-cyan: hsl(119 99% 46%);
+  --color-electric-cyan: hsl(119 99% 46%);
   --color-electric-blue: hsl(119 99% 46%);
+  --color-albireo-blue: hsl(0 0% 14%);
   --color-neon-violet: hsl(119 99% 46%);
   --color-light-purple: hsl(0 0% 60%);
   --color-primary-dark: hsl(0 0% 8%);

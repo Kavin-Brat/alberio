@@ -189,17 +189,17 @@ export function InteractiveChart({ symbol, quote, candles }: InteractiveChartPro
               />
             )}
 
-            {showEma20 && <Line type="monotone" dataKey="ema20" stroke="#38bdf8" strokeWidth={1.5} dot={false} name="EMA 20" />}
-            {showEma50 && <Line type="monotone" dataKey="ema50" stroke="#a855f7" strokeWidth={1.5} dot={false} name="EMA 50" />}
+            {showEma20 && <Line type="monotone" dataKey="ema20" stroke="#f59e0b" strokeWidth={1.5} dot={false} name="EMA 20" />}
+            {showEma50 && <Line type="monotone" dataKey="ema50" stroke="#94a3b8" strokeWidth={1.5} dot={false} name="EMA 50" />}
           </ComposedChart>
         </ResponsiveContainer>
       </div>
 
       {/* RSI Sub-Panel */}
       {showRsi && (
-        <div className="h-24 border-t border-border px-4 py-2 bg-hero-bg/40">
+        <div className="h-24 border-t border-border px-4 py-2 bg-hero-bg/40 font-sora">
           <div className="flex items-center justify-between text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-semibold">
-            <span className="flex items-center gap-1.5"><Activity className="w-3 h-3 text-neon-violet" /> Relative Strength Index (RSI 14)</span>
+            <span className="flex items-center gap-1.5"><Activity className="w-3 h-3 text-primary" /> Relative Strength Index (RSI 14)</span>
             <span className="font-mono text-foreground font-bold">
               {candles.length > 0 ? candles[candles.length - 1].rsi14 : 50}
             </span>
@@ -209,7 +209,7 @@ export function InteractiveChart({ symbol, quote, candles }: InteractiveChartPro
               <YAxis domain={[0, 100]} orientation="right" stroke="hsl(0 0% 30%)" fontSize={8} ticks={[30, 70]} />
               <ReferenceLine y={70} stroke="rgba(239, 68, 68, 0.5)" strokeDasharray="2 2" />
               <ReferenceLine y={30} stroke="rgba(16, 185, 129, 0.5)" strokeDasharray="2 2" />
-              <Line type="monotone" dataKey="rsi14" stroke="#a855f7" strokeWidth={1.5} dot={false} />
+              <Line type="monotone" dataKey="rsi14" stroke="#57F287" strokeWidth={1.5} dot={false} />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
