@@ -62,7 +62,7 @@ export function Footer() {
             Get live signal breakdowns, drawdown alerts, and quantitative prop firm market updates.
           </p>
           <a
-            href="https://t.me/albireo_trading"
+            href="https://t.me/+e5tkgGVt5mIxZjI1"
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-secondary border border-border rounded-sm text-primary text-xs font-semibold uppercase tracking-wider hover:bg-primary/10 hover:border-primary transition-all duration-300"

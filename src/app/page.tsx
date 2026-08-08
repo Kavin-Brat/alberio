@@ -257,37 +257,19 @@ export default function Home() {
           </div>
 
           <div className="mt-16 flex flex-col items-center border-t border-border pt-12 text-center">
-            <span className="font-sora font-bold text-xl text-foreground tracking-widest uppercase">Kavin Brat</span>
+            <span className="font-sora font-bold text-xl text-foreground tracking-widest uppercase">Kavin B Albireo</span>
             <span className="text-xs text-muted-foreground uppercase tracking-widest font-sora mt-1 font-light">
-              Founder & Principal Engineer
+              Trader
             </span>
             <div className="flex flex-wrap justify-center gap-4 mt-6">
               <a
-                href="https://linkedin.com/in/kavin-brat"
+                href="https://t.me/+e5tkgGVt5mIxZjI1"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 px-4 py-2 border border-border rounded-sm bg-secondary hover:border-primary text-muted-foreground hover:text-foreground text-xs font-sora uppercase tracking-wider transition-all duration-200"
-              >
-                <LinkedinIcon className="w-4 h-4 text-primary" />
-                LinkedIn
-              </a>
-              <a
-                href="https://t.me/albireo_trading"
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 px-4 py-2 border border-border rounded-sm bg-secondary hover:border-primary text-muted-foreground hover:text-foreground text-xs font-sora uppercase tracking-wider transition-all duration-200"
+                className="flex items-center gap-2 px-6 py-2.5 border border-primary/40 rounded-sm bg-primary/10 hover:bg-primary/20 text-primary text-xs font-sora font-semibold uppercase tracking-wider transition-all duration-200 shadow-[0_0_15px_rgba(34,230,0,0.2)]"
               >
                 <Send className="w-4 h-4 text-primary" />
-                Telegram
-              </a>
-              <a
-                href="https://discord.gg/albireo_trading"
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 px-4 py-2 border border-border rounded-sm bg-secondary hover:border-primary text-muted-foreground hover:text-foreground text-xs font-sora uppercase tracking-wider transition-all duration-200"
-              >
-                <MessageSquare className="w-4 h-4 text-primary" />
-                Discord
+                Join Official Telegram Channel
               </a>
             </div>
           </div>

@@ -155,7 +155,7 @@ export function MobileNav({ isOpen, onClose, pathname }: MobileNavProps) {
         {/* Bottom CTA */}
         <motion.div variants={linkVariants} className="pt-8 border-t border-cyber-cyan/15 flex flex-col gap-3">
           <a
-            href="https://t.me/albireo_trading"
+            href="https://t.me/+e5tkgGVt5mIxZjI1"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 py-2.5 px-4 text-xs font-heading font-semibold uppercase tracking-wider text-cyber-cyan border border-cyber-cyan/30 rounded-sm hover:bg-cyber-cyan/10 transition-colors"

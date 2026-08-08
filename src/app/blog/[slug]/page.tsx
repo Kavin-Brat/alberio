@@ -64,7 +64,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               <Calendar className="w-3.5 h-3.5" /> {post.date}
             </span>
             <span>•</span>
-            <span>By Kavin Brat (Founder & Dev)</span>
+            <span>By Kavin B Albireo (Trader)</span>
           </div>
         </div>
 
@@ -126,9 +126,9 @@ export default async function BlogPostPage({ params }: PageProps) {
               </div>
 
               <div>
-                <h3 className="font-extrabold text-sm text-text-primary">Kavin Brat</h3>
+                <h3 className="font-extrabold text-sm text-text-primary">Kavin B Albireo</h3>
                 <span className="text-[10px] text-text-muted uppercase tracking-wider font-bold">
-                  Founder & Software Engineer
+                  Trader
                 </span>
               </div>
 
@@ -138,20 +138,12 @@ export default async function BlogPostPage({ params }: PageProps) {
 
               <div className="flex flex-col gap-2 w-full mt-2">
                 <a
-                  href="https://linkedin.com/in/kavin-brat"
+                  href="https://t.me/+e5tkgGVt5mIxZjI1"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-2 border border-border-custom hover:border-text-muted/40 rounded-lg text-[10px] text-text-muted hover:text-text-primary font-bold transition-colors flex items-center justify-center gap-1.5"
+                  className="w-full py-2.5 border border-primary/40 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg text-[10px] font-bold transition-all flex items-center justify-center gap-1.5 shadow-[0_0_10px_rgba(34,230,0,0.15)]"
                 >
-                  <Linkedin className="w-3.5 h-3.5 text-electric-cyan" /> LinkedIn Profile
-                </a>
-                <a
-                  href="https://t.me/albireo_trading"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-2 border border-border-custom hover:border-text-muted/40 rounded-lg text-[10px] text-text-muted hover:text-text-primary font-bold transition-colors flex items-center justify-center gap-1.5"
-                >
-                  <Send className="w-3.5 h-3.5 text-cygnus-gold" /> Join Telegram
+                  <Send className="w-3.5 h-3.5 text-primary" /> Join Official Telegram Channel
                 </a>
               </div>
             </div>
