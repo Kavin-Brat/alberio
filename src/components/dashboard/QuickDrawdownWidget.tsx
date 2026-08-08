@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Calculator, ShieldAlert, CheckCircle, AlertTriangle } from "lucide-react";
+import { Calculator, ShieldAlert, CheckCircle, AlertTriangle, Edit2, Check } from "lucide-react";
 import { GlassCard } from "@/components/ui/Card";
 
 export function QuickDrawdownWidget() {
   const [balance, setBalance] = useState<number>(100000);
+  const [isEditingBalance, setIsEditingBalance] = useState<boolean>(false);
   const [drawdownType, setDrawdownType] = useState<"static" | "trailing-balance" | "trailing-equity">("trailing-equity");
   const [maxDrawdownPct, setMaxDrawdownPct] = useState<number>(10);
   const [winRate, setWinRate] = useState<number>(50);
@@ -87,18 +88,53 @@ export function QuickDrawdownWidget() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
-              <div className="flex justify-between text-xs">
+              <div className="flex justify-between items-center text-xs min-h-[28px]">
                 <label className="text-muted-foreground font-medium">Starting Account Size</label>
-                <span className="text-foreground font-bold font-mono">${balance.toLocaleString()}</span>
+                
+                {isEditingBalance ? (
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-muted-foreground font-mono">$</span>
+                    <input
+                      type="number"
+                      value={balance}
+                      onChange={(e) => setBalance(Math.max(1, Number(e.target.value)))}
+                      onBlur={() => setIsEditingBalance(false)}
+                      onKeyDown={(e) => e.key === "Enter" && setIsEditingBalance(false)}
+                      autoFocus
+                      className="w-28 bg-hero-bg border border-primary text-foreground font-bold font-mono px-2 py-0.5 rounded-xs text-xs focus:outline-hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingBalance(false)}
+                      className="text-primary hover:text-foreground text-[10px] uppercase font-bold p-1 rounded-xs bg-primary/10 border border-primary/30 cursor-pointer transition-colors"
+                      title="Save Account Size"
+                    >
+                      <Check className="w-3.5 h-3.5 text-primary" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <span className="text-foreground font-bold font-mono text-sm">${balance.toLocaleString()}</span>
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingBalance(true)}
+                      className="p-1 text-muted-foreground hover:text-primary transition-colors cursor-pointer border border-border/60 hover:border-primary/50 bg-secondary/50 rounded-xs"
+                      title="Edit Custom Account Size"
+                    >
+                      <Edit2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                )}
               </div>
+
               <input
                 type="range"
-                min="10000"
+                min="100"
                 max="200000"
-                step="5000"
+                step="500"
                 value={balance}
                 onChange={(e) => setBalance(Number(e.target.value))}
-                className="w-full h-1.5 bg-hero-bg rounded-xs appearance-none cursor-pointer accent-primary"
+                className="w-full cursor-pointer"
               />
             </div>
 
@@ -135,7 +171,7 @@ export function QuickDrawdownWidget() {
                   step="1"
                   value={maxDrawdownPct}
                   onChange={(e) => setMaxDrawdownPct(Number(e.target.value))}
-                  className="w-full h-1.5 bg-hero-bg rounded-xs appearance-none cursor-pointer accent-primary"
+                  className="w-full cursor-pointer"
                 />
               </div>
 
@@ -151,7 +187,7 @@ export function QuickDrawdownWidget() {
                   step="0.5"
                   value={riskPerTradePct}
                   onChange={(e) => setRiskPerTradePct(Number(e.target.value))}
-                  className="w-full h-1.5 bg-hero-bg rounded-xs appearance-none cursor-pointer accent-primary"
+                  className="w-full cursor-pointer"
                 />
               </div>
             </div>
@@ -169,7 +205,7 @@ export function QuickDrawdownWidget() {
                   step="5"
                   value={winRate}
                   onChange={(e) => setWinRate(Number(e.target.value))}
-                  className="w-full h-1.5 bg-hero-bg rounded-xs appearance-none cursor-pointer accent-primary"
+                  className="w-full cursor-pointer"
                 />
               </div>
 
@@ -185,7 +221,7 @@ export function QuickDrawdownWidget() {
                   step="0.5"
                   value={riskReward}
                   onChange={(e) => setRiskReward(Number(e.target.value))}
-                  className="w-full h-1.5 bg-hero-bg rounded-xs appearance-none cursor-pointer accent-primary"
+                  className="w-full cursor-pointer"
                 />
               </div>
             </div>
