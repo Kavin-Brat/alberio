@@ -8,12 +8,15 @@ import { ComplianceEngine, ComplianceReport } from "@/services/complianceEngine"
 import { MonteCarloEngine, MonteCarloResult } from "@/services/monteCarloEngine";
 import { SessionVolatilityEngine, SessionAnalysisReport } from "@/services/sessionVolatilityEngine";
 import { CorrelationEngine, CorrelationMatrixReport } from "@/services/correlationEngine";
-import { ShieldCheck, Activity, BarChart3, GitCompare, Play, FileText, CheckCircle2, AlertTriangle, Layers } from "lucide-react";
+import { ShieldCheck, Activity, BarChart3, GitCompare, Play, FileText, CheckCircle2, AlertTriangle, Layers, Calculator, Sparkles, Download, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import PositionSizerWidget from "@/components/dashboard/PositionSizerWidget";
+import ProUpgradeModal from "@/components/ui/ProUpgradeModal";
 
 export default function ToolsSuitePage() {
-  const [activeTab, setActiveTab] = useState<"COMPLIANCE" | "MONTE_CARLO" | "SESSIONS" | "CORRELATION">("COMPLIANCE");
+  const [activeTab, setActiveTab] = useState<"POSITION_SIZER" | "COMPLIANCE" | "MONTE_CARLO" | "SESSIONS" | "CORRELATION">("POSITION_SIZER");
+  const [isProModalOpen, setIsProModalOpen] = useState(false);
 
   // State 1: Compliance Guardian
   const [csvInput, setCsvInput] = useState<string>(
@@ -33,7 +36,7 @@ TRD-104,2026-08-04 15:30,BUY,3.0,XAU/USD,2420.0,2410.0,2440.0,2026-08-04 19:00,2
     MonteCarloEngine.runSimulation([1.5, -0.8, 2.1, -1.2, 3.0, -0.5, 1.8, -1.5, 2.4, -0.9, 4.2, -2.1])
   );
 
-  // State 3 & 4: Static Reports
+  // Static Reports
   const sessionReport: SessionAnalysisReport = SessionVolatilityEngine.analyzeSessions("EUR/USD");
   const correlationReport: CorrelationMatrixReport = CorrelationEngine.calculateCorrelationMatrix();
 
@@ -53,20 +56,40 @@ TRD-104,2026-08-04 15:30,BUY,3.0,XAU/USD,2420.0,2410.0,2440.0,2026-08-04 19:00,2
     <PageContainer>
       {/* Title & Navigation Tabs */}
       <div className="flex flex-col gap-4 font-sora">
-        <div className="flex flex-col gap-1">
-          <span className="text-xs font-bold uppercase tracking-widest text-primary">
-            Quantitative Software Suite
-          </span>
-          <h1 className="text-3xl font-extrabold text-foreground tracking-tight">
-            Institutional Algorithmic Tools
-          </h1>
-          <p className="text-sm text-muted-foreground font-light">
-            Zero-dependency risk guardians, Monte Carlo stress-testers, session volatility matrix & cross-asset correlation engines.
-          </p>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-border pb-6">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5" /> Quantitative Software Suite
+            </span>
+            <h1 className="text-3xl font-extrabold text-foreground tracking-tight mt-1">
+              Institutional Risk & Calculation Suite
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground font-light mt-1">
+              Zero-dependency lot sizers, prop-firm guardians, Monte Carlo stress-testers & session volatility tools.
+            </p>
+          </div>
+
+          <Button
+            variant="cyber"
+            size="sm"
+            onClick={() => setIsProModalOpen(true)}
+            className="shrink-0 font-bold"
+          >
+            Unlock Albireo Pro Tools
+          </Button>
         </div>
 
         {/* Tab Buttons */}
         <div className="flex flex-wrap gap-2 border-b border-border pb-3">
+          <button
+            onClick={() => setActiveTab("POSITION_SIZER")}
+            className={cn(
+              "px-4 py-2 rounded-md text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer",
+              activeTab === "POSITION_SIZER" ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(34,230,0,0.4)]" : "bg-secondary text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <Calculator className="w-4 h-4" /> 1. Lot & Risk Calculator
+          </button>
           <button
             onClick={() => setActiveTab("COMPLIANCE")}
             className={cn(
@@ -74,7 +97,7 @@ TRD-104,2026-08-04 15:30,BUY,3.0,XAU/USD,2420.0,2410.0,2440.0,2026-08-04 19:00,2
               activeTab === "COMPLIANCE" ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(34,230,0,0.4)]" : "bg-secondary text-muted-foreground hover:text-foreground"
             )}
           >
-            <ShieldCheck className="w-4 h-4" /> 1. Prop-Firm Guardian
+            <ShieldCheck className="w-4 h-4" /> 2. Prop Guardian
           </button>
           <button
             onClick={() => setActiveTab("MONTE_CARLO")}
@@ -83,7 +106,7 @@ TRD-104,2026-08-04 15:30,BUY,3.0,XAU/USD,2420.0,2410.0,2440.0,2026-08-04 19:00,2
               activeTab === "MONTE_CARLO" ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(34,230,0,0.4)]" : "bg-secondary text-muted-foreground hover:text-foreground"
             )}
           >
-            <Activity className="w-4 h-4" /> 2. Monte Carlo Stress-Tester
+            <Activity className="w-4 h-4" /> 3. Monte Carlo Simulator
           </button>
           <button
             onClick={() => setActiveTab("SESSIONS")}
@@ -92,7 +115,7 @@ TRD-104,2026-08-04 15:30,BUY,3.0,XAU/USD,2420.0,2410.0,2440.0,2026-08-04 19:00,2
               activeTab === "SESSIONS" ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(34,230,0,0.4)]" : "bg-secondary text-muted-foreground hover:text-foreground"
             )}
           >
-            <BarChart3 className="w-4 h-4" /> 3. Session Volatility Matrix
+            <BarChart3 className="w-4 h-4" /> 4. Volatility Matrix
           </button>
           <button
             onClick={() => setActiveTab("CORRELATION")}
@@ -101,271 +124,228 @@ TRD-104,2026-08-04 15:30,BUY,3.0,XAU/USD,2420.0,2410.0,2440.0,2026-08-04 19:00,2
               activeTab === "CORRELATION" ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(34,230,0,0.4)]" : "bg-secondary text-muted-foreground hover:text-foreground"
             )}
           >
-            <GitCompare className="w-4 h-4" /> 4. Cross-Asset Correlation
+            <GitCompare className="w-4 h-4" /> 5. Asset Correlation
           </button>
         </div>
       </div>
 
-      {/* TAB 1: PROP-FIRM RULE COMPLIANCE GUARDIAN */}
+      {/* TAB 1: POSITION SIZER & RISK CALCULATOR */}
+      {activeTab === "POSITION_SIZER" && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 font-sora">
+          <div className="lg:col-span-7">
+            <GlassCard className="p-6 border-border">
+              <h3 className="text-lg font-bold text-foreground mb-1">
+                Precision Position Sizing Engine
+              </h3>
+              <p className="text-xs text-muted-foreground mb-6 font-light">
+                Calculate exact lot sizes and dollar risk based on your account currency, stop loss pips, and risk percentage cap.
+              </p>
+              <PositionSizerWidget />
+            </GlassCard>
+          </div>
+
+          <div className="lg:col-span-5 flex flex-col gap-6">
+            <GlassCard className="p-6 border-primary/30 bg-secondary/40 flex flex-col gap-4">
+              <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-wider">
+                <Lock className="w-4 h-4" /> Albireo Pro PDF Risk Reports
+              </div>
+              <p className="text-xs text-muted-foreground font-light leading-relaxed">
+                Need to submit custom risk reports to your prop firm desk or trading journal? Albireo Pro allows you to export high-definition PDF risk breakdown cards.
+              </p>
+              <Button
+                variant="primary"
+                size="sm"
+                className="font-bold w-fit"
+                onClick={() => setIsProModalOpen(true)}
+              >
+                Unlock PDF Reports (₹299/mo)
+              </Button>
+            </GlassCard>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 2: PROP-FIRM GUARDIAN */}
       {activeTab === "COMPLIANCE" && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 font-sora">
-          {/* CSV Input Form */}
           <div className="lg:col-span-5 flex flex-col gap-4">
-            <GlassCard>
-              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground mb-2 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-primary" /> Trade History CSV Input
-              </h3>
-              <p className="text-xs text-muted-foreground mb-3 font-light">
-                Paste raw MT4/MT5/cTrader trade log rows to analyze High Water Marks, daily loss limits (5%), and consistency rule compliance.
-              </p>
+            <GlassCard className="flex flex-col gap-4 border-border">
+              <div className="flex items-center justify-between border-b border-border pb-3">
+                <span className="text-xs font-bold text-foreground uppercase tracking-wider">
+                  MT4 / MT5 Trade Log CSV Input
+                </span>
+              </div>
               <textarea
-                rows={10}
                 value={csvInput}
                 onChange={(e) => setCsvInput(e.target.value)}
-                className="w-full bg-hero-bg border border-border rounded-md p-3 text-xs font-mono text-foreground focus:outline-hidden focus:border-primary"
+                className="w-full h-56 bg-hero-bg border border-border rounded-md p-3 font-mono text-[11px] text-foreground focus:outline-hidden focus:border-primary transition-all resize-none"
               />
-              <Button onClick={handleRunCompliance} variant="primary" size="md" className="w-full mt-4 flex items-center justify-center gap-2">
-                <Play className="w-4 h-4" /> Run Compliance Audit
+              <Button
+                variant="primary"
+                onClick={handleRunCompliance}
+                className="flex items-center justify-center gap-2 font-bold text-xs uppercase"
+              >
+                <Play className="w-4 h-4" /> Audit CSV Logs
               </Button>
             </GlassCard>
           </div>
 
-          {/* Audit Report Results */}
-          <div className="lg:col-span-7 flex flex-col gap-4">
-            <GlassCard className={cn("border-2", complianceReport.complianceStatus === "PASSED" ? "border-profit/40" : "border-loss/40")}>
-              <div className="flex items-center justify-between border-b border-border pb-4 mb-4">
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Compliance Status</span>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className={cn("text-2xl font-extrabold uppercase tracking-tight", complianceReport.complianceStatus === "PASSED" ? "text-profit" : "text-loss")}>
-                      {complianceReport.complianceStatus}
-                    </span>
-                  </div>
-                </div>
-                <div className="text-right font-mono text-xs">
-                  <span className="text-muted-foreground">Trades Parsed:</span>
-                  <div className="font-bold text-foreground">{complianceReport.parsedTradesCount}</div>
-                </div>
+          <div className="lg:col-span-7 flex flex-col gap-6">
+            <GlassCard className="flex flex-col gap-4 border-border">
+              <div className="flex items-center justify-between border-b border-border pb-3">
+                <span className="text-xs font-bold text-foreground uppercase tracking-wider">
+                  Compliance Audit Results
+                </span>
+                <span className={cn(
+                  "px-2.5 py-0.5 rounded text-[10px] font-bold uppercase",
+                  complianceReport.complianceStatus === "PASSED" ? "bg-profit/20 text-profit" : "bg-destructive/20 text-destructive"
+                )}>
+                  {complianceReport.complianceStatus === "PASSED" ? "PASSED COMPLIANCE" : "RULE BREACH DETECTED"}
+                </span>
               </div>
 
-              {/* Metrics Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6 text-xs font-mono">
-                <div className="p-3 bg-hero-bg border border-border rounded-md">
-                  <span className="text-[10px] text-muted-foreground font-sans uppercase">High Water Mark</span>
-                  <div className="font-bold text-foreground text-sm mt-1">${complianceReport.highWaterMark.toLocaleString()}</div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+                <div className="p-3 bg-hero-bg border border-border rounded">
+                  <span className="text-[10px] text-muted-foreground block">Max Daily Drawdown</span>
+                  <span className="font-mono font-bold text-foreground">{complianceReport.maxDailyLoss.percent.toFixed(2)}%</span>
                 </div>
-                <div className="p-3 bg-hero-bg border border-border rounded-md">
-                  <span className="text-[10px] text-muted-foreground font-sans uppercase">Max Daily Loss</span>
-                  <div className={cn("font-bold text-sm mt-1", complianceReport.maxDailyLoss.percent > 5 ? "text-loss" : "text-foreground")}>
-                    ${complianceReport.maxDailyLoss.dollar} ({complianceReport.maxDailyLoss.percent}%)
-                  </div>
+                <div className="p-3 bg-hero-bg border border-border rounded">
+                  <span className="text-[10px] text-muted-foreground block">Max Overall Drawdown</span>
+                  <span className="font-mono font-bold text-foreground">{complianceReport.maxTrailingDrawdown.percent.toFixed(2)}%</span>
                 </div>
-                <div className="p-3 bg-hero-bg border border-border rounded-md">
-                  <span className="text-[10px] text-muted-foreground font-sans uppercase">Trailing Drawdown</span>
-                  <div className={cn("font-bold text-sm mt-1", complianceReport.maxTrailingDrawdown.percent > 10 ? "text-loss" : "text-foreground")}>
-                    ${complianceReport.maxTrailingDrawdown.dollar} ({complianceReport.maxTrailingDrawdown.percent}%)
-                  </div>
+                <div className="p-3 bg-hero-bg border border-border rounded">
+                  <span className="text-[10px] text-muted-foreground block">Top Trade Share %</span>
+                  <span className="font-mono font-bold text-foreground">{complianceReport.consistencyScore.topTradeSharePercent.toFixed(2)}%</span>
                 </div>
-              </div>
-
-              {/* Recommendations */}
-              <div className="flex flex-col gap-2">
-                <span className="text-xs font-bold text-foreground uppercase tracking-wider">Actionable Recommendations</span>
-                <ul className="space-y-2">
-                  {complianceReport.actionableRecommendations.map((rec, idx) => (
-                    <li key={idx} className="text-xs text-muted-foreground flex items-start gap-2 bg-hero-bg p-2.5 rounded-md border border-border">
-                      <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                      <span>{rec}</span>
-                    </li>
-                  ))}
-                </ul>
+                <div className="p-3 bg-hero-bg border border-border rounded">
+                  <span className="text-[10px] text-muted-foreground block">30% Consistency</span>
+                  <span className={cn("font-mono font-bold", complianceReport.consistencyScore.passed ? "text-profit" : "text-destructive")}>
+                    {complianceReport.consistencyScore.passed ? "COMPLIANT" : "VIOLATED"}
+                  </span>
+                </div>
               </div>
             </GlassCard>
           </div>
         </div>
       )}
 
-      {/* TAB 2: MONTE CARLO STRATEGY STRESS-TESTER */}
+      {/* TAB 3: MONTE CARLO STRESS-TESTER */}
       {activeTab === "MONTE_CARLO" && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 font-sora">
           <div className="lg:col-span-5 flex flex-col gap-4">
-            <GlassCard>
-              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground mb-2 flex items-center gap-2">
-                <Activity className="w-4 h-4 text-primary" /> Returns Sequence Input
-              </h3>
-              <p className="text-xs text-muted-foreground mb-3 font-light">
-                Comma-separated historical trade return percentages (+1.5, -0.8, +2.1, -1.2, ...).
-              </p>
-              <textarea
-                rows={4}
+            <GlassCard className="flex flex-col gap-4 border-border">
+              <span className="text-xs font-bold text-foreground uppercase border-b border-border pb-3">
+                Historical Return Sequence (%)
+              </span>
+              <input
+                type="text"
                 value={returnsInput}
                 onChange={(e) => setReturnsInput(e.target.value)}
-                className="w-full bg-hero-bg border border-border rounded-md p-3 text-xs font-mono text-foreground focus:outline-hidden focus:border-primary"
+                className="w-full bg-hero-bg border border-border rounded p-3 font-mono text-xs text-foreground focus:border-primary focus:outline-hidden"
               />
-              <Button onClick={handleRunMonteCarlo} variant="primary" size="md" className="w-full mt-4 flex items-center justify-center gap-2">
-                <Play className="w-4 h-4" /> Run 1,000 Resample Iterations
+              <Button
+                variant="primary"
+                onClick={handleRunMonteCarlo}
+                className="flex items-center justify-center gap-2 font-bold text-xs uppercase"
+              >
+                <Activity className="w-4 h-4" /> Run 1,000 Iterations
               </Button>
-            </GlassCard>
-
-            <GlassCard className="flex flex-col gap-3 font-mono text-xs">
-              <span className="text-xs font-bold font-sora uppercase text-primary">Simulation Statistics</span>
-              <div className="flex items-center justify-between border-b border-border pb-2">
-                <span className="text-muted-foreground">Total Iterations:</span>
-                <span className="font-bold text-foreground">{monteCarloResult.totalSimulations}</span>
-              </div>
-              <div className="flex items-center justify-between border-b border-border pb-2">
-                <span className="text-muted-foreground">Median Ending Equity:</span>
-                <span className="font-bold text-profit">${monteCarloResult.medianEndingEquity.toLocaleString()}</span>
-              </div>
-              <div className="flex items-center justify-between border-b border-border pb-2">
-                <span className="text-muted-foreground">Worst 5th Percentile Drawdown:</span>
-                <span className="font-bold text-loss">{monteCarloResult.fifthPercentileDrawdown}%</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Probability of Ruin (20% DD):</span>
-                <span className={cn("font-bold text-sm", monteCarloResult.probabilityOfRuinPercent > 15 ? "text-loss" : "text-primary")}>
-                  {monteCarloResult.probabilityOfRuinPercent}%
-                </span>
-              </div>
             </GlassCard>
           </div>
 
           <div className="lg:col-span-7 flex flex-col gap-4">
-            <GlassCard>
-              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground mb-4">
-                Monte Carlo Equity Paths (Median vs 5th Percentile Tail Risk)
-              </h3>
-              <div className="w-full h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={monteCarloResult.equityCurves}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="tradeIndex" stroke="hsl(0 0% 40%)" fontSize={10} />
-                    <YAxis stroke="hsl(0 0% 40%)" fontSize={10} domain={['auto', 'auto']} />
-                    <Tooltip contentStyle={{ backgroundColor: '#0d0e12', borderColor: '#333', color: '#fff', fontSize: '11px' }} />
-                    <Line type="monotone" dataKey="median" stroke="#57F287" strokeWidth={2} name="Median Path" dot={false} />
-                    <Line type="monotone" dataKey="worst5th" stroke="#ef4444" strokeWidth={2} strokeDasharray="4 4" name="5th Percentile Worst Case" dot={false} />
-                  </LineChart>
-                </ResponsiveContainer>
+            <GlassCard className="flex flex-col gap-4 border-border">
+              <span className="text-xs font-bold text-foreground uppercase border-b border-border pb-3">
+                Monte Carlo Probability Distribution
+              </span>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs font-mono">
+                <div className="p-3 bg-hero-bg border border-border rounded">
+                  <span className="text-[10px] text-muted-foreground block font-sora">Median Ending Equity</span>
+                  <span className="font-bold text-profit">${monteCarloResult.medianEndingEquity.toLocaleString()}</span>
+                </div>
+                <div className="p-3 bg-hero-bg border border-border rounded">
+                  <span className="text-[10px] text-muted-foreground block font-sora">5th Percentile Drawdown</span>
+                  <span className="font-bold text-destructive">-${monteCarloResult.fifthPercentileDrawdown.toLocaleString()}</span>
+                </div>
+                <div className="p-3 bg-hero-bg border border-border rounded">
+                  <span className="text-[10px] text-muted-foreground block font-sora">Probability of Ruin</span>
+                  <span className="font-bold text-foreground">{monteCarloResult.probabilityOfRuinPercent.toFixed(1)}%</span>
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground mt-4 p-3 bg-hero-bg rounded-md border border-border font-light">
-                {monteCarloResult.riskExplanation}
-              </p>
             </GlassCard>
           </div>
         </div>
       )}
 
-      {/* TAB 3: SESSION-BASED VOLATILITY MATRIX */}
+      {/* TAB 4: SESSIONS */}
       {activeTab === "SESSIONS" && (
-        <div className="flex flex-col gap-6 font-sora">
-          <GlassCard>
-            <div className="flex items-center justify-between border-b border-border pb-4 mb-6">
-              <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-primary">Microstructure Matrix</span>
-                <h3 className="text-xl font-extrabold text-foreground mt-1">EUR/USD Global Session Volatility & Liquidity</h3>
-              </div>
-              <span className="text-xs font-mono bg-primary/10 text-primary px-3 py-1 rounded-md border border-primary/20">
-                Prime Window: {sessionReport.primeExecutionWindow}
-              </span>
+        <GlassCard className="p-6 border-border font-sora">
+          <h3 className="text-lg font-bold text-foreground mb-4">EUR/USD UTC Session Volatility Matrix</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+            <div className="p-4 bg-hero-bg border border-border rounded">
+              <span className="text-primary font-bold block mb-1">Tokyo (00:00 - 08:00 UTC)</span>
+              <p className="text-muted-foreground">Average ATR: 18 pips | Breakout Continuation: 32%</p>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {sessionReport.sessions.map((sess, idx) => (
-                <div key={idx} className="p-4 bg-hero-bg border border-border rounded-lg flex flex-col gap-3">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-sm text-foreground">{sess.sessionName}</span>
-                    <span className="text-[10px] font-mono text-muted-foreground bg-muted/40 px-2 py-0.5 rounded-xs border border-border">
-                      {sess.utcHours}
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-2 font-mono text-xs py-2 border-y border-border/40">
-                    <div>
-                      <span className="text-[9px] text-muted-foreground font-sans uppercase">Avg ATR</span>
-                      <div className="font-bold text-primary">{sess.averageAtrPips} pips</div>
-                    </div>
-                    <div>
-                      <span className="text-[9px] text-muted-foreground font-sans uppercase">Avg Volume</span>
-                      <div className="font-bold text-foreground">{sess.averageVolume.toLocaleString()}</div>
-                    </div>
-                    <div>
-                      <span className="text-[9px] text-muted-foreground font-sans uppercase">Breakout Rate</span>
-                      <div className="font-bold text-profit">{sess.breakoutContinuationRatePercent}%</div>
-                    </div>
-                  </div>
-
-                  <div className="text-xs text-muted-foreground font-light">
-                    Strategy Fit: <strong className="text-foreground">{sess.optimalStrategy}</strong>
-                  </div>
-                </div>
-              ))}
+            <div className="p-4 bg-hero-bg border border-border rounded">
+              <span className="text-primary font-bold block mb-1">London (08:00 - 16:00 UTC)</span>
+              <p className="text-muted-foreground">Average ATR: 45 pips | Breakout Continuation: 68%</p>
             </div>
-          </GlassCard>
-        </div>
+            <div className="p-4 bg-hero-bg border border-border rounded">
+              <span className="text-primary font-bold block mb-1">New York Overlap (13:00 - 16:00 UTC)</span>
+              <p className="text-muted-foreground">Average ATR: 62 pips | Breakout Continuation: 74%</p>
+            </div>
+          </div>
+        </GlassCard>
       )}
 
-      {/* TAB 4: CROSS-ASSET CORRELATION MATRIX */}
+      {/* TAB 5: CORRELATION */}
       {activeTab === "CORRELATION" && (
-        <div className="flex flex-col gap-6 font-sora">
-          <GlassCard>
-            <div className="border-b border-border pb-4 mb-6">
-              <span className="text-xs font-bold uppercase tracking-widest text-primary">Quantitative Macro Engine</span>
-              <h3 className="text-xl font-extrabold text-foreground mt-1">Cross-Asset Pearson Correlation Matrix</h3>
-            </div>
-
-            {/* Matrix Table */}
-            <div className="overflow-x-auto mb-8">
-              <table className="w-full text-center text-xs font-mono border-collapse">
-                <thead>
-                  <tr className="border-b border-border bg-hero-bg text-muted-foreground font-bold">
-                    <th className="p-3 text-left">Asset</th>
-                    {correlationReport.assets.map((a, i) => (
-                      <th key={i} className="p-3">{a}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/40">
-                  {correlationReport.assets.map((assetRow, r) => (
-                    <tr key={r} className="hover:bg-muted/20">
-                      <td className="p-3 font-bold text-left text-foreground font-sora">{assetRow}</td>
-                      {correlationReport.matrix[r].map((val, c) => (
-                        <td key={c} className="p-3">
-                          <span className={cn(
-                            "px-2 py-1 rounded-md font-bold text-xs inline-block min-w-[50px]",
-                            val === 1.0 ? "bg-muted/30 text-muted-foreground" : val < -0.5 ? "bg-loss/20 text-loss border border-loss/30" : val > 0.5 ? "bg-profit/20 text-profit border border-profit/30" : "bg-hero-bg text-foreground"
-                          )}>
-                            {val.toFixed(2)}
-                          </span>
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Decoupling Signals */}
-            <div className="flex flex-col gap-3">
-              <span className="text-xs font-bold text-foreground uppercase tracking-wider">Macro Structural Signals</span>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {correlationReport.decouplingPairs.map((pair, idx) => (
-                  <div key={idx} className="p-3 bg-hero-bg border border-border rounded-md flex flex-col gap-1.5 text-xs">
-                    <div className="flex items-center justify-between font-bold">
-                      <span className="text-foreground">{pair.assetA} vs {pair.assetB}</span>
-                      <span className={cn("px-2 py-0.5 rounded-xs text-[10px] uppercase font-mono", pair.status === "DECOUPLING_WARNING" ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30" : "bg-primary/10 text-primary")}>
-                        r = {pair.correlation}
-                      </span>
-                    </div>
-                    <p className="text-muted-foreground font-light text-[11px] leading-relaxed">
-                      {pair.insight}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </GlassCard>
-        </div>
+        <GlassCard className="p-6 border-border font-sora">
+          <h3 className="text-lg font-bold text-foreground mb-4">Cross-Asset Pearson Correlation Coefficient</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse font-mono">
+              <thead>
+                <tr className="border-b border-border bg-secondary">
+                  <th className="p-3 text-foreground">Asset</th>
+                  <th className="p-3 text-foreground">EUR/USD</th>
+                  <th className="p-3 text-foreground">GBP/USD</th>
+                  <th className="p-3 text-foreground">USD/JPY</th>
+                  <th className="p-3 text-foreground">Gold (XAU)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                <tr>
+                  <td className="p-3 font-bold text-primary">EUR/USD</td>
+                  <td className="p-3 text-profit">+1.00</td>
+                  <td className="p-3 text-profit">+0.88</td>
+                  <td className="p-3 text-destructive">-0.72</td>
+                  <td className="p-3 text-profit">+0.45</td>
+                </tr>
+                <tr>
+                  <td className="p-3 font-bold text-primary">GBP/USD</td>
+                  <td className="p-3 text-profit">+0.88</td>
+                  <td className="p-3 text-profit">+1.00</td>
+                  <td className="p-3 text-destructive">-0.65</td>
+                  <td className="p-3 text-profit">+0.38</td>
+                </tr>
+                <tr>
+                  <td className="p-3 font-bold text-primary">USD/JPY</td>
+                  <td className="p-3 text-destructive">-0.72</td>
+                  <td className="p-3 text-destructive">-0.65</td>
+                  <td className="p-3 text-profit">+1.00</td>
+                  <td className="p-3 text-destructive">-0.55</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </GlassCard>
       )}
+
+      {/* PRO MODAL */}
+      <ProUpgradeModal
+        isOpen={isProModalOpen}
+        onClose={() => setIsProModalOpen(false)}
+      />
     </PageContainer>
   );
 }

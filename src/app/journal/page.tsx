@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Trash2, Edit2, X } from "lucide-react";
+import { Plus, Trash2, Edit2, X, Lock, Sparkles, BarChart3, Download, Layers } from "lucide-react";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Cell } from "recharts";
 import KPICard from "@/components/dashboard/KPICard";
 import PageContainer from "@/components/layout/PageContainer";
 import Button from "@/components/ui/Button";
 import { GlassCard } from "@/components/ui/Card";
+import ProUpgradeModal from "@/components/ui/ProUpgradeModal";
 
 interface Trade {
   id: string;
@@ -94,697 +95,150 @@ const DEFAULT_TRADES: Trade[] = [
     psychology: "Early Exit",
     session: "New York",
     notes: "Exited early ahead of economic release. Closed +40 pips."
-  },
-  {
-    id: "t5",
-    date: "2026-08-02T02:00",
-    symbol: "Bitcoin",
-    direction: "LONG",
-    entryPrice: 65000,
-    exitPrice: 66500,
-    stopLoss: 64200,
-    takeProfit: 66600,
-    size: 0.5,
-    pnl: 750,
-    rr: 2.0,
-    strategy: "Order Block",
-    psychology: "Disciplined",
-    session: "Tokyo",
-    notes: "Asia session range deviation. Exited manually near high range."
   }
 ];
 
-export default function TradeJournal() {
-  const [mounted, setMounted] = useState(false);
-  const [trades, setTrades] = useState<Trade[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingTrade, setEditingTrade] = useState<Trade | null>(null);
+export default function TradeJournalPage() {
+  const [trades, setTrades] = useState<Trade[]>(DEFAULT_TRADES);
+  const [isProModalOpen, setIsProModalOpen] = useState(false);
 
-  // Form Fields
-  const [symbol, setSymbol] = useState("EUR/USD");
-  const [direction, setDirection] = useState<"LONG" | "SHORT">("LONG");
-  const [date, setDate] = useState("2026-08-03T11:00");
-  const [entryPrice, setEntryPrice] = useState(1.0850);
-  const [exitPrice, setExitPrice] = useState(1.0900);
-  const [stopLoss, setStopLoss] = useState(1.0820);
-  const [takeProfit, setTakeProfit] = useState(1.0910);
-  const [size, setSize] = useState(1.0);
-  const [pnl, setPnl] = useState(500);
-  const [strategy, setStrategy] = useState("Order Block");
-  const [psychology, setPsychology] = useState("Disciplined");
-  const [session, setSession] = useState<"London" | "New York" | "Tokyo" | "Sydney">("London");
-  const [notes, setNotes] = useState("");
-
-  useEffect(() => {
-    setMounted(true);
-    const localData = localStorage.getItem("albireo_trade_log");
-    if (localData) {
-      try {
-        setTrades(JSON.parse(localData));
-      } catch (e) {
-        setTrades(DEFAULT_TRADES);
-      }
-    } else {
-      setTrades(DEFAULT_TRADES);
-      localStorage.setItem("albireo_trade_log", JSON.stringify(DEFAULT_TRADES));
-    }
-  }, []);
-
-  const saveToLocalStorage = (updatedTrades: Trade[]) => {
-    setTrades(updatedTrades);
-    localStorage.setItem("albireo_trade_log", JSON.stringify(updatedTrades));
-  };
-
-  const resetForm = () => {
-    setSymbol("EUR/USD");
-    setDirection("LONG");
-    setDate(new Date().toISOString().substring(0, 16));
-    setEntryPrice(1.0);
-    setExitPrice(1.0);
-    setStopLoss(0.9);
-    setTakeProfit(1.2);
-    setSize(1.0);
-    setPnl(0);
-    setStrategy("Order Block");
-    setPsychology("Disciplined");
-    setSession("London");
-    setNotes("");
-    setEditingTrade(null);
-  };
-
-  const handleNewTrade = () => {
-    resetForm();
-    setIsModalOpen(true);
-  };
-
-  const handleEditTrade = (trade: Trade) => {
-    setEditingTrade(trade);
-    setSymbol(trade.symbol);
-    setDirection(trade.direction);
-    setDate(trade.date);
-    setEntryPrice(trade.entryPrice);
-    setExitPrice(trade.exitPrice);
-    setStopLoss(trade.stopLoss);
-    setTakeProfit(trade.takeProfit);
-    setSize(trade.size);
-    setPnl(trade.pnl);
-    setStrategy(trade.strategy);
-    setPsychology(trade.psychology);
-    setSession(trade.session);
-    setNotes(trade.notes);
-    setIsModalOpen(true);
-  };
-
-  const handleSaveTrade = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const diff = Math.abs(entryPrice - stopLoss);
-    const reward = Math.abs(exitPrice - entryPrice);
-    const calculatedRR = diff > 0 ? parseFloat((reward / diff).toFixed(1)) : 1.0;
-
-    const newTradeRecord: Trade = {
-      id: editingTrade ? editingTrade.id : "t-" + Date.now(),
-      date,
-      symbol,
-      direction,
-      entryPrice,
-      exitPrice,
-      stopLoss,
-      takeProfit,
-      size,
-      pnl,
-      rr: calculatedRR,
-      strategy,
-      psychology,
-      session,
-      notes
-    };
-
-    let updatedList: Trade[];
-    if (editingTrade) {
-      updatedList = trades.map((t) => (t.id === editingTrade.id ? newTradeRecord : t));
-    } else {
-      updatedList = [newTradeRecord, ...trades];
-    }
-
-    saveToLocalStorage(updatedList);
-    setIsModalOpen(false);
-    resetForm();
-  };
-
-  const handleDeleteTrade = (id: string) => {
-    if (confirm("Are you sure you want to delete this trade log?")) {
-      const updatedList = trades.filter((t) => t.id !== id);
-      saveToLocalStorage(updatedList);
-    }
-  };
-
-  const totalPnL = trades.reduce((sum, t) => sum + t.pnl, 0);
+  // Compute Metrics
   const totalTrades = trades.length;
-  const winTrades = trades.filter((t) => t.pnl > 0).length;
-  const winRate = totalTrades > 0 ? parseFloat(((winTrades / totalTrades) * 100).toFixed(1)) : 0;
-  
-  const grossProfit = trades.filter((t) => t.pnl > 0).reduce((sum, t) => sum + t.pnl, 0);
-  const grossLoss = Math.abs(trades.filter((t) => t.pnl < 0).reduce((sum, t) => sum + t.pnl, 0));
-  const profitFactor = grossLoss > 0 ? parseFloat((grossProfit / grossLoss).toFixed(2)) : grossProfit > 0 ? 9.99 : 0;
-  
-  const avgRR = totalTrades > 0 ? parseFloat((trades.reduce((sum, t) => sum + t.rr, 0) / totalTrades).toFixed(1)) : 0;
-
-  let peak = 0;
-  let runningBal = 0;
-  let maxDD = 0;
-  const sortedTrades = [...trades].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  
-  sortedTrades.forEach((t) => {
-    runningBal += t.pnl;
-    if (runningBal > peak) peak = runningBal;
-    const currentDD = peak - runningBal;
-    if (currentDD > maxDD) maxDD = currentDD;
-  });
-
-  let cumulativePnL = 0;
-  const equityCurveData = sortedTrades.map((t, idx) => {
-    cumulativePnL += t.pnl;
-    return {
-      index: idx + 1,
-      date: new Date(t.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-      "Cumulative P&L": cumulativePnL
-    };
-  });
-  equityCurveData.unshift({ index: 0, date: "Start", "Cumulative P&L": 0 });
-
-  const sessions = ["London", "New York", "Tokyo", "Sydney"] as const;
-  const sessionData = sessions.map((sess) => {
-    const sessionTrades = trades.filter((t) => t.session === sess);
-    const totalSess = sessionTrades.length;
-    const winsSess = sessionTrades.filter((t) => t.pnl > 0).length;
-    const rate = totalSess > 0 ? Math.round((winsSess / totalSess) * 100) : 0;
-    return { name: sess, "Win Rate %": rate, count: totalSess };
-  });
-
-  const pairPnLMap: Record<string, number> = {};
-  trades.forEach((t) => {
-    pairPnLMap[t.symbol] = (pairPnLMap[t.symbol] || 0) + t.pnl;
-  });
-  const assetData = Object.entries(pairPnLMap).map(([symbol, pnl]) => ({
-    name: symbol,
-    "Net P&L": pnl
-  })).sort((a, b) => b["Net P&L"] - a["Net P&L"]);
+  const winningTrades = trades.filter((t) => t.pnl > 0).length;
+  const winRate = totalTrades > 0 ? (winningTrades / totalTrades) * 100 : 0;
+  const netPnL = trades.reduce((acc, t) => acc + t.pnl, 0);
 
   return (
     <PageContainer>
-      {/* Header Title */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-6">
-        <div className="flex flex-col gap-1.5">
-          <span className="text-xs font-sora font-bold text-primary uppercase tracking-widest">
-            Quantitative Performance Metrics
-          </span>
-          <h1 className="text-3xl md:text-5xl font-sora font-bold text-foreground tracking-tight">
-            Trading Journal & Analytics
-          </h1>
-          <p className="text-muted-foreground text-xs md:text-sm max-w-xl leading-relaxed">
-            Track win ratios, profit factor curves, and psychology slips. Logs are persisted locally inside your browser storage for safety.
-          </p>
-        </div>
-        <Button
-          variant="cyber"
-          onClick={handleNewTrade}
-          className="flex items-center gap-2 self-start md:self-center"
-        >
-          <Plus className="w-4 h-4" /> Log Position Record
-        </Button>
-      </div>
-
-      {/* KPI METRICS */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <KPICard
-          label="Net P&L"
-          value={`${totalPnL >= 0 ? "+" : ""}${totalPnL.toLocaleString()}`}
-          subtext={`${totalTrades} logged positions`}
-          valueColor={totalPnL >= 0 ? "text-primary text-glow-green" : "text-loss"}
-          topAccent={true}
-        />
-        <KPICard
-          label="Win Rate"
-          value={`${winRate}%`}
-          subtext={`${winTrades} winning trades`}
-        />
-        <KPICard
-          label="Profit Factor"
-          value={profitFactor}
-          subtext="Ratio of wins to losses"
-          valueColor="text-primary"
-        />
-        <KPICard
-          label="Avg Risk-Reward"
-          value={`1:${avgRR}`}
-          subtext="Projected average target"
-          valueColor="text-primary"
-        />
-        <KPICard
-          label="Max Drawdown"
-          value={`-$${maxDD.toLocaleString()}`}
-          subtext="Peak-to-valley variance"
-          valueColor="text-loss"
-          className="col-span-2 lg:col-span-1"
-        />
-      </div>
-
-      {/* CHARTS GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <GlassCard className="lg:col-span-8 min-w-0 flex flex-col gap-4">
+      {/* HEADER HERO */}
+      <div className="flex flex-col gap-4 font-sora">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-border pb-6">
           <div>
-            <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-white">Cumulative Net P&L Curve</h3>
-            <span className="text-[11px] text-light-purple">Account growth trajectory over trade log history</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-1.5">
+              <BarChart3 className="w-4 h-4 text-primary" /> Quantitative Trade Logger & Analytics
+            </span>
+            <h1 className="text-3xl font-extrabold text-foreground tracking-tight mt-1">
+              Performance Journal & Behavioral Analytics
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground font-light mt-1">
+              Track Sharpe ratio, session win rates, psychology tags, and account equity curves.
+            </p>
           </div>
 
-          <div className="relative w-full h-72 min-w-0 mt-2">
-            {mounted && trades.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={equityCurveData}
-                  margin={{ top: 10, right: 10, left: 10, bottom: 0 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                  <XAxis dataKey="date" stroke="hsl(0 0% 40%)" fontSize={9} />
-                  <YAxis
-                    stroke="hsl(0 0% 40%)"
-                    fontSize={9}
-                    tickFormatter={(value) => `${value >= 0 ? "+" : ""}$${value}`}
-                  />
-                  <Tooltip
-                    contentStyle={{ backgroundColor: "#0d0e12", borderColor: "#333", color: "#fff" }}
-                    labelStyle={{ color: "#ffffff" }}
-                    itemStyle={{ color: "#57F287" }}
-                    formatter={(value: any) => [`$${value.toLocaleString()}`, "PnL"]}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="Cumulative P&L"
-                    stroke="#57F287"
-                    strokeWidth={2.5}
-                    dot={{ r: 4, strokeWidth: 1 }}
-                    activeDot={{ r: 6 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="w-full h-full bg-hero-bg/50 rounded-sm flex items-center justify-center text-muted-foreground text-xs font-sora">
-                {trades.length === 0 ? "Log trades to build your growth curve" : "Loading charts..."}
-              </div>
-            )}
+          {/* Capacity Meter */}
+          <div className="flex items-center gap-3 bg-secondary/80 px-4 py-2 rounded-lg border border-border">
+            <div className="text-right text-xs">
+              <span className="text-muted-foreground block text-[10px] uppercase font-bold">Free Plan Capacity</span>
+              <span className="font-mono font-bold text-foreground">{totalTrades} / 50 Trades Logged</span>
+            </div>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => setIsProModalOpen(true)}
+              className="font-bold text-[11px]"
+            >
+              Upgrade Pro
+            </Button>
           </div>
+        </div>
+
+        {/* METRICS KPIS */}
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mt-2">
+          <GlassCard className="p-4 border-border">
+            <span className="text-[10px] text-muted-foreground uppercase font-bold block">Net Floating PnL</span>
+            <span className={`text-2xl font-black font-mono ${netPnL >= 0 ? "text-profit" : "text-destructive"}`}>
+              {netPnL >= 0 ? `+$${netPnL.toLocaleString()}` : `-$${Math.abs(netPnL).toLocaleString()}`}
+            </span>
+          </GlassCard>
+
+          <GlassCard className="p-4 border-border">
+            <span className="text-[10px] text-muted-foreground uppercase font-bold block">Win Rate</span>
+            <span className="text-2xl font-black font-mono text-primary">{winRate.toFixed(1)}%</span>
+          </GlassCard>
+
+          <GlassCard className="p-4 border-border">
+            <span className="text-[10px] text-muted-foreground uppercase font-bold block">Sharpe Ratio</span>
+            <div className="flex items-center justify-between">
+              <span className="text-2xl font-black font-mono text-foreground">1.85</span>
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-primary/20 text-primary font-bold">Pro Metric</span>
+            </div>
+          </GlassCard>
+
+          <GlassCard className="p-4 border-border">
+            <span className="text-[10px] text-muted-foreground uppercase font-bold block">Total Trades</span>
+            <span className="text-2xl font-black font-mono text-foreground">{totalTrades}</span>
+          </GlassCard>
+        </div>
+
+        {/* PRO ANALYTICS SPOTLIGHT */}
+        <GlassCard className="p-6 border-primary/40 bg-secondary/40 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div>
+            <span className="px-2.5 py-0.5 rounded bg-primary/20 text-primary text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 w-fit mb-1">
+              <Sparkles className="w-3 h-3" /> Unlock Advanced Pro Journal Metrics
+            </span>
+            <h3 className="text-base font-bold text-foreground">
+              Session Heatmaps, Expectancy Calculation & CSV Exporter
+            </h3>
+            <p className="text-xs text-muted-foreground font-light mt-0.5">
+              Albireo Pro unlocks behavioral tags, win rate by session (London vs NY), and CSV export for tax & prop auditing.
+            </p>
+          </div>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => setIsProModalOpen(true)}
+            className="shrink-0 font-bold"
+          >
+            Unlock All Pro Metrics
+          </Button>
         </GlassCard>
 
-        <div className="lg:col-span-4 min-w-0 grid grid-cols-1 gap-6">
-          <GlassCard className="flex flex-col justify-between font-sora">
-            <div>
-              <h3 className="font-bold text-xs uppercase tracking-wider text-foreground">Win Rate by Session</h3>
-              <span className="text-[10px] text-muted-foreground block mt-0.5">Performance breakdown by timezone</span>
-            </div>
-            
-            <div className="relative w-full h-40 min-w-0 mt-4">
-              {mounted ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={sessionData}
-                    margin={{ top: 5, right: 0, left: -20, bottom: 0 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="name" stroke="hsl(0 0% 40%)" fontSize={9} />
-                    <YAxis stroke="hsl(0 0% 40%)" fontSize={9} unit="%" domain={[0, 100]} />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: "#0d0e12", borderColor: "#333", color: "#fff" }}
-                      formatter={(v: any) => [`${v}%`, "Win Rate"]}
-                    />
-                    <Bar dataKey="Win Rate %" radius={[2, 2, 0, 0]}>
-                      {sessionData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.name === "London" ? "#57F287" : entry.name === "New York" ? "#F59E0B" : "#94A3B8"} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="w-full h-full bg-primary-dark/50 rounded-sm flex items-center justify-center text-light-purple text-xs font-heading">
-                  Loading...
-                </div>
-              )}
-            </div>
-          </GlassCard>
-
-          <GlassCard className="flex flex-col justify-between font-sora">
-            <div>
-              <h3 className="font-bold text-xs uppercase tracking-wider text-foreground">P&L by Currency Pair</h3>
-              <span className="text-[10px] text-muted-foreground block mt-0.5">Asset profit distribution</span>
-            </div>
-            
-            <div className="relative w-full h-40 min-w-0 mt-4">
-              {mounted && assetData.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={assetData}
-                    layout="vertical"
-                    margin={{ top: 5, right: 5, left: -10, bottom: 5 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                    <XAxis type="number" stroke="hsl(0 0% 40%)" fontSize={9} />
-                    <YAxis type="category" dataKey="name" stroke="hsl(0 0% 40%)" fontSize={9} />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: "#0d0e12", borderColor: "#333", color: "#fff" }}
-                      formatter={(v: any) => [`$${v}`, "P&L"]}
-                    />
-                    <Bar dataKey="Net P&L" radius={[0, 2, 2, 0]}>
-                      {assetData.map((entry: any, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={entry["Net P&L"] >= 0 ? "#57F287" : "#ef4444"}
-                        />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="w-full h-full bg-hero-bg/50 rounded-sm flex items-center justify-center text-muted-foreground text-xs font-sora">
-                  {trades.length === 0 ? "Log trades to analyze pairs" : "Loading..."}
-                </div>
-              )}
-            </div>
-          </GlassCard>
-        </div>
-      </div>
-
-      {/* TRADE LOG TABLE */}
-      <GlassCard className="flex flex-col gap-4">
-        <div className="flex items-center justify-between border-b border-border pb-3">
-          <h3 className="font-sora font-bold text-base text-foreground uppercase tracking-wider">Logged Positions</h3>
-          <span className="text-xs text-muted-foreground">{trades.length} Positions total</span>
-        </div>
-
-        <div className="overflow-x-auto w-full">
-          <table className="w-full text-left text-xs border-collapse font-sans">
+        {/* LOGGED TRADES TABLE */}
+        <GlassCard className="p-0 overflow-x-auto border-border mt-2">
+          <table className="w-full text-left text-xs border-collapse font-sora">
             <thead>
-              <tr className="border-b border-border text-muted-foreground font-sora font-bold uppercase tracking-wider text-[10px]">
-                <th className="py-3 px-2 hidden sm:table-cell">Date</th>
-                <th className="py-3 px-2">Symbol</th>
-                <th className="py-3 px-2">Type</th>
-                <th className="py-3 px-2 hidden md:table-cell">Size</th>
-                <th className="py-3 px-2 hidden sm:table-cell">Entry & Exit</th>
-                <th className="py-3 px-2">P&L ($)</th>
-                <th className="py-3 px-2 hidden md:table-cell">R:R</th>
-                <th className="py-3 px-2 hidden md:table-cell">Strategy</th>
-                <th className="py-3 px-2 hidden md:table-cell">Psychology</th>
-                <th className="py-3 px-2 text-right">Actions</th>
+              <tr className="border-b border-border bg-secondary/80 text-muted-foreground">
+                <th className="p-3">Date & Time</th>
+                <th className="p-3">Symbol</th>
+                <th className="p-3">Side</th>
+                <th className="p-3">Volume</th>
+                <th className="p-3">Entry</th>
+                <th className="p-3">Exit</th>
+                <th className="p-3">Strategy</th>
+                <th className="p-3">Session</th>
+                <th className="p-3">PnL</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border text-foreground">
-              {trades.length === 0 ? (
-                <tr>
-                  <td colSpan={10} className="py-8 text-center text-muted-foreground font-sora">
-                    No trades logged yet. Click "+ Log Position Record" to record one!
+            <tbody className="divide-y divide-border">
+              {trades.map((t) => (
+                <tr key={t.id} className="hover:bg-muted/30 transition-colors">
+                  <td className="p-3 font-mono text-[11px] text-muted-foreground">{t.date.replace("T", " ")}</td>
+                  <td className="p-3 font-bold text-foreground">{t.symbol}</td>
+                  <td className="p-3">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${t.direction === "LONG" ? "bg-profit/20 text-profit" : "bg-destructive/20 text-destructive"}`}>
+                      {t.direction}
+                    </span>
+                  </td>
+                  <td className="p-3 font-mono">{t.size} Lots</td>
+                  <td className="p-3 font-mono">{t.entryPrice}</td>
+                  <td className="p-3 font-mono">{t.exitPrice}</td>
+                  <td className="p-3 font-medium text-foreground">{t.strategy}</td>
+                  <td className="p-3 text-muted-foreground">{t.session}</td>
+                  <td className={`p-3 font-mono font-bold ${t.pnl >= 0 ? "text-profit" : "text-destructive"}`}>
+                    {t.pnl >= 0 ? `+$${t.pnl}` : `-$${Math.abs(t.pnl)}`}
                   </td>
                 </tr>
-              ) : (
-                trades.map((trade) => (
-                  <tr key={trade.id} className="hover:bg-primary/5 transition-colors">
-                    <td className="py-3 px-2 text-[10px] text-muted-foreground font-medium hidden sm:table-cell">
-                      {new Date(trade.date).toLocaleDateString("en-US", {
-                        month: "2-digit",
-                        day: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit"
-                      })}
-                    </td>
-                    <td className="py-3 px-2 font-sora font-bold text-foreground">{trade.symbol}</td>
-                    <td className="py-3 px-2">
-                      <span className={`px-2 py-0.5 rounded-xs text-[10px] font-sora font-bold ${
-                        trade.direction === "LONG"
-                          ? "bg-profit/15 text-profit border border-profit/30"
-                          : "bg-loss/15 text-loss border border-loss/30"
-                      }`}>
-                        {trade.direction}
-                      </span>
-                    </td>
-                    <td className="py-3 px-2 font-medium hidden md:table-cell">{trade.size} Lots</td>
-                    <td className="py-3 px-2 text-[11px] font-medium text-muted-foreground hidden sm:table-cell">
-                      <span>{trade.entryPrice}</span> &rarr; <span>{trade.exitPrice}</span>
-                    </td>
-                    <td className={`py-3 px-2 font-sora font-bold ${trade.pnl >= 0 ? "text-primary text-glow-green" : "text-loss"}`}>
-                      {trade.pnl >= 0 ? "+" : ""}${trade.pnl.toLocaleString()}
-                    </td>
-                    <td className="py-3 px-2 font-sora font-bold text-primary hidden md:table-cell">1:{trade.rr}</td>
-                    <td className="py-3 px-2 hidden md:table-cell">
-                      <span className="bg-hero-bg border border-border px-2 py-0.5 rounded-xs text-[10px] font-sora font-semibold text-foreground">
-                        {trade.strategy}
-                      </span>
-                    </td>
-                    <td className="py-3 px-2 hidden md:table-cell">
-                      <span className={`px-2 py-0.5 rounded-xs text-[10px] font-sora font-semibold ${
-                        trade.psychology === "Disciplined"
-                          ? "bg-profit/10 text-profit"
-                          : trade.psychology === "Early Exit"
-                          ? "bg-primary/10 text-primary"
-                          : "bg-loss/10 text-loss"
-                      }`}>
-                        {trade.psychology}
-                      </span>
-                    </td>
-                    <td className="py-3 px-2 text-right">
-                      <div className="flex justify-end gap-2">
-                        <button
-                          onClick={() => handleEditTrade(trade)}
-                          className="p-1 hover:bg-hero-bg border border-transparent hover:border-primary/30 rounded-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer"
-                        >
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteTrade(trade.id)}
-                          className="p-1 hover:bg-hero-bg border border-transparent hover:border-loss/30 rounded-xs text-muted-foreground hover:text-loss transition-colors cursor-pointer"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
+              ))}
             </tbody>
           </table>
-        </div>
-      </GlassCard>
+        </GlassCard>
+      </div>
 
-      {/* LOG MODAL */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <GlassCard className="max-w-xl w-full border-primary/40 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <h3 className="text-base font-sora font-bold uppercase text-foreground tracking-wider">
-                {editingTrade ? "Edit Position Log" : "Log New Position"}
-              </h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsModalOpen(false)}
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
-
-            <form onSubmit={handleSaveTrade} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 font-sora">
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase">Symbol / Pair</label>
-                <select
-                  value={symbol}
-                  onChange={(e) => setSymbol(e.target.value)}
-                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary font-sora"
-                >
-                  <option value="EUR/USD" className="bg-[#0b0c0e] text-[#f5f5f5]">EUR/USD</option>
-                  <option value="GBP/USD" className="bg-[#0b0c0e] text-[#f5f5f5]">GBP/USD</option>
-                  <option value="Gold (XAU)" className="bg-[#0b0c0e] text-[#f5f5f5]">Gold (XAU)</option>
-                  <option value="Crude Oil" className="bg-[#0b0c0e] text-[#f5f5f5]">Crude Oil</option>
-                  <option value="Bitcoin" className="bg-[#0b0c0e] text-[#f5f5f5]">Bitcoin</option>
-                  <option value="S&P 500" className="bg-[#0b0c0e] text-[#f5f5f5]">S&P 500</option>
-                </select>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase">Execution Date</label>
-                <input
-                  type="datetime-local"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-1.5 text-xs text-foreground focus:outline-hidden focus:border-primary"
-                  required
-                />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase">Direction</label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setDirection("LONG")}
-                    className={`py-2 border text-xs font-bold rounded-sm cursor-pointer ${
-                      direction === "LONG"
-                        ? "bg-profit/15 border-profit text-profit"
-                        : "bg-hero-bg border-border text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    LONG
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setDirection("SHORT")}
-                    className={`py-2 border text-xs font-bold rounded-sm cursor-pointer ${
-                      direction === "SHORT"
-                        ? "bg-loss/15 border-loss text-loss"
-                        : "bg-hero-bg border-border text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    SHORT
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase">Lot / Contract Size</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={size}
-                  onChange={(e) => setSize(Number(e.target.value))}
-                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary"
-                  required
-                />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase">Entry Price</label>
-                <input
-                  type="number"
-                  step="0.00001"
-                  value={entryPrice}
-                  onChange={(e) => setEntryPrice(Number(e.target.value))}
-                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary"
-                  required
-                />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase">Exit Price</label>
-                <input
-                  type="number"
-                  step="0.00001"
-                  value={exitPrice}
-                  onChange={(e) => setExitPrice(Number(e.target.value))}
-                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary"
-                  required
-                />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase">Stop Loss (SL)</label>
-                <input
-                  type="number"
-                  step="0.00001"
-                  value={stopLoss}
-                  onChange={(e) => setStopLoss(Number(e.target.value))}
-                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary"
-                  required
-                />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase">Take Profit (TP)</label>
-                <input
-                  type="number"
-                  step="0.00001"
-                  value={takeProfit}
-                  onChange={(e) => setTakeProfit(Number(e.target.value))}
-                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary"
-                  required
-                />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase">Realized PnL ($)</label>
-                <input
-                  type="number"
-                  value={pnl}
-                  onChange={(e) => setPnl(Number(e.target.value))}
-                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary"
-                  required
-                />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase">Strategy setup</label>
-                <select
-                  value={strategy}
-                  onChange={(e) => setStrategy(e.target.value)}
-                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary font-sora"
-                >
-                  <option value="Order Block" className="bg-[#0b0c0e] text-[#f5f5f5]">Order Block</option>
-                  <option value="Fair Value Gap" className="bg-[#0b0c0e] text-[#f5f5f5]">Fair Value Gap</option>
-                  <option value="Breakout" className="bg-[#0b0c0e] text-[#f5f5f5]">Breakout</option>
-                  <option value="Trend" className="bg-[#0b0c0e] text-[#f5f5f5]">Trend Following</option>
-                </select>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase">Psychological State</label>
-                <select
-                  value={psychology}
-                  onChange={(e) => setPsychology(e.target.value)}
-                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary font-sora"
-                >
-                  <option value="Disciplined" className="bg-[#0b0c0e] text-[#f5f5f5]">Disciplined (System Exited)</option>
-                  <option value="FOMO" className="bg-[#0b0c0e] text-[#f5f5f5]">FOMO (Fear of Missing Out)</option>
-                  <option value="Revenge Trade" className="bg-[#0b0c0e] text-[#f5f5f5]">Revenge Trade</option>
-                  <option value="Early Exit" className="bg-[#0b0c0e] text-[#f5f5f5]">Early Exit (Fear of loss)</option>
-                </select>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase">Trading Session</label>
-                <select
-                  value={session}
-                  onChange={(e) => setSession(e.target.value as any)}
-                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-primary font-sora"
-                >
-                  <option value="London" className="bg-[#0b0c0e] text-[#f5f5f5]">London (Open/Overlap)</option>
-                  <option value="New York" className="bg-[#0b0c0e] text-[#f5f5f5]">New York (Open/News)</option>
-                  <option value="Tokyo" className="bg-[#0b0c0e] text-[#f5f5f5]">Tokyo (Asian range)</option>
-                  <option value="Sydney" className="bg-[#0b0c0e] text-[#f5f5f5]">Sydney</option>
-                </select>
-              </div>
-
-              <div className="md:col-span-2 flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase">Execution Notes</label>
-                <textarea
-                  rows={2}
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Confluence factors, news events..."
-                  className="w-full bg-hero-bg border border-border rounded-sm px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground/40 focus:outline-hidden focus:border-primary"
-                />
-              </div>
-
-              <div className="md:col-span-2 flex justify-end gap-3 mt-2">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setIsModalOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" variant="cyber">
-                  Save Position Log
-                </Button>
-              </div>
-            </form>
-          </GlassCard>
-        </div>
-      )}
+      {/* PRO MODAL */}
+      <ProUpgradeModal
+        isOpen={isProModalOpen}
+        onClose={() => setIsProModalOpen(false)}
+      />
     </PageContainer>
   );
 }

@@ -3,14 +3,16 @@ import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { ThemeProvider } from "@/components/theme/ThemeContext";
+import { AuthProvider } from "@/context/AuthContext";
+import AppLayoutShell from "@/components/layout/AppLayoutShell";
 
 export const metadata: Metadata = {
   title: {
-    default: "Albireo | Institutional Trading Intelligence & ECN Terminal",
+    default: "Albireo | Trading Intelligence Platform & SaaS OS",
     template: "%s | Albireo Platform",
   },
   description:
-    "Institutional-grade prop firm drawdown analytics, 1,000-iteration Monte Carlo stress-testing, session volatility profiles, and real-time ECN Forex terminal.",
+    "Trading Intelligence Platform, Monte Carlo Risk Engine, Prop Firm Analytics, Albireo Academy, and Operating System.",
   keywords: [
     "prop firm simulator",
     "drawdown calculator",
@@ -19,8 +21,8 @@ export const metadata: Metadata = {
     "FTMO calculator",
     "ECN trading terminal",
     "Monte Carlo stress test",
-    "Forex risk management",
-    "Albireo trading",
+    "Albireo academy",
+    "Albireo OS"
   ],
   authors: [{ name: "Kavin B Albireo", url: "https://t.me/+e5tkgGVt5mIxZjI1" }],
   creator: "Kavin B Albireo",
@@ -31,18 +33,18 @@ export const metadata: Metadata = {
     apple: "/icon.svg",
   },
   openGraph: {
-    title: "Albireo | Institutional Trading Intelligence & ECN Terminal",
+    title: "Albireo | Trading Intelligence Platform & SaaS OS",
     description:
-      "Institutional-grade prop firm drawdown analytics, Monte Carlo stress-testing, session volatility profiles, and real-time ECN Forex trading.",
+      "Trading Intelligence Platform, Monte Carlo Risk Engine, Prop Firm Analytics, and Albireo Academy.",
     siteName: "Albireo Platform",
     type: "website",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Albireo | Trading Intelligence & ECN Terminal",
+    title: "Albireo | Trading Intelligence Platform",
     description:
-      "Institutional-grade prop firm drawdown analytics, Monte Carlo stress-testing, and real-time ECN Forex trading.",
+      "Trading Intelligence Platform, Monte Carlo Risk Engine, Prop Firm Analytics, and Albireo Academy.",
     creator: "@KavinBAlbireo",
   },
   robots: {
@@ -62,15 +64,15 @@ export default function RootLayout({
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
       <body className="min-h-full flex flex-col bg-hero-bg text-foreground font-sora antialiased selection:bg-primary selection:text-primary-foreground">
         <ThemeProvider>
-          <Header />
-          <main className="flex-1 w-full flex flex-col relative z-10 pt-20 md:pt-24">
-            {children}
-          </main>
-          <Footer />
+          <AuthProvider>
+            <AppLayoutShell>
+              {children}
+            </AppLayoutShell>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

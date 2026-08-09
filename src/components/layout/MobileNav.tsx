@@ -3,9 +3,8 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { X, Send, BarChart3, Calculator, PenTool } from "lucide-react";
+import { X, Send, BarChart3, Calculator, PenTool, GraduationCap, Sparkles, DollarSign } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import Button from "@/components/ui/Button";
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -57,13 +56,13 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
             initial="closed"
             animate={isOpen ? "open" : "closed"}
             variants={sidebarVariants}
-            className="fixed inset-y-0 right-0 z-50 w-full sm:w-[380px] bg-hero-bg/95 backdrop-blur-xl border-l border-border px-8 py-10 flex flex-col justify-between shadow-2xl lg:hidden overflow-y-auto"
+            className="fixed inset-y-0 right-0 z-50 w-full sm:w-[380px] bg-hero-bg/95 backdrop-blur-xl border-l border-border px-8 py-10 flex flex-col justify-between shadow-2xl lg:hidden overflow-y-auto font-sora"
           >
             <div>
               {/* Header & Close Button */}
               <div className="flex items-center justify-between mb-8 pb-4 border-b border-border">
                 <span className="font-sora text-sm font-bold tracking-widest text-primary uppercase">
-                  ALBIREO
+                  ALBIREO PLATFORM
                 </span>
                 <button
                   onClick={onClose}
@@ -75,55 +74,40 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
               </div>
 
               {/* Nav Links */}
-              <nav className="flex flex-col gap-6">
+              <nav className="flex flex-col gap-5">
                 <motion.div variants={linkVariants}>
                   <Link
                     href="/"
                     onClick={onClose}
-                    className={`font-sora text-lg tracking-wider transition-colors uppercase block ${
+                    className={`text-base tracking-wider transition-colors uppercase block ${
                       pathname === "/" ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
                     }`}
                   >
-                    Story
+                    Home
                   </Link>
                 </motion.div>
 
-                {/* Tools Submenu */}
-                <motion.div variants={linkVariants} className="flex flex-col gap-2 pt-2 border-t border-border">
-                  <span className="text-[10px] font-sora font-bold uppercase tracking-widest text-primary/70">
-                    Tools & Terminal
-                  </span>
+                <motion.div variants={linkVariants}>
                   <Link
-                    href="/terminal"
+                    href="/academy"
                     onClick={onClose}
-                    className="flex items-center gap-3 py-2 text-sm text-foreground hover:text-primary transition-colors"
+                    className={`text-base tracking-wider transition-colors uppercase flex items-center gap-2 ${
+                      pathname.startsWith("/academy") ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
+                    }`}
                   >
-                    <BarChart3 className="w-4 h-4 text-primary" />
-                    ECN Trading Terminal
+                    <GraduationCap className="w-4 h-4 text-primary" /> Academy
                   </Link>
+                </motion.div>
+
+                <motion.div variants={linkVariants}>
                   <Link
-                    href="/prop-firms"
+                    href="/pricing"
                     onClick={onClose}
-                    className="flex items-center gap-3 py-2 text-sm text-foreground hover:text-primary transition-colors"
+                    className={`text-base tracking-wider transition-colors uppercase flex items-center gap-2 ${
+                      pathname.startsWith("/pricing") ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
+                    }`}
                   >
-                    <Calculator className="w-4 h-4 text-primary" />
-                    Drawdown Simulator
-                  </Link>
-                  <Link
-                    href="/tools/cot-analyzer"
-                    onClick={onClose}
-                    className="flex items-center gap-3 py-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <BarChart3 className="w-4 h-4 text-primary" />
-                    COT Analyzer
-                  </Link>
-                  <Link
-                    href="/blog#position-sizer"
-                    onClick={onClose}
-                    className="flex items-center gap-3 py-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <PenTool className="w-4 h-4 text-profit" />
-                    Position Sizer
+                    <DollarSign className="w-4 h-4 text-primary" /> Pro & Pricing
                   </Link>
                 </motion.div>
 
@@ -131,11 +115,11 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                   <Link
                     href="/prop-firms"
                     onClick={onClose}
-                    className={`font-sora text-lg tracking-wider transition-colors uppercase block ${
+                    className={`text-base tracking-wider transition-colors uppercase block ${
                       pathname.startsWith("/prop-firms") ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
                     }`}
                   >
-                    Prop Firms
+                    Prop Firm Directory
                   </Link>
                 </motion.div>
 
@@ -143,30 +127,49 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                   <Link
                     href="/journal"
                     onClick={onClose}
-                    className={`font-sora text-lg tracking-wider transition-colors uppercase block ${
+                    className={`text-base tracking-wider transition-colors uppercase block ${
                       pathname.startsWith("/journal") ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
                     }`}
                   >
-                    Journal
+                    Trading Journal
                   </Link>
                 </motion.div>
 
-                <motion.div variants={linkVariants}>
+                {/* Tools Submenu */}
+                <motion.div variants={linkVariants} className="flex flex-col gap-2 pt-2 border-t border-border">
+                  <span className="text-[10px] font-sora font-bold uppercase tracking-widest text-primary/70">
+                    Tools & Suite
+                  </span>
                   <Link
-                    href="/blog"
+                    href="/tools"
                     onClick={onClose}
-                    className={`font-sora text-lg tracking-wider transition-colors uppercase block ${
-                      pathname.startsWith("/blog") ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
-                    }`}
+                    className="flex items-center gap-3 py-1.5 text-sm text-foreground hover:text-primary transition-colors"
                   >
-                    Blog & Guides
+                    <BarChart3 className="w-4 h-4 text-primary" />
+                    Quantitative Software Suite
+                  </Link>
+                  <Link
+                    href="/terminal"
+                    onClick={onClose}
+                    className="flex items-center gap-3 py-1.5 text-sm text-foreground hover:text-primary transition-colors"
+                  >
+                    <BarChart3 className="w-4 h-4 text-primary" />
+                    ECN Trading Terminal
+                  </Link>
+                  <Link
+                    href="/tools/cot-analyzer"
+                    onClick={onClose}
+                    className="flex items-center gap-3 py-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <BarChart3 className="w-4 h-4 text-primary" />
+                    COT Analyzer
                   </Link>
                 </motion.div>
               </nav>
             </div>
 
             {/* Bottom CTA */}
-            <motion.div variants={linkVariants} className="pt-8 border-t border-border flex flex-col gap-3">
+            <motion.div variants={linkVariants} className="pt-6 border-t border-border flex flex-col gap-3">
               <a
                 href="https://t.me/+e5tkgGVt5mIxZjI1"
                 target="_blank"
