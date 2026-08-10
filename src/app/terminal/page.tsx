@@ -1,12 +1,9 @@
 "use client";
 
 import React from "react";
-import TradingTerminal from "@/components/tradeflow/TradingTerminal";
+import RouteRegistry from "@/routes/RouteRegistry";
+import PATHS from "@/routes/paths";
 
 export default function TerminalPage() {
-  return (
-    <div className="w-full min-h-screen bg-hero-bg">
-      <TradingTerminal />
-    </div>
-  );
+  return <RouteRegistry path={PATHS.TERMINAL} />;
 }

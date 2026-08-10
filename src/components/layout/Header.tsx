@@ -50,8 +50,10 @@ export default function Header() {
     setIsDropdownOpen(false);
   }, [pathname]);
 
+  const currentPath = pathname || "";
   const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
+    href === "/" ? currentPath === "/" : currentPath.startsWith(href);
+
 
   return (
     <>

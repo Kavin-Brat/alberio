@@ -20,10 +20,12 @@ import { PUBLIC_ROUTES, AUTH_MESSAGES } from "@/constants/authConstants";
 export default function AppLayoutShell({ children }: { children: React.ReactNode }) {
   const { isLoggedIn } = useAuth();
   const pathname = usePathname();
+  const currentPath = pathname || "";
 
   const isPublicRoute = PUBLIC_ROUTES.some(
-    (route) => pathname === route || pathname.startsWith("/blog/")
+    (route) => currentPath === route || currentPath.startsWith("/blog/")
   );
+
 
   // If user is unauthenticated and attempting to visit a protected route
   if (!isLoggedIn && !isPublicRoute) {

@@ -13,6 +13,8 @@ interface MobileNavProps {
 
 export function MobileNav({ isOpen, onClose }: MobileNavProps) {
   const pathname = usePathname();
+  const currentPath = pathname || "";
+
 
   const sidebarVariants = {
     closed: {
@@ -92,7 +94,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                     href="/academy"
                     onClick={onClose}
                     className={`text-base tracking-wider transition-colors uppercase flex items-center gap-2 ${
-                      pathname.startsWith("/academy") ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
+                      currentPath.startsWith("/academy") ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
                     }`}
                   >
                     <GraduationCap className="w-4 h-4 text-primary" /> Academy
@@ -104,7 +106,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                     href="/pricing"
                     onClick={onClose}
                     className={`text-base tracking-wider transition-colors uppercase flex items-center gap-2 ${
-                      pathname.startsWith("/pricing") ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
+                      currentPath.startsWith("/pricing") ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
                     }`}
                   >
                     <DollarSign className="w-4 h-4 text-primary" /> Pro & Pricing
@@ -116,7 +118,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                     href="/prop-firms"
                     onClick={onClose}
                     className={`text-base tracking-wider transition-colors uppercase block ${
-                      pathname.startsWith("/prop-firms") ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
+                      currentPath.startsWith("/prop-firms") ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
                     }`}
                   >
                     Prop Firm Directory
@@ -128,11 +130,12 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                     href="/journal"
                     onClick={onClose}
                     className={`text-base tracking-wider transition-colors uppercase block ${
-                      pathname.startsWith("/journal") ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
+                      currentPath.startsWith("/journal") ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
                     }`}
                   >
                     Trading Journal
                   </Link>
+
                 </motion.div>
 
                 {/* Tools Submenu */}

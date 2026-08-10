@@ -4,15 +4,14 @@
 
 ---
 
-## 1. Executive Summary & Application Vision
+## 1. Executive Summary & Enterprise Frontend Architecture
 
-Albireo bridges the gap between complex quantitative financial modeling and retail trader execution. It provides serious traders, prop-firm evaluation candidates, and quantitative funds with a single unified workspace containing:
+Albireo features an enterprise frontend architecture inspired by **`devportal_frontend_2.0`** and **`topsweb`** (`tp-projects`):
 
-- **ECN Trading Terminal**: Real-time quote streaming, candlestick charts, and instant order execution.
-- **Prop-Firm Compliance Guardian**: Automated CSV audit parser for High Water Marks, 5% daily loss limits, and 30% consistency rules.
-- **Monte Carlo Strategy Stress-Tester**: 1,000-iteration bootstrap resampling engine computing tail-risk drawdowns and probability of ruin.
-- **Session Volatility Matrix**: Microstructure volatility profiles across Tokyo, London, New York, and Overlap trading windows.
-- **Cross-Asset Correlation Engine**: Pearson correlation matrices and macro decoupling alerts.
+- **Centralized Master Route Array (`src/routes/routesConfig.ts`)**: Structured JavaScript/TypeScript array mapping path definitions, component bindings, route protection status, roles (`SUPER_ADMIN`), and entitlements.
+- **Dedicated Module Components (`src/modules/`)**: Organized into domain modules (`Auth/`, `Dashboard/`, `Admin/`, `Terminal/`, `Tools/`, `Journal/`).
+- **Declarative Route Registry (`src/routes/RouteRegistry.tsx`)**: Centralized route renderer dynamically resolving paths and wrapping components with `<ProtectedRoute>` and `<PublicRoute>` guards.
+- **Next.js 16 App Router Integration (`src/app/`)**: Lightweight route handlers delegating page rendering to `RouteRegistry` and `src/modules/`.
 
 ---
 
@@ -47,15 +46,6 @@ In the single terminal output, you will see both streams:
 [2026-08-10 19:55:47] ERROR [AuthService]: Invalid email or account does not exist
  POST /api/auth/logout 200 in 91ms
 ```
-
-### Log Stream Identification
-
-| Log Prefix / Format | Source | Description |
-| :--- | :--- | :--- |
-| `GET /path 200 in ...` | **Next.js Dev Server** | Page rendering and HTTP request latency metrics. |
-| `✓ Compiled in ...` | **Turbopack Compiler** | Hot-module replacement and compilation status. |
-| `[YYYY-MM-DD HH:mm:ss] INFO [Component]` | **Backend Winston Logger** | Server router, IP tracking, controller execution, and service logic. |
-| `[YYYY-MM-DD HH:mm:ss] ERROR [Component]` | **Backend Winston Error Boundary** | Joi payload validation, operational error trace, and DB failures. |
 
 ---
 

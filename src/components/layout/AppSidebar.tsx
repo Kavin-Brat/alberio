@@ -53,7 +53,9 @@ export default function AppSidebar() {
     }
   };
 
-  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+  const currentPath = pathname || "";
+  const isActive = (href: string) => currentPath === href || currentPath.startsWith(`${href}/`);
+
 
   // Default menu list fallback if backend menu list is loading
   const defaultGeneralItems = [
@@ -126,7 +128,8 @@ export default function AppSidebar() {
                 onClick={() => setIsOpenMobile(false)}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all group",
-                  isActive("/admin") && !pathname.includes("/admin/")
+                  isActive("/admin") && !currentPath.includes("/admin/")
+
                     ? "bg-[#22e600]/15 text-[#22e600] border border-[#22e600]/40 font-bold"
                     : "text-slate-400 hover:text-white hover:bg-slate-900"
                 )}

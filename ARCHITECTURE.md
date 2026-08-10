@@ -15,17 +15,20 @@ graph TD
         Mobile["Mobile & Tablet Devices (<1024px)<br/>Landing Screen Focused Experience"]
     end
 
-    subgraph Presentation & UI Layer
+    subgraph Presentation & UI Layer (Decomposed Architecture)
         AppShell["AppLayoutShell Component<br/>Public vs Authenticated Route Guard"]
         HeaderComp["Header Component<br/>Brand Logo + Tools Dropdown + Desktop Auth"]
         SidebarComp["AppSidebar Component<br/>Left Nav Category List (Auth Only)"]
         UserCorner["UserNavCorner Component<br/>Profile Pill + Async Logout Trigger"]
         UIPrimitives["UI Primitives (src/components/ui/)<br/>Badge, Button, Card, ProUpgradeModal"]
-        DomainComponents["Domain Components (src/components/)<br/>landing, dashboard, admin, auth, tools, journal"]
+        ModuleChildComponents["Module Child Components (src/components/modules/)<br/>Auth, UserManagement, RoleManagement, Terminal, Tools, Journal"]
+        ParentPageContainers["Parent Page Containers (src/modules/)<br/>LoginPage, RegisterPage, DashboardPage, AdminPages, TerminalPage"]
     end
 
-    subgraph App Router & API Handling Layer
+    subgraph App Router & Route Management Layer
         NextRouter["Next.js 16 App Router (src/app/)<br/>File-Based Page & API Endpoints"]
+        RouteRegistry["RouteRegistry (src/routes/RouteRegistry.tsx)<br/>Master Route Array Mapper & Guard Renderer"]
+        RoutesConfig["Master Route Array (src/routes/routesConfig.ts)<br/>Route Metadata & Protection Rules"]
         AuthAPI["/api/auth/* (login, logout, register, me)"]
         UserAPI["/api/users/* ([userId])"]
         RoleAPI["/api/roles/* ([roleId])"]
@@ -64,9 +67,13 @@ graph TD
     AppShell --> SidebarComp
     HeaderComp --> UserCorner
     HeaderComp --> UIPrimitives
-    DomainComponents --> UIPrimitives
 
-    AppShell --> NextRouter
+    NextRouter --> RouteRegistry
+    RouteRegistry --> RoutesConfig
+    RouteRegistry --> ParentPageContainers
+    ParentPageContainers --> ModuleChildComponents
+    ModuleChildComponents --> UIPrimitives
+
     NextRouter --> AuthAPI
     NextRouter --> UserAPI
     NextRouter --> RoleAPI
@@ -104,13 +111,11 @@ graph TD
 
 ## 2. Authentication & Session Lifecycle Diagram
 
-This diagram details the sign-in, JWT token generation, localStorage sync, and sign-out session purge sequence.
-
 ```mermaid
 sequenceDiagram
     autonumber
     actor User as Client Browser
-    participant Page as Login / Register UI Page
+    participant Page as Parent Page Container (LoginPage)
     participant AuthCtx as AuthContext Provider
     participant API as POST /api/auth/login
     participant Ctrl as AuthController
@@ -144,7 +149,7 @@ sequenceDiagram
 
 ---
 
-## 3. Directory Layout & Module Ownership
+## 3. Directory Layout & Module Component Ownership
 
 ```
 alberio/
@@ -154,100 +159,64 @@ alberio/
 ├── src/
 │   ├── app/                  # NEXT.JS 16 APP ROUTER
 │   │   ├── api/              # Server API Endpoints (auth, users, roles, compliance, risk)
-│   │   ├── academy/          # Trader Academy Pages
-│   │   ├── admin/            # Executive CEO Command Center Pages
-│   │   ├── dashboard/        # Personal Cockpit Dashboard Page
-│   │   ├── login/            # Desktop Login Page
-│   │   ├── register/         # Desktop Register Page
-│   │   ├── terminal/         # ECN Trading Terminal & Live Ticket Page
-│   │   └── tools/            # Quantitative Software Suite Pages
+│   │   ├── admin/            # Delegates to RouteRegistry (PATHS.ADMIN.ROOT, USERS, ROLES)
+│   │   ├── dashboard/        # Delegates to RouteRegistry (PATHS.DASHBOARD)
+│   │   ├── login/            # Delegates to RouteRegistry (PATHS.LOGIN)
+│   │   ├── register/         # Delegates to RouteRegistry (PATHS.REGISTER)
+│   │   ├── terminal/         # Delegates to RouteRegistry (PATHS.TERMINAL)
+│   │   ├── tools/            # Delegates to RouteRegistry (PATHS.TOOLS.ROOT)
+│   │   └── journal/          # Delegates to RouteRegistry (PATHS.JOURNAL)
 │   │
-│   ├── backend/              # ENTERPRISE BACKEND ARCHITECTURE
-│   │   ├── config/           # Winston Logger (`logger.ts`) & Joi Env Validation (`config.ts`)
-│   │   ├── controllers/      # Route Controllers (`authController`, `userController`, `roleController`)
-│   │   ├── middlewares/      # `authMiddleware`, `errorMiddleware`, `validate`
-│   │   ├── models/           # TypeScript Data Models (`userModel`, `roleModel`)
-│   │   ├── routes/           # Central Express-Style Router Registry (`index.ts`, `auth.route.ts`, etc.)
-│   │   ├── services/         # Domain Business Logic (`authService`, `userService`, `roleService`, `menuService`)
-│   │   └── utils/            # `ApiError`, `catchAsync`, `jwt`, `helpers`
+│   ├── components/           # FRONTEND COMPONENTS BY MODULE
+│   │   ├── modules/          # MODULE-SPECIFIC DECOMPOSED CHILD COMPONENTS
+│   │   │   ├── Auth/         # LoginForm, RegisterForm, DemoPersonaSwitcher, MobileDesktopNotice
+│   │   │   ├── Dashboard/    # UserWelcomeBanner, FunnelRankCard, ConversionBanner
+│   │   │   ├── UserManagement/# UserTable, UserHeader
+│   │   │   ├── RoleManagement/# RoleCard, RoleHeader
+│   │   │   ├── Terminal/     # TerminalHeader, TickerGrid, OrderTicketForm, CandlestickVisualizer
+│   │   │   ├── Tools/        # ToolCardGrid
+│   │   │   └── Journal/      # CsvUploaderCard, ComplianceReportView
+│   │   │
+│   │   ├── layout/           # AppLayoutShell, Header, AppSidebar, UserNavCorner
+│   │   └── ui/               # Atomic Design System (Badge, Button, Card, GlassCard)
 │   │
-│   ├── components/           # FRONTEND COMPONENTS BY DOMAIN
-│   │   ├── common/           # Common Utilities (`Badge.tsx`, `SectionHeader.tsx`, `StatBox.tsx`)
-│   │   ├── layout/           # `AppLayoutShell`, `Header`, `AppSidebar`, `UserNavCorner`
-│   │   └── ui/               # Atomic Design System (`Badge`, `Button`, `Card`, `ProUpgradeModal`)
+│   ├── modules/              # PARENT PAGE CONTAINERS
+│   │   ├── Auth/             # LoginPage.tsx, RegisterPage.tsx
+│   │   ├── Dashboard/        # DashboardPage.tsx
+│   │   ├── Admin/            # AdminDashboardPage.tsx, AdminUsersPage.tsx, AdminRolesPage.tsx
+│   │   ├── Terminal/         # TerminalPage.tsx
+│   │   ├── Tools/            # ToolsSuitePage.tsx
+│   │   └── Journal/          # JournalPage.tsx
 │   │
-│   ├── constants/            # CENTRALIZED CONSTANTS REGISTRY
-│   │   ├── appConstants.ts   # App config, user roles, risk profiles, subscription tiers
-│   │   ├── authConstants.ts  # Storage keys, public routes, status messages
-│   │   └── landingContent.ts # Landing page content & feature copy
-│   │
-│   ├── context/              # React AuthContext Provider & Session Manager
-│   ├── data/                 # System Mock Data Fallbacks
-│   ├── lib/                  # PostgreSQL Connection Pool (`postgres.ts`) & Store Modules
-│   └── types/                # Core TypeScript Type Declarations & Entitlements
+│   ├── routes/               # ROUTE MANAGEMENT
+│   │   ├── paths.ts          # Centralized route path constants
+│   │   ├── routesConfig.ts   # Master route array configuration
+│   │   └── RouteRegistry.tsx # Route mapper & guard renderer
 ```
 
 ---
 
 ## 4. Architectural Layer Breakdown
 
-### Layer 1: Presentation & UI Layer (`src/components/`)
-- **Design System Tokens**: Built with Vanilla CSS, Tailwind CSS v4, and Google Fonts (`Sora` for headers/labels, `JetBrains Mono` for quantitative numbers/code).
-- **Atomic UI Components (`src/components/ui/`)**: Reusable primitives (`Badge`, `Button`, `Card`, `GlassCard`, `ProUpgradeModal`) designed under the **Open/Closed Principle (OCP)** to accept variant props (`success`, `warning`, `danger`, `primary`, `neutral`) without modifying underlying code.
-- **Layout Management (`src/components/layout/`)**:
-  - `AppLayoutShell.tsx`: Intercepts protected routes based on `PUBLIC_ROUTES` constants and renders `AppSidebar` exclusively for signed-in sessions.
-  - `Header.tsx`: Provides brand navigation and desktop header actions (`hidden lg:flex`).
-  - `AppSidebar.tsx`: Displays category menu items according to user role permissions.
-  - `UserNavCorner.tsx`: Manages top-right user pill and async logout execution.
+### Layer 1: Presentation & Module Component Layer (`src/components/modules/` & `src/modules/`)
+- **Parent Page Containers (`src/modules/`)**: Every route maps to a parent page component (`LoginPage.tsx`, `DashboardPage.tsx`, `AdminUsersPage.tsx`, etc.) that composes child components.
+- **Decomposed Child Components (`src/components/modules/`)**: Organized by feature domain. Forms, tables, headers, grids, and tickers are separated into dedicated child files.
+- **Atomic UI Components (`src/components/ui/`)**: Reusable primitives (`Badge`, `Button`, `Card`, `GlassCard`) designed under the **Open/Closed Principle (OCP)**.
 
 ### Layer 2: API & Security Pipeline (`src/backend/`)
-- **Central Dispatcher (`app.handleRequest`)**: Encapsulates request processing in `src/backend/app.ts`. Injects Helmet-style HTTP security headers (`nosniff`, `DENY`, `XSS-Protection`, `Strict-Transport-Security`).
-- **Winston Structured Logger (`logger.ts`)**: Formats server requests, IP metadata, and operational errors into colored console stdout logs.
-- **Joi Payload Validator (`validate.ts`)**: Validates request `body`, `query`, and `params` against Joi schemas with `{ allowUnknown: true }` flexibility.
-- **Global Operational Error Boundary (`errorMiddleware.ts`)**: Catches unhandled exceptions, converts them into standard `ApiError` instances, and returns uniform `{ success: false, error: "..." }` HTTP JSON responses.
-
-### Layer 3: Business Logic & Services (`src/backend/services/`)
-- **Single Responsibility Controllers & Services**: Controllers (`authController`, `userController`, `roleController`) handle HTTP contracts; services (`authService`, `userService`, `roleService`, `menuService`) handle domain rules.
-- **Role-Based Access Control (RBAC)**: `MenuService.getAllowedMenusForRole(userRole)` generates dynamic navigation menus based on role entitlements.
-
-### Layer 4: Data & Persistence Layer (`src/lib/db/`)
-- **PostgreSQL Pool (`postgres.ts`)**: Managed connection pool reading `POSTGRES_URL`/`DATABASE_URL` with automatic schema DDL table creation (`users`, `user_entitlements`, `user_sessions`, `activity_logs`, `department_master`).
-- **High-Speed Store Fallback**: If PostgreSQL is offline, `userStore.ts` and `roleStore.ts` gracefully fall back to in-memory arrays so the application remains 100% operational without crashing.
+- **Central Dispatcher (`app.handleRequest`)**: Encapsulates request processing in `src/backend/app.ts`. Injects Helmet security headers.
+- **Winston Structured Logger (`logger.ts`)**: Formats server requests and operational errors into colored console stdout logs.
+- **Joi Payload Validator (`validate.ts`)**: Validates request parameters with `{ allowUnknown: true }` flexibility.
 
 ---
 
-## 5. Developer How-To Reference
-
-### How to Add a New API Endpoint
-1. Create Joi validation schema in `src/backend/validations/<feature>Validation.ts`.
-2. Add business logic method in `src/backend/services/<feature>Service.ts`.
-3. Add request handler in `src/backend/controllers/<feature>Controller.ts`.
-4. Register route in `src/backend/routes/<feature>.route.ts`.
-5. Create Next.js route file in `src/app/api/<feature>/route.ts` calling:
-   ```ts
-   export async function POST(request: Request) {
-     return app.handleRequest(request, (req) => featureRoute.handleAction(req));
-   }
-   ```
-
-### How to Add a New UI Component
-1. Create component file in `src/components/ui/MyComponent.tsx`.
-2. Use predefined CSS design tokens (`font-sora`, `font-mono`, `#22e600` primary green, glassmorphism cards).
-3. Add TSDoc block comments explaining props and usage.
-
-### How to Add New System Constants
-1. Add new string/metadata key to `src/constants/appConstants.ts` or `src/constants/authConstants.ts`.
-2. Import using `@/constants/appConstants` or `@/constants/authConstants`.
-
----
-
-## 6. Verification & Quality Commands
+## 5. Verification Commands
 
 ```bash
 # Type Safety Verification (0 errors expected)
 npx tsc --noEmit
 
-# Production Build Compiler (Compiles static & dynamic API routes in ~4 seconds)
+# Production Build Compiler (Compiles static & dynamic API routes in ~3.6 seconds)
 npm run build
 
 # Development Server (Runs Unified Full-Stack on http://localhost:3000)
