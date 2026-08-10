@@ -1,61 +1,46 @@
-import { NextResponse } from "next/server";
+import { validateRequest } from "../middlewares/validate";
+import { listUsersSchema, updateUserSchema } from "../validations/userValidation";
 import { userService } from "../services/userService";
+import { buildSuccessResponse } from "../utils/helpers";
 
 export class UserController {
   public async handleListUsers(request: Request) {
-    try {
-      const { searchParams } = new URL(request.url);
-      const search = searchParams.get("search") || undefined;
-      const role = searchParams.get("role") || undefined;
-      const activeOnly = searchParams.get("activeOnly") === "true";
+    const { query } = await validateRequest(request, listUsersSchema);
+    const search = query?.search;
+    const role = query?.role;
+    const activeOnly = query?.activeOnly === true || query?.activeOnly === "true";
 
-      const users = await userService.listUsers(search, role, activeOnly);
+    const users = await userService.listUsers(search, role, activeOnly);
 
-      return NextResponse.json({
+    return buildSuccessResponse(
+      {
         totalCount: users.length,
-        users
-      });
-    } catch (error) {
-      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-    }
+        users,
+      },
+      "Users fetched successfully",
+      200
+    );
   }
 
   public async handleGetUser(userId: string) {
     const user = await userService.getUser(userId);
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-    return NextResponse.json({ user });
+    return buildSuccessResponse({ user }, "User details retrieved", 200);
   }
 
   public async handleUpdateUser(userId: string, request: Request) {
-    try {
-      const body = await request.json();
-      const updated = await userService.updateUserProfile(userId, body);
+    const { body } = await validateRequest(request, updateUserSchema);
+    const updated = await userService.updateUserProfile(userId, body);
 
-      if (!updated) {
-        return NextResponse.json({ error: "User not found" }, { status: 404 });
-      }
-
-      return NextResponse.json({
-        message: "User updated successfully",
-        user: updated
-      });
-    } catch (error) {
-      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-    }
+    return buildSuccessResponse(
+      { user: updated },
+      "User updated successfully",
+      200
+    );
   }
 
   public async handleDeleteUser(userId: string) {
-    try {
-      const success = await userService.deleteUserProfile(userId);
-      if (!success) {
-        return NextResponse.json({ error: "User not found" }, { status: 404 });
-      }
-      return NextResponse.json({ message: "User deleted successfully" });
-    } catch (error) {
-      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-    }
+    await userService.deleteUserProfile(userId);
+    return buildSuccessResponse(null, "User deleted successfully", 200);
   }
 }
 

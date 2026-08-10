@@ -1,7 +1,6 @@
-import { AuthController } from "@/backend/controllers/authController";
-
-const controller = new AuthController();
+import app from "@/backend/app";
+import authRoute from "@/backend/routes/auth.route";
 
 export async function POST(request: Request) {
-  return controller.handleRegister(request);
+  return app.handleRequest(request, (req) => authRoute.register(req));
 }

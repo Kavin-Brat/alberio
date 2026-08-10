@@ -1,27 +1,17 @@
-import { UserController } from "@/backend/controllers/userController";
+import app from "@/backend/app";
+import userRoute from "@/backend/routes/user.route";
 
-const controller = new UserController();
-
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ userId: string }> }
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ userId: string }> }) {
   const { userId } = await params;
-  return controller.handleGetUser(userId);
+  return app.handleRequest(request, (req) => userRoute.get(req, userId));
 }
 
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ userId: string }> }
-) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ userId: string }> }) {
   const { userId } = await params;
-  return controller.handleUpdateUser(userId, request);
+  return app.handleRequest(request, (req) => userRoute.update(req, userId));
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ userId: string }> }
-) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ userId: string }> }) {
   const { userId } = await params;
-  return controller.handleDeleteUser(userId);
+  return app.handleRequest(request, (req) => userRoute.delete(req, userId));
 }

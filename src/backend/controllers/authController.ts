@@ -1,79 +1,56 @@
-import { NextResponse } from "next/server";
+import { validateRequest } from "../middlewares/validate";
+import { loginSchema, registerSchema, getSessionSchema } from "../validations/authValidation";
 import { AuthService } from "../services/authService";
+import { buildSuccessResponse } from "../utils/helpers";
 
 const authService = new AuthService();
 
 export class AuthController {
   public async handleLogin(request: Request) {
-    try {
-      const body = await request.json();
-      const { email } = body;
+    const { body } = await validateRequest(request, loginSchema);
+    const result = await authService.login(body.email);
 
-      const result = await authService.login(email);
-
-      if (!result.success) {
-        return NextResponse.json({ success: false, error: result.error }, { status: result.status });
-      }
-
-      return NextResponse.json({
-        success: true,
-        message: result.message || "Login successful",
-        token: result.token,
+    return buildSuccessResponse(
+      {
         user: result.user,
-        allowedMenus: result.allowedMenus
-      });
-    } catch (error) {
-      return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
-    }
+        token: result.token,
+        allowedMenus: result.allowedMenus,
+      },
+      result.message || "Login successful",
+      200
+    );
   }
 
   public async handleRegister(request: Request) {
-    try {
-      const body = await request.json();
-      const { name, email, role, riskProfile } = body;
+    const { body } = await validateRequest(request, registerSchema);
+    const { name, email, role, riskProfile } = body;
 
-      const result = await authService.register(name, email, role, riskProfile);
+    const result = await authService.register(name, email, role, riskProfile);
 
-      if (!result.success) {
-        return NextResponse.json({ success: false, error: result.error }, { status: result.status });
-      }
-
-      return NextResponse.json({
-        success: true,
-        message: result.message || "Account registered successfully",
-        token: result.token,
+    return buildSuccessResponse(
+      {
         user: result.user,
-        allowedMenus: result.allowedMenus
-      }, { status: 201 });
-    } catch (error) {
-      return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
-    }
+        token: result.token,
+        allowedMenus: result.allowedMenus,
+      },
+      result.message || "Account registered successfully",
+      201
+    );
   }
 
   public async handleGetSession(request: Request) {
-    try {
-      const { searchParams } = new URL(request.url);
-      const userId = searchParams.get("userId");
+    const { query } = await validateRequest(request, getSessionSchema);
+    const result = await authService.getSession(query.userId);
 
-      if (!userId) {
-        return NextResponse.json({ success: false, error: "UserId is required" }, { status: 400 });
-      }
-
-      const result = await authService.getSession(userId);
-
-      if (!result.success) {
-        return NextResponse.json({ success: false, error: result.error }, { status: result.status });
-      }
-
-      return NextResponse.json({
-        success: true,
-        token: result.token,
+    return buildSuccessResponse(
+      {
         user: result.user,
-        allowedMenus: result.allowedMenus
-      });
-    } catch (error) {
-      return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
-    }
+        token: result.token,
+        allowedMenus: result.allowedMenus,
+      },
+      "User session retrieved",
+      200
+    );
   }
 }
 

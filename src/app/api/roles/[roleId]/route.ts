@@ -1,27 +1,17 @@
-import { RoleController } from "@/backend/controllers/roleController";
+import app from "@/backend/app";
+import roleRoute from "@/backend/routes/role.route";
 
-const controller = new RoleController();
-
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ roleId: string }> }
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ roleId: string }> }) {
   const { roleId } = await params;
-  return controller.handleGetRole(roleId);
+  return app.handleRequest(request, (req) => roleRoute.get(req, roleId));
 }
 
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ roleId: string }> }
-) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ roleId: string }> }) {
   const { roleId } = await params;
-  return controller.handleUpdateRole(roleId, request);
+  return app.handleRequest(request, (req) => roleRoute.update(req, roleId));
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ roleId: string }> }
-) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ roleId: string }> }) {
   const { roleId } = await params;
-  return controller.handleDeleteRole(roleId);
+  return app.handleRequest(request, (req) => roleRoute.delete(req, roleId));
 }

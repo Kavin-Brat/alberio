@@ -1,7 +1,9 @@
+import httpStatus from "http-status";
 import { UserModel } from "../models/userModel";
 import { authenticateUser, createUser, getUserByEmail, getUserById } from "@/lib/db/userStore";
 import { signJwtToken } from "../utils/jwt";
 import { MenuService, MenuItem } from "./menuService";
+import { ApiError } from "../utils/ApiError";
 
 export interface AuthLoginResponse {
   success: boolean;
@@ -9,7 +11,6 @@ export interface AuthLoginResponse {
   token?: string;
   user?: UserModel;
   allowedMenus?: MenuItem[];
-  error?: string;
   status?: number;
 }
 
@@ -19,24 +20,24 @@ export class AuthService {
    */
   public async login(email: string): Promise<AuthLoginResponse> {
     if (!email) {
-      return { success: false, error: "Email is required", status: 400 };
+      throw new ApiError(httpStatus.BAD_REQUEST, "Email is required");
     }
 
-    const user = authenticateUser(email);
+    const user = await authenticateUser(email);
 
     if (!user) {
-      return { success: false, error: "Invalid email or account does not exist", status: 401 };
+      throw new ApiError(httpStatus.UNAUTHORIZED, "Invalid email or account does not exist");
     }
 
     if (!user.isActive) {
-      return { success: false, error: "Account has been suspended or deactivated. Contact Admin.", status: 403 };
+      throw new ApiError(httpStatus.FORBIDDEN, "Account has been suspended or deactivated. Contact Admin.");
     }
 
     // Generate JWT Token signed with user payload
     const token = signJwtToken({
       userId: user.id,
       email: user.email,
-      role: user.role
+      role: user.role,
     });
 
     // Get allowed menu list based on role
@@ -48,7 +49,7 @@ export class AuthService {
       token,
       user,
       allowedMenus,
-      status: 200
+      status: 200,
     };
   }
 
@@ -57,25 +58,25 @@ export class AuthService {
    */
   public async register(name: string, email: string, role?: string, riskProfile?: string): Promise<AuthLoginResponse> {
     if (!email || !name) {
-      return { success: false, error: "Name and email are required", status: 400 };
+      throw new ApiError(httpStatus.BAD_REQUEST, "Name and email are required");
     }
 
-    const existing = getUserByEmail(email);
+    const existing = await getUserByEmail(email);
     if (existing) {
-      return { success: false, error: "User with this email already exists", status: 409 };
+      throw new ApiError(httpStatus.CONFLICT, "User with this email already exists");
     }
 
-    const newUser = createUser({
+    const newUser = await createUser({
       name,
       email,
       role: role || "FREE",
-      riskProfile: riskProfile || "Moderate"
+      riskProfile: riskProfile || "Moderate",
     });
 
     const token = signJwtToken({
       userId: newUser.id,
       email: newUser.email,
-      role: newUser.role
+      role: newUser.role,
     });
 
     const allowedMenus = MenuService.getAllowedMenusForRole(newUser.role);
@@ -86,7 +87,7 @@ export class AuthService {
       token,
       user: newUser,
       allowedMenus,
-      status: 201
+      status: 201,
     };
   }
 
@@ -94,15 +95,15 @@ export class AuthService {
    * Get active user session and allowed menu list
    */
   public async getSession(userId: string): Promise<AuthLoginResponse> {
-    const user = getUserById(userId);
+    const user = await getUserById(userId);
     if (!user) {
-      return { success: false, error: "User session not found", status: 404 };
+      throw new ApiError(httpStatus.NOT_FOUND, "User session not found");
     }
 
     const token = signJwtToken({
       userId: user.id,
       email: user.email,
-      role: user.role
+      role: user.role,
     });
 
     const allowedMenus = MenuService.getAllowedMenusForRole(user.role);
@@ -112,7 +113,7 @@ export class AuthService {
       token,
       user,
       allowedMenus,
-      status: 200
+      status: 200,
     };
   }
 }

@@ -1,3 +1,5 @@
+import { executeQuery, initPostgresSchema } from "./postgres";
+
 export interface PermissionKey {
   key: string;
   name: string;
@@ -106,15 +108,15 @@ let ROLES_DATABASE: RoleDefinition[] = [
   }
 ];
 
-export function getAllRoles(): RoleDefinition[] {
+export async function getAllRoles(): Promise<RoleDefinition[]> {
   return [...ROLES_DATABASE];
 }
 
-export function getRoleById(id: string): RoleDefinition | undefined {
+export async function getRoleById(id: string): Promise<RoleDefinition | undefined> {
   return ROLES_DATABASE.find((r) => r.id === id || r.roleKey === id);
 }
 
-export function createRole(data: { displayName: string; roleKey: string; description: string; permissions: string[] }): RoleDefinition {
+export async function createRole(data: { displayName: string; roleKey: string; description: string; permissions: string[] }): Promise<RoleDefinition> {
   const newRole: RoleDefinition = {
     id: `role-${Date.now()}`,
     roleKey: data.roleKey.toUpperCase().replace(/\s+/g, "_"),
@@ -129,7 +131,7 @@ export function createRole(data: { displayName: string; roleKey: string; descrip
   return newRole;
 }
 
-export function updateRole(id: string, updates: Partial<RoleDefinition>): RoleDefinition | undefined {
+export async function updateRole(id: string, updates: Partial<RoleDefinition>): Promise<RoleDefinition | undefined> {
   const idx = ROLES_DATABASE.findIndex((r) => r.id === id || r.roleKey === id);
   if (idx === -1) return undefined;
 
@@ -141,10 +143,10 @@ export function updateRole(id: string, updates: Partial<RoleDefinition>): RoleDe
   return ROLES_DATABASE[idx];
 }
 
-export function deleteRole(id: string): boolean {
-  const role = getRoleById(id);
+export async function deleteRole(id: string): Promise<boolean> {
+  const role = await getRoleById(id);
   if (role && role.isSystem) {
-    return false; // Prevent deleting default system roles
+    return false;
   }
 
   const initialLen = ROLES_DATABASE.length;

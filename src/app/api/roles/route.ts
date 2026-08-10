@@ -1,11 +1,10 @@
-import { RoleController } from "@/backend/controllers/roleController";
+import app from "@/backend/app";
+import roleRoute from "@/backend/routes/role.route";
 
-const controller = new RoleController();
-
-export async function GET() {
-  return controller.handleListRoles();
+export async function GET(request: Request) {
+  return app.handleRequest(request, () => roleRoute.list(request));
 }
 
 export async function POST(request: Request) {
-  return controller.handleCreateRole(request);
+  return app.handleRequest(request, (req) => roleRoute.create(req));
 }

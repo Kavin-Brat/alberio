@@ -1,6 +1,7 @@
 import { DbUserSchema } from "./schema";
+import { executeQuery, initPostgresSchema } from "./postgres";
 
-// Pre-populated PostgreSQL-ready dummy user store
+// Pre-populated fallback in-memory store for local development without DB
 let USERS_DATABASE: DbUserSchema[] = [
   {
     id: "usr-kavin-ceo",
@@ -22,7 +23,7 @@ let USERS_DATABASE: DbUserSchema[] = [
       simulationsRun: 150,
       tradesLoggedCount: 84,
       savedWatchlist: ["EUR/USD", "GBP/USD", "USD/JPY", "Gold (XAU)"],
-      capitalAmountINR: 10000000 // ₹1 Crore
+      capitalAmountINR: 10000000
     },
     entitlements: [
       "FREE_TOOLS",
@@ -62,7 +63,7 @@ let USERS_DATABASE: DbUserSchema[] = [
       simulationsRun: 42,
       tradesLoggedCount: 38,
       savedWatchlist: ["EUR/USD", "Gold (XAU)"],
-      capitalAmountINR: 2500000 // ₹25 Lakhs
+      capitalAmountINR: 2500000
     },
     entitlements: [
       "FREE_TOOLS",
@@ -98,7 +99,7 @@ let USERS_DATABASE: DbUserSchema[] = [
       simulationsRun: 8,
       tradesLoggedCount: 5,
       savedWatchlist: ["EUR/USD", "GBP/USD"],
-      capitalAmountINR: 500000 // ₹5 Lakhs
+      capitalAmountINR: 500000
     },
     entitlements: [
       "FREE_TOOLS",
@@ -128,7 +129,7 @@ let USERS_DATABASE: DbUserSchema[] = [
       simulationsRun: 2,
       tradesLoggedCount: 1,
       savedWatchlist: ["EUR/USD"],
-      capitalAmountINR: 100000 // ₹1 Lakh
+      capitalAmountINR: 100000
     },
     entitlements: [
       "FREE_TOOLS",
@@ -137,10 +138,64 @@ let USERS_DATABASE: DbUserSchema[] = [
   }
 ];
 
+function mapRowToDbUser(row: any, entitlements: string[] = []): DbUserSchema {
+  return {
+    id: row.id,
+    email: row.email,
+    passwordHash: row.password_hash,
+    name: row.name,
+    role: row.role,
+    subscriptionTier: row.subscription_tier,
+    funnelLevel: Number(row.funnel_level) || 1,
+    isActive: Boolean(row.is_active),
+    riskProfile: row.risk_profile || "Moderate",
+    createdAt: row.created_at ? new Date(row.created_at).toISOString() : new Date().toISOString(),
+    lastLoginAt: row.last_login_at ? new Date(row.last_login_at).toISOString() : new Date().toISOString(),
+    progress: typeof row.progress === "string" ? JSON.parse(row.progress) : row.progress || {
+      courseProgressPct: 0,
+      quizScores: {},
+      completedLessons: [],
+      simulationsRun: 0,
+      tradesLoggedCount: 0,
+      savedWatchlist: ["EUR/USD"]
+    },
+    entitlements: entitlements.length > 0 ? entitlements : ["FREE_TOOLS", "BASIC_CALCULATORS"]
+  };
+}
+
 /**
- * Get all users with optional filtering
+ * Get all users with optional filtering (PostgreSQL primary, fallback secondary)
  */
-export function getAllUsers(search?: string, role?: string, activeOnly?: boolean): DbUserSchema[] {
+export async function getAllUsers(search?: string, role?: string, activeOnly?: boolean): Promise<DbUserSchema[]> {
+  const isPgActive = await initPostgresSchema();
+
+  if (isPgActive) {
+    let sql = `SELECT * FROM users WHERE 1=1`;
+    const params: any[] = [];
+
+    if (search) {
+      params.push(`%${search.toLowerCase()}%`);
+      sql += ` AND (LOWER(name) LIKE $${params.length} OR LOWER(email) LIKE $${params.length})`;
+    }
+
+    if (role && role !== "ALL") {
+      params.push(role);
+      sql += ` AND role = $${params.length}`;
+    }
+
+    if (activeOnly) {
+      sql += ` AND is_active = TRUE`;
+    }
+
+    sql += ` ORDER BY created_at DESC`;
+
+    const res = await executeQuery(sql, params);
+    if (res && res.rows.length > 0) {
+      return res.rows.map((row) => mapRowToDbUser(row));
+    }
+  }
+
+  // Fallback to in-memory store
   let filtered = [...USERS_DATABASE];
 
   if (search) {
@@ -164,30 +219,56 @@ export function getAllUsers(search?: string, role?: string, activeOnly?: boolean
 /**
  * Get single user by ID
  */
-export function getUserById(id: string): DbUserSchema | undefined {
+export async function getUserById(id: string): Promise<DbUserSchema | undefined> {
+  const isPgActive = await initPostgresSchema();
+
+  if (isPgActive) {
+    const res = await executeQuery(`SELECT * FROM users WHERE id = $1 LIMIT 1`, [id]);
+    if (res && res.rows.length > 0) {
+      const entRes = await executeQuery(`SELECT entitlement_key FROM user_entitlements WHERE user_id = $1`, [id]);
+      const entitlements = entRes ? entRes.rows.map((r) => r.entitlement_key) : [];
+      return mapRowToDbUser(res.rows[0], entitlements);
+    }
+  }
+
   return USERS_DATABASE.find((u) => u.id === id);
 }
 
 /**
  * Get user by email
  */
-export function getUserByEmail(email: string): DbUserSchema | undefined {
+export async function getUserByEmail(email: string): Promise<DbUserSchema | undefined> {
+  const isPgActive = await initPostgresSchema();
+
+  if (isPgActive) {
+    const res = await executeQuery(`SELECT * FROM users WHERE LOWER(email) = LOWER($1) LIMIT 1`, [email]);
+    if (res && res.rows.length > 0) {
+      const entRes = await executeQuery(`SELECT entitlement_key FROM user_entitlements WHERE user_id = $1`, [res.rows[0].id]);
+      const entitlements = entRes ? entRes.rows.map((r) => r.entitlement_key) : [];
+      return mapRowToDbUser(res.rows[0], entitlements);
+    }
+  }
+
   return USERS_DATABASE.find((u) => u.email.toLowerCase() === email.toLowerCase());
 }
 
 /**
  * Authenticate credentials
  */
-export function authenticateUser(email: string): DbUserSchema | undefined {
+export async function authenticateUser(email: string): Promise<DbUserSchema | undefined> {
   return getUserByEmail(email);
 }
 
 /**
  * Create new user
  */
-export function createUser(userData: Partial<DbUserSchema>): DbUserSchema {
+export async function createUser(userData: Partial<DbUserSchema>): Promise<DbUserSchema> {
+  const isPgActive = await initPostgresSchema();
+  const id = `usr-${Date.now()}`;
+  const now = new Date().toISOString();
+
   const newUser: DbUserSchema = {
-    id: `usr-${Date.now()}`,
+    id,
     email: userData.email || "",
     passwordHash: `pbkdf2_sha256_${Date.now()}`,
     name: userData.name || "New Trader",
@@ -196,8 +277,8 @@ export function createUser(userData: Partial<DbUserSchema>): DbUserSchema {
     funnelLevel: 2,
     isActive: true,
     riskProfile: userData.riskProfile || "Moderate",
-    createdAt: new Date().toISOString(),
-    lastLoginAt: new Date().toISOString(),
+    createdAt: now,
+    lastLoginAt: now,
     progress: {
       enrolledCourseSlug: "forex-basics-free",
       courseProgressPct: 0,
@@ -211,6 +292,34 @@ export function createUser(userData: Partial<DbUserSchema>): DbUserSchema {
     entitlements: ["FREE_TOOLS", "BASIC_CALCULATORS", "SAVE_JOURNAL", "ACADEMY_BASIC"]
   };
 
+  if (isPgActive) {
+    await executeQuery(
+      `INSERT INTO users (id, email, password_hash, name, role, subscription_tier, funnel_level, is_active, risk_profile, created_at, last_login_at, progress)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+      [
+        newUser.id,
+        newUser.email,
+        newUser.passwordHash,
+        newUser.name,
+        newUser.role,
+        newUser.subscriptionTier,
+        newUser.funnelLevel,
+        newUser.isActive,
+        newUser.riskProfile,
+        newUser.createdAt,
+        newUser.lastLoginAt,
+        JSON.stringify(newUser.progress)
+      ]
+    );
+
+    for (const ent of newUser.entitlements) {
+      await executeQuery(
+        `INSERT INTO user_entitlements (user_id, entitlement_key) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
+        [newUser.id, ent]
+      );
+    }
+  }
+
   USERS_DATABASE.unshift(newUser);
   return newUser;
 }
@@ -218,7 +327,41 @@ export function createUser(userData: Partial<DbUserSchema>): DbUserSchema {
 /**
  * Update user details or role
  */
-export function updateUser(id: string, updates: Partial<DbUserSchema>): DbUserSchema | undefined {
+export async function updateUser(id: string, updates: Partial<DbUserSchema>): Promise<DbUserSchema | undefined> {
+  const isPgActive = await initPostgresSchema();
+
+  if (isPgActive) {
+    const fields: string[] = [];
+    const params: any[] = [id];
+
+    if (updates.name !== undefined) {
+      params.push(updates.name);
+      fields.push(`name = $${params.length}`);
+    }
+    if (updates.email !== undefined) {
+      params.push(updates.email);
+      fields.push(`email = $${params.length}`);
+    }
+    if (updates.role !== undefined) {
+      params.push(updates.role);
+      fields.push(`role = $${params.length}`);
+    }
+    if (updates.subscriptionTier !== undefined) {
+      params.push(updates.subscriptionTier);
+      fields.push(`subscription_tier = $${params.length}`);
+    }
+    if (updates.isActive !== undefined) {
+      params.push(updates.isActive);
+      fields.push(`is_active = $${params.length}`);
+    }
+
+    if (fields.length > 0) {
+      await executeQuery(`UPDATE users SET ${fields.join(", ")} WHERE id = $1`, params);
+    }
+
+    return getUserById(id);
+  }
+
   const index = USERS_DATABASE.findIndex((u) => u.id === id);
   if (index === -1) return undefined;
 
@@ -233,7 +376,14 @@ export function updateUser(id: string, updates: Partial<DbUserSchema>): DbUserSc
 /**
  * Delete user
  */
-export function deleteUser(id: string): boolean {
+export async function deleteUser(id: string): Promise<boolean> {
+  const isPgActive = await initPostgresSchema();
+
+  if (isPgActive) {
+    const res = await executeQuery(`DELETE FROM users WHERE id = $1`, [id]);
+    return Boolean(res && res.rowCount && res.rowCount > 0);
+  }
+
   const initialLen = USERS_DATABASE.length;
   USERS_DATABASE = USERS_DATABASE.filter((u) => u.id !== id);
   return USERS_DATABASE.length < initialLen;

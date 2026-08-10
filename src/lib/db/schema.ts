@@ -68,3 +68,20 @@ export interface DbActivityLogSchema {
   details: string;
   createdAt: string;
 }
+
+export interface DbSessionSchema {
+  id: string;
+  userId: string;
+  ipAddress: string;
+  userAgent: string;
+  createdAt: string;
+  expiresAt: string;
+}
+
+export interface DbDepartmentSchema {
+  departmentCode: string;
+  departmentName: string;
+  description: string;
+  isActive: boolean;
+}
+
