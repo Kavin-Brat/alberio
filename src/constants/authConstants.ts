@@ -16,7 +16,9 @@ export const PUBLIC_ROUTES: string[] = [
   "/login",
   "/register",
   "/blog",
+  "/learn",
 ];
+
 
 export const AUTH_MESSAGES = {
   LOGIN_SUCCESS: "Login successful. JWT Bearer token issued.",

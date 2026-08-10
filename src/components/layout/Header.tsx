@@ -76,6 +76,16 @@ export default function Header() {
 
           {/* Center Nav Links */}
           <nav className="hidden lg:flex items-center gap-7">
+            <Link
+              href="/learn"
+              className={cn(
+                "text-xs tracking-widest uppercase transition-colors hover:text-white",
+                isActive("/learn") ? "text-[#22e600] font-semibold" : "text-muted-foreground"
+              )}
+            >
+              Learn
+            </Link>
+
             {!isLoggedIn ? (
               <>
                 <Link

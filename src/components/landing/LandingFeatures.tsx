@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Code2, LineChart, Target, GitMerge } from "lucide-react";
+import { Code2, LineChart, Target, GitMerge, BookOpen } from "lucide-react";
 import Link from "next/link";
 import SectionHeader from "@/components/common/SectionHeader";
 import { CORE_ARCHITECTURE_CONTENT } from "@/constants/landingContent";
@@ -12,6 +12,7 @@ import { CORE_ARCHITECTURE_CONTENT } from "@/constants/landingContent";
 export default function LandingFeatures() {
   const getIcon = (key: string) => {
     switch (key) {
+      case "book": return BookOpen;
       case "code": return Code2;
       case "chart": return LineChart;
       case "target": return Target;

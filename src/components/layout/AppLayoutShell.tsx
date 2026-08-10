@@ -23,8 +23,12 @@ export default function AppLayoutShell({ children }: { children: React.ReactNode
   const currentPath = pathname || "";
 
   const isPublicRoute = PUBLIC_ROUTES.some(
-    (route) => currentPath === route || currentPath.startsWith("/blog/")
+    (route) =>
+      currentPath === route ||
+      currentPath.startsWith("/blog/") ||
+      currentPath.startsWith("/learn/")
   );
+
 
 
   // If user is unauthenticated and attempting to visit a protected route

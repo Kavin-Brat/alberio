@@ -18,7 +18,7 @@ export default function LandingStory() {
       />
 
       {/* Main Origin Story Box */}
-      <div className="p-8 bg-[#0b0b0b] border border-[#00FF00]/40 rounded-xl mb-8">
+      <div className="p-8 bg-[#0b0b0b] border border-[#00FF00]/40 rounded-xl">
         <span className="text-[10px] font-mono font-bold text-[#00FF00] uppercase tracking-widest block mb-2">
           {OUR_STORY_CONTENT.originBox.pill}
         </span>
@@ -28,21 +28,6 @@ export default function LandingStory() {
         <p className="text-xs text-slate-400 font-light leading-relaxed">
           {OUR_STORY_CONTENT.originBox.body}
         </p>
-      </div>
-
-      {/* 3 Phase Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {OUR_STORY_CONTENT.phases.map((phase, i) => (
-          <div key={i} className="p-6 bg-[#0b0b0b] border border-slate-800 rounded-xl">
-            <span className="text-[10px] font-mono font-bold text-[#00FF00] uppercase tracking-widest block mb-2">
-              {phase.pill}
-            </span>
-            <h4 className="text-sm font-bold text-white mb-2">{phase.title}</h4>
-            <p className="text-xs text-slate-400 font-light leading-relaxed">
-              {phase.description}
-            </p>
-          </div>
-        ))}
       </div>
     </section>
   );

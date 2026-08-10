@@ -5,7 +5,7 @@ import { Calculator, ShieldAlert, CheckCircle, AlertTriangle, Edit2, Check } fro
 import { GlassCard } from "@/components/ui/Card";
 
 export function QuickDrawdownWidget() {
-  const [balance, setBalance] = useState<number>(100000);
+  const [balance, setBalance] = useState<number>(5000);
   const [isEditingBalance, setIsEditingBalance] = useState<boolean>(false);
   const [drawdownType, setDrawdownType] = useState<"static" | "trailing-balance" | "trailing-equity">("trailing-equity");
   const [maxDrawdownPct, setMaxDrawdownPct] = useState<number>(10);
@@ -129,9 +129,9 @@ export function QuickDrawdownWidget() {
 
               <input
                 type="range"
-                min="100"
+                min="5000"
                 max="200000"
-                step="500"
+                step="1000"
                 value={balance}
                 onChange={(e) => setBalance(Number(e.target.value))}
                 className="w-full cursor-pointer"

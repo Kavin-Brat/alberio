@@ -244,3 +244,78 @@ select option:checked {
   background-color: rgba(34, 230, 0, 0.25) !important;
   color: #57F287 !important;
 }
+
+/* ─── prose-learn: BlogViewer article HTML styles ────────────────────────── */
+.prose-learn h1 {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -0.025em;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+.prose-learn h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #1e293b;
+}
+.prose-learn p {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  font-weight: 300;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+.prose-learn ul {
+  margin: 0.75rem 0 1rem 1rem;
+  space-y: 0.5rem;
+}
+.prose-learn li {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  font-weight: 300;
+  line-height: 1.7;
+  padding-left: 0.25rem;
+  list-style-type: disc;
+  margin-bottom: 0.4rem;
+}
+.prose-learn strong {
+  color: #e2e8f0;
+  font-weight: 700;
+}
+.prose-learn em {
+  color: #cbd5e1;
+}
+/* Callout boxes */
+.prose-learn .callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  margin: 1.25rem 0;
+  line-height: 1.6;
+}
+.prose-learn .callout-key   { background: rgba(0,255,0,0.04);   border-left: 4px solid #00FF00; color: #00FF00; }
+.prose-learn .callout-tip   { background: rgba(0,255,0,0.04);   border-left: 4px solid #00FF00; color: #4ade80; }
+.prose-learn .callout-warning { background: rgba(245,158,11,0.05); border-left: 4px solid #f59e0b; color: #fbbf24; }
+.prose-learn .callout-info  { background: rgba(59,130,246,0.05); border-left: 4px solid #3b82f6; color: #60a5fa; }
+/* Formula box */
+.prose-learn .formula {
+  font-family: monospace;
+  font-size: 0.8125rem;
+  background: #020817;
+  border: 1px solid #1e293b;
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  color: #00FF00;
+  margin: 1.25rem 0;
+  overflow-x: auto;
+}
+

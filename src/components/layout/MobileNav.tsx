@@ -91,6 +91,18 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
 
                 <motion.div variants={linkVariants}>
                   <Link
+                    href="/learn"
+                    onClick={onClose}
+                    className={`text-base tracking-wider transition-colors uppercase flex items-center gap-2 ${
+                      currentPath.startsWith("/learn") ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
+                    }`}
+                  >
+                    <GraduationCap className="w-4 h-4 text-primary" /> Learn
+                  </Link>
+                </motion.div>
+
+                <motion.div variants={linkVariants}>
+                  <Link
                     href="/academy"
                     onClick={onClose}
                     className={`text-base tracking-wider transition-colors uppercase flex items-center gap-2 ${

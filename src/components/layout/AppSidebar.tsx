@@ -60,11 +60,12 @@ export default function AppSidebar() {
   // Default menu list fallback if backend menu list is loading
   const defaultGeneralItems = [
     { label: "Cockpit Dashboard", href: "/dashboard", iconName: "LayoutDashboard" },
+    { label: "Learn Platform", href: "/learn", iconName: "GraduationCap" },
     { label: "ECN Terminal", href: "/terminal", iconName: "Cpu" },
     { label: "Quantitative Suite", href: "/tools", iconName: "Wrench" },
     { label: "Prop-Firm Directory", href: "/prop-firms", iconName: "Building2" },
     { label: "Trade Journal", href: "/journal", iconName: "FileText" },
-    { label: "Trader Academy", href: "/academy", iconName: "GraduationCap" },
+    { label: "Trader Academy", href: "/academy", iconName: "Bookmark" },
     { label: "Albireo Pro SaaS", href: "/pricing", iconName: "Sparkles" },
   ];
 

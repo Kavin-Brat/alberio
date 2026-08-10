@@ -31,6 +31,11 @@ export function Footer() {
           </h4>
           <ul className="space-y-2.5 text-xs font-light text-muted-foreground">
             <li>
+              <Link href="/learn" className="hover:text-primary transition-colors text-primary font-semibold">
+                Learn Platform (Free Courses)
+              </Link>
+            </li>
+            <li>
               <Link href="/academy" className="hover:text-primary transition-colors">
                 Albireo Academy
               </Link>

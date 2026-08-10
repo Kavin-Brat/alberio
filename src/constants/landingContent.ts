@@ -29,6 +29,13 @@ export const CORE_ARCHITECTURE_CONTENT = {
     "Eliminate emotional guess-work. Quantify risk, track institutional flow, and journal trades with precision.",
   cards: [
     {
+      title: "Free Education & Trading Courses",
+      description:
+        "Structured step-by-step curriculum from beginner pip calculations to prop firm trailing drawdown math and institutional COT data.",
+      iconKey: "book",
+      href: "/learn",
+    },
+    {
       title: "Prop Firm Drawdown Engine",
       description:
         "Trailing drawdown limits are math traps. Simulate trailing equity peaks and balance resets under realistic slippage and win-rate variance.",
