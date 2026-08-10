@@ -16,9 +16,10 @@ export interface MobileDesktopNoticeProps {
  * Displayed on mobile viewports (<1024px) for desktop-only authentication pages.
  */
 export default function MobileDesktopNotice({
-  title = "Desktop Workstation Required",
-  description = "The Albireo Trading Cockpit & Executive Command Center are optimized exclusively for desktop displays.",
+  title = "Desktop Access Required",
+  description = "Please log in with a desktop device to access it.",
 }: MobileDesktopNoticeProps) {
+
   return (
     <div className="lg:hidden">
       <GlassCard className="p-8 border-[#00FF00]/40 bg-[#0b0b0b] text-center flex flex-col items-center gap-4 rounded-2xl shadow-2xl">
