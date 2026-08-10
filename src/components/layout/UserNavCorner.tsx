@@ -6,7 +6,8 @@ import { User, Crown, Sparkles, LogOut, ChevronDown, LayoutDashboard, ShieldChec
 import Link from "next/link";
 
 export default function UserNavCorner() {
-  const { user, isSuperAdmin, switchUser } = useAuth();
+  const { user, isSuperAdmin, logout } = useAuth();
+
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -20,6 +21,12 @@ export default function UserNavCorner() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const userName = user?.name || "User";
+  const userEmail = user?.email || "";
+  const userRole = user?.role || "FREE";
+  const userTier = user?.subscriptionTier || "Free";
+  const funnelLevel = user?.progress?.funnelLevel || 1;
+
   return (
     <div className="relative font-sora" ref={dropdownRef}>
       {/* Top Right Corner Pill */}
@@ -28,16 +35,16 @@ export default function UserNavCorner() {
         className="flex items-center gap-2.5 p-1.5 pr-3 rounded-full bg-black/90 border border-primary/40 hover:border-primary transition-all cursor-pointer shadow-[0_0_15px_rgba(34,230,0,0.2)]"
       >
         <div className="w-7 h-7 rounded-full bg-primary text-black font-extrabold flex items-center justify-center text-xs shrink-0 font-mono">
-          {user.name.charAt(0)}
+          {userName.charAt(0)}
         </div>
 
         <div className="hidden sm:flex flex-col text-left truncate max-w-36">
-          <span className="text-[11px] font-bold text-white truncate">{user.name}</span>
-          <span className="text-[9px] text-[#22e600] font-mono truncate">{user.email}</span>
+          <span className="text-[11px] font-bold text-white truncate">{userName}</span>
+          <span className="text-[9px] text-[#22e600] font-mono truncate">{userEmail}</span>
         </div>
 
         <span className="px-2 py-0.5 rounded-full bg-[#22e600]/20 text-[#22e600] font-mono text-[9px] font-bold uppercase hidden md:inline">
-          {user.role}
+          {userRole}
         </span>
 
         <ChevronDown className={`w-3.5 h-3.5 text-white/70 transition-transform ${isOpen ? "rotate-180" : ""}`} />
@@ -48,11 +55,11 @@ export default function UserNavCorner() {
         <div className="absolute right-0 mt-2 w-64 bg-[#0b0b0b] border border-primary/40 rounded-xl shadow-2xl p-3 flex flex-col gap-2 backdrop-blur-xl animate-fade-in z-50 text-xs">
           {/* User Info Header */}
           <div className="p-2 bg-black rounded-lg border border-border/80 flex flex-col gap-1">
-            <span className="font-bold text-white block">{user.name}</span>
-            <span className="text-[10px] text-[#22e600] font-mono block">{user.email}</span>
+            <span className="font-bold text-white block">{userName}</span>
+            <span className="text-[10px] text-[#22e600] font-mono block">{userEmail}</span>
             <div className="flex justify-between items-center pt-1 border-t border-border/60 text-[10px] font-mono text-muted-foreground">
-              <span>Tier: {user.subscriptionTier}</span>
-              <span className="text-[#22e600] font-bold">L{user.progress.funnelLevel} / 6</span>
+              <span>Tier: {userTier}</span>
+              <span className="text-[#22e600] font-bold">L{funnelLevel} / 6</span>
             </div>
           </div>
 
@@ -89,14 +96,17 @@ export default function UserNavCorner() {
           )}
 
           <div className="border-t border-border pt-1">
-            <Link
-              href="/login"
-              onClick={() => setIsOpen(false)}
-              className="p-2 rounded hover:bg-destructive/20 flex items-center gap-2 text-destructive font-semibold transition-colors"
+            <button
+              onClick={async () => {
+                setIsOpen(false);
+                await logout();
+                window.location.href = "/login";
+              }}
+              className="w-full text-left p-2 rounded hover:bg-destructive/20 flex items-center gap-2 text-destructive font-semibold transition-colors cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               <span>Sign Out</span>
-            </Link>
+            </button>
           </div>
         </div>
       )}

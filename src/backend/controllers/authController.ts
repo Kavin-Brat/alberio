@@ -52,6 +52,19 @@ export class AuthController {
       200
     );
   }
+
+  public async handleLogout(request: Request) {
+    let userId = "";
+    try {
+      const body = await request.json();
+      userId = body?.userId || "";
+    } catch (e) {
+      // Body may be empty on logout request
+    }
+
+    const result = await authService.logout(userId);
+    return buildSuccessResponse(null, result.message, 200);
+  }
 }
 
 export const authController = new AuthController();

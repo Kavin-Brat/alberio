@@ -1,3 +1,5 @@
+import { validateRequest } from "../middlewares/validate";
+import { createRoleSchema, updateRoleSchema } from "../validations/roleValidation";
 import { roleService } from "../services/roleService";
 import { buildSuccessResponse } from "../utils/helpers";
 
@@ -8,16 +10,17 @@ export class RoleController {
   }
 
   public async handleCreateRole(request: Request) {
-    const body = await request.json();
+    const { body } = await validateRequest(request, createRoleSchema);
     const { displayName, roleKey, description, permissions } = body;
 
-    const newRole = await roleService.createNewRole({ displayName, roleKey, description, permissions });
+    const newRole = await roleService.createNewRole({
+      displayName,
+      roleKey,
+      description: description || "",
+      permissions: permissions || [],
+    });
 
-    return buildSuccessResponse(
-      { role: newRole },
-      "Role created successfully",
-      201
-    );
+    return buildSuccessResponse({ role: newRole }, "Role created successfully", 201);
   }
 
   public async handleGetRole(roleId: string) {
@@ -26,14 +29,10 @@ export class RoleController {
   }
 
   public async handleUpdateRole(roleId: string, request: Request) {
-    const body = await request.json();
+    const { body } = await validateRequest(request, updateRoleSchema);
     const updated = await roleService.updateExistingRole(roleId, body);
 
-    return buildSuccessResponse(
-      { role: updated },
-      "Role updated successfully",
-      200
-    );
+    return buildSuccessResponse({ role: updated }, "Role updated successfully", 200);
   }
 
   public async handleDeleteRole(roleId: string) {

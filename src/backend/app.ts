@@ -6,29 +6,39 @@ import { errorConverter, errorHandler } from "./middlewares/errorMiddleware";
 import { ApiError } from "./utils/ApiError";
 import { LoggerInfo } from "./utils/helpers";
 
+/**
+ * Enterprise Application Server Router & Middleware Dispatcher
+ * Single Responsibility: Manages application configuration, client context extraction,
+ * HTTP security header injection, and centralized operational error boundary handling.
+ */
 export class Application {
   public config = config;
   public router = router;
 
   /**
-   * Process request through security headers, routing registry, and error middleware
+   * Dispatches incoming Web API Requests through security, logging, controller handling, and error middleware
+   * @param req Web API Request object
+   * @param handler Async route execution handler callback
+   * @returns Web API NextResponse object
    */
-  public async handleRequest(req: Request, handler: (req: Request) => Promise<NextResponse>): Promise<NextResponse> {
+  public async handleRequest(
+    req: Request,
+    handler: (req: Request) => Promise<NextResponse>
+  ): Promise<NextResponse> {
     try {
-      // Client IP & User Agent context extraction
+      // Extract client IP address and user agent context
       const clientIp =
         req.headers.get("cf-connecting-ip") ||
         req.headers.get("x-forwarded-for") ||
         req.headers.get("x-real-ip") ||
         "127.0.0.1";
-      const userAgent = req.headers.get("user-agent") || "N/A";
 
       LoggerInfo(req, `${req.method} ${new URL(req.url).pathname} - IP: ${clientIp}`, "AppRouter");
 
-      // Execute controller route handler
+      // Execute target controller route handler
       const response = await handler(req);
 
-      // Inject Security HTTP Headers (Helmet-style)
+      // Inject Helmet-style security HTTP headers
       response.headers.set("X-Content-Type-Options", "nosniff");
       response.headers.set("X-Frame-Options", "DENY");
       response.headers.set("X-XSS-Protection", "1; mode=block");
@@ -42,7 +52,8 @@ export class Application {
   }
 
   /**
-   * Default 404 handler for missing route endpoints
+   * Default 404 response handler for non-existent API route endpoints
+   * @returns NextResponse with 404 HTTP status envelope
    */
   public handleNotFound(): NextResponse {
     const err = new ApiError(httpStatus.NOT_FOUND, "API route endpoint not found");

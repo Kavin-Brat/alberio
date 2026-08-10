@@ -13,65 +13,63 @@ import {
   Sparkles, 
   Users, 
   FileText, 
-  ShieldCheck, 
-  LogOut, 
-  Crown, 
-  ChevronRight, 
-  Menu, 
-  X,
-  Layers,
-  Compass
+  Bookmark, 
+  Crown,
+  ChevronRight,
+  ShieldCheck,
+  ChevronDown
 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import Badge from "@/components/ui/Badge";
+import { MenuItem } from "@/backend/services/menuService";
 
+/**
+ * Authenticated Left Navigation Sidebar Component
+ * Single Responsibility: Renders platform tools navigation categories and user workspace links
+ * exclusively when the user is logged into an active session.
+ */
 export default function AppSidebar() {
+  const { user, isLoggedIn, allowedMenus, isSuperAdmin, logout } = useAuth();
   const pathname = usePathname();
-  const { user, allowedMenus, logout } = useAuth();
   const [isOpenMobile, setIsOpenMobile] = useState(false);
 
-  const isActive = (path: string) => pathname === path;
+  // If user is unauthenticated, do not render sidebar
+  if (!isLoggedIn) return null;
 
   const getIcon = (iconName: string) => {
     switch (iconName) {
       case "LayoutDashboard": return LayoutDashboard;
       case "GraduationCap": return GraduationCap;
       case "Wrench": return Wrench;
-      case "FileText": return FileText;
-      case "Sparkles": return Sparkles;
-      case "Compass": return Compass;
-      case "Cpu": return Cpu;
       case "Building2": return Building2;
-      case "Layers": return Layers;
-      case "Crown": return Crown;
+      case "Cpu": return Cpu;
+      case "Sparkles": return Sparkles;
       case "Users": return Users;
+      case "FileText": return FileText;
+      case "Bookmark": return Bookmark;
+      case "Crown": return Crown;
       case "ShieldCheck": return ShieldCheck;
       default: return LayoutDashboard;
     }
   };
 
-  const defaultNavItems = [
-    { label: "Personal Cockpit", href: "/dashboard", iconName: "LayoutDashboard" },
-    { label: "Academy Catalog", href: "/academy", iconName: "GraduationCap" },
-    { label: "Quantitative Tools", href: "/tools", iconName: "Wrench" },
+  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+
+  // Default menu list fallback if backend menu list is loading
+  const defaultGeneralItems = [
+    { label: "Cockpit Dashboard", href: "/dashboard", iconName: "LayoutDashboard" },
+    { label: "ECN Terminal", href: "/terminal", iconName: "Cpu" },
+    { label: "Quantitative Suite", href: "/tools", iconName: "Wrench" },
+    { label: "Prop-Firm Directory", href: "/prop-firms", iconName: "Building2" },
     { label: "Trade Journal", href: "/journal", iconName: "FileText" },
+    { label: "Trader Academy", href: "/academy", iconName: "GraduationCap" },
     { label: "Albireo Pro SaaS", href: "/pricing", iconName: "Sparkles" },
-    { label: "Group Ecosystem Hub", href: "/group", iconName: "Layers" },
   ];
 
-  const menuList = allowedMenus && allowedMenus.length > 0 ? allowedMenus : defaultNavItems;
-
-  const generalItems = menuList.filter((m: any) => !m.category || m.category === "GENERAL" || m.category === "PRO");
-  const adminItems = menuList.filter((m: any) => m.category === "ADMIN");
+  const generalItems = allowedMenus && allowedMenus.length > 0 ? allowedMenus : defaultGeneralItems;
 
   return (
     <>
-      {/* Mobile Drawer Toggle Button */}
-      <button
-        onClick={() => setIsOpenMobile(!isOpenMobile)}
-        className="lg:hidden fixed bottom-4 right-4 z-50 p-3 rounded-full bg-[#00FF00] text-black font-bold shadow-[0_0_20px_rgba(0,255,0,0.5)] flex items-center justify-center cursor-pointer"
-      >
-        {isOpenMobile ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-      </button>
-
       {/* Sidebar Overlay on Mobile */}
       {isOpenMobile && (
         <div
@@ -86,20 +84,7 @@ export default function AppSidebar() {
           isOpenMobile ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
-        <div className="flex flex-col gap-6 overflow-y-auto">
-          {/* Logo Header */}
-          <Link href="/" className="flex items-center gap-2 px-2 pt-2">
-            <div className="w-8 h-8 rounded-lg bg-[#00FF00]/10 border border-[#00FF00]/40 flex items-center justify-center text-[#00FF00]">
-              <Sparkles className="w-5 h-5 text-[#00FF00] animate-pulse" />
-            </div>
-            <div>
-              <span className="font-extrabold text-white tracking-tight text-base block">ALBIREO</span>
-              <span className="text-[9px] text-[#00FF00] font-mono font-bold tracking-widest block uppercase">
-                {user?.role || "AUTHENTICATED"}
-              </span>
-            </div>
-          </Link>
-
+        <div className="flex flex-col gap-6 overflow-y-auto pt-2">
           {/* Navigation Links */}
           <div className="space-y-1">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 block mb-2 font-mono">
@@ -114,74 +99,74 @@ export default function AppSidebar() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsOpenMobile(false)}
-                  className={`p-2.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-between ${
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all group",
                     active
-                      ? "bg-[#00FF00] text-black font-bold shadow-[0_0_15px_rgba(0,255,0,0.3)]"
-                      : "text-slate-400 hover:text-white hover:bg-slate-900"
-                  }`}
+                      ? "bg-[#22e600]/10 text-[#22e600] border border-[#22e600]/30 font-bold shadow-[0_0_15px_rgba(34,230,0,0.1)]"
+                      : "text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent"
+                  )}
                 >
-                  <div className="flex items-center gap-2.5">
-                    <IconComp className="w-4 h-4" />
-                    <span>{item.label}</span>
-                  </div>
-                  {active && <ChevronRight className="w-3.5 h-3.5" />}
+                  <IconComp className={cn("w-4 h-4 shrink-0 transition-colors", active ? "text-[#22e600]" : "text-slate-400 group-hover:text-white")} />
+                  <span className="flex-1 truncate">{item.label}</span>
+                  {active && <ChevronRight className="w-3.5 h-3.5 text-[#22e600]" />}
                 </Link>
               );
             })}
           </div>
 
-          {/* Admin Command Center (Only if returned in allowedMenus or Admin) */}
-          {adminItems.length > 0 && (
+          {/* Super Admin Section */}
+          {isSuperAdmin && (
             <div className="space-y-1 pt-4 border-t border-slate-800">
-              <span className="text-[10px] font-bold text-[#00FF00] uppercase tracking-widest px-2 block mb-2 font-mono">
-                Executive Command Center
+              <span className="text-[10px] font-bold text-[#22e600] uppercase tracking-widest px-2 block mb-2 font-mono flex items-center gap-1.5">
+                <Crown className="w-3 h-3 text-[#22e600]" /> Executive Admin
               </span>
-              {adminItems.map((item) => {
-                const IconComp = getIcon(item.iconName);
-                const active = isActive(item.href);
 
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setIsOpenMobile(false)}
-                    className={`p-2.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-between ${
-                      active
-                        ? "bg-[#00FF00] text-black font-bold shadow-[0_0_15px_rgba(0,255,0,0.4)]"
-                        : "text-[#00FF00]/80 hover:text-[#00FF00] hover:bg-[#00FF00]/10 border border-[#00FF00]/20"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <IconComp className="w-4 h-4 text-[#00FF00]" />
-                      <span>{item.label}</span>
-                    </div>
-                    {active && <ChevronRight className="w-3.5 h-3.5 text-black" />}
-                  </Link>
-                );
-              })}
+              <Link
+                href="/admin"
+                onClick={() => setIsOpenMobile(false)}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all group",
+                  isActive("/admin") && !pathname.includes("/admin/")
+                    ? "bg-[#22e600]/15 text-[#22e600] border border-[#22e600]/40 font-bold"
+                    : "text-slate-400 hover:text-white hover:bg-slate-900"
+                )}
+              >
+                <Crown className="w-4 h-4 text-[#22e600]" />
+                <span className="flex-1">CEO Command Center</span>
+              </Link>
+
+              <Link
+                href="/admin/users"
+                onClick={() => setIsOpenMobile(false)}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all group",
+                  isActive("/admin/users")
+                    ? "bg-[#22e600]/15 text-[#22e600] border border-[#22e600]/40 font-bold"
+                    : "text-slate-400 hover:text-white hover:bg-slate-900"
+                )}
+              >
+                <ShieldCheck className="w-4 h-4 text-[#22e600]" />
+                <span className="flex-1">User & Role Management</span>
+              </Link>
             </div>
           )}
         </div>
 
-        {/* User Footer Profile Pill & Sign Out */}
-        <div className="pt-4 border-t border-slate-800 flex flex-col gap-2">
-          <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between">
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-xs font-bold text-white truncate">{user.name}</span>
-              <span className="text-[10px] text-slate-400 font-mono truncate">{user.email}</span>
+        {/* User Footer Profile Summary */}
+        <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
+          <div className="flex items-center gap-2.5 overflow-hidden">
+            <div className="w-8 h-8 rounded-full bg-[#22e600]/20 border border-[#22e600]/40 flex items-center justify-center text-[#22e600] font-bold text-xs font-mono shrink-0">
+              {(user?.name || "U").charAt(0)}
             </div>
-            <span className="text-[9px] font-bold font-mono px-1.5 py-0.5 rounded bg-[#00FF00]/10 text-[#00FF00] border border-[#00FF00]/30 shrink-0">
-              {user.role}
-            </span>
+            <div className="flex flex-col truncate">
+              <span className="text-xs font-bold text-white truncate">{user?.name || "User"}</span>
+              <span className="text-[10px] text-slate-400 font-mono truncate">{user?.email || ""}</span>
+            </div>
           </div>
 
-          <button
-            onClick={logout}
-            className="w-full p-2.5 rounded-lg text-xs font-semibold text-red-400 hover:bg-red-500/10 border border-red-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Sign Out</span>
-          </button>
+          <Badge variant="primary" size="sm">
+            {user?.role || "FREE"}
+          </Badge>
         </div>
       </aside>
     </>

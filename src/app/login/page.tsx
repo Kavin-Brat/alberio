@@ -103,14 +103,12 @@ export default function LoginPage() {
           <GlassCard className="p-8 border-slate-800 bg-[#0b0b0b] flex flex-col gap-6 shadow-2xl rounded-2xl">
             {/* Header */}
             <div className="flex flex-col items-center text-center gap-2">
-              <div className="w-12 h-12 rounded-xl bg-[#00FF00]/10 border border-[#00FF00]/40 flex items-center justify-center text-[#00FF00]">
-                <Sparkles className="w-6 h-6 text-[#00FF00] animate-pulse" />
-              </div>
               <h1 className="text-2xl font-black text-white tracking-tight">Log In to Albireo</h1>
               <p className="text-xs text-slate-400 font-light">
                 Dedicated authentication gateway for trading intelligence, trade journal, and prop firm risk tools.
               </p>
             </div>
+
 
             {/* Google Single Sign-On (SSO) Button */}
             <button

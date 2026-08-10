@@ -12,11 +12,15 @@ export interface ValidationSchema {
  * Validates request payload against Joi schema
  * Inspired by devportal_backend_2.0 & topsbizops validation middleware
  */
-export async function validateRequest(req: Request, schema: ValidationSchema, paramsObject?: Record<string, string>): Promise<{ body?: any; query?: any; params?: any }> {
+export async function validateRequest(
+  req: Request,
+  schema: ValidationSchema,
+  paramsObject?: Record<string, string>
+): Promise<{ body?: any; query?: any; params?: any }> {
   const result: any = {};
 
   if (schema.params && paramsObject) {
-    const { value, error } = schema.params.validate(paramsObject);
+    const { value, error } = schema.params.validate(paramsObject, { allowUnknown: true });
     if (error) {
       const errorMessage = error.details.map((details) => details.message).join(", ");
       throw new ApiError(httpStatus.BAD_REQUEST, `Validation error: ${errorMessage}`);
@@ -31,7 +35,7 @@ export async function validateRequest(req: Request, schema: ValidationSchema, pa
       queryObj[key] = val;
     });
 
-    const { value, error } = schema.query.validate(queryObj);
+    const { value, error } = schema.query.validate(queryObj, { allowUnknown: true });
     if (error) {
       const errorMessage = error.details.map((details) => details.message).join(", ");
       throw new ApiError(httpStatus.BAD_REQUEST, `Validation error: ${errorMessage}`);
@@ -42,7 +46,7 @@ export async function validateRequest(req: Request, schema: ValidationSchema, pa
   if (schema.body && (req.method === "POST" || req.method === "PUT" || req.method === "PATCH")) {
     try {
       const jsonBody = await req.json();
-      const { value, error } = schema.body.validate(jsonBody);
+      const { value, error } = schema.body.validate(jsonBody, { allowUnknown: true });
       if (error) {
         const errorMessage = error.details.map((details) => details.message).join(", ");
         throw new ApiError(httpStatus.BAD_REQUEST, `Validation error: ${errorMessage}`);

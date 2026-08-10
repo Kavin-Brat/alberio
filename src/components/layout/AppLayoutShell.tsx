@@ -1,25 +1,25 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { useAuth } from "@/context/AuthContext";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import AppSidebar from "@/components/layout/AppSidebar";
 import { GlassCard } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
-import { Lock, ArrowRight, ShieldAlert } from "lucide-react";
+import { Lock, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { PUBLIC_ROUTES, AUTH_MESSAGES } from "@/constants/authConstants";
 
 /**
- * Public routes accessible without authentication
+ * Application Core Layout Shell
+ * Single Responsibility: Manages layout container structure, protected route access guards,
+ * and renders the Left Navigation Sidebar exclusively for authenticated workspace sessions.
  */
-const PUBLIC_ROUTES = ["/", "/login", "/register", "/blog"];
-
 export default function AppLayoutShell({ children }: { children: React.ReactNode }) {
   const { isLoggedIn } = useAuth();
   const pathname = usePathname();
-  const router = useRouter();
 
   const isPublicRoute = PUBLIC_ROUTES.some(
     (route) => pathname === route || pathname.startsWith("/blog/")
@@ -46,7 +46,7 @@ export default function AppLayoutShell({ children }: { children: React.ReactNode
             </div>
 
             <p className="text-xs text-slate-400 font-light leading-relaxed">
-              The module <span className="font-mono text-[#00FF00] font-bold">{pathname}</span> is protected. You must log in to your Albireo account to view left navigation and trading tools.
+              {AUTH_MESSAGES.UNAUTHORIZED} The module <span className="font-mono text-[#00FF00] font-bold">{pathname}</span> requires a signed-in Albireo session.
             </p>
 
             <Link href="/login" className="w-full">

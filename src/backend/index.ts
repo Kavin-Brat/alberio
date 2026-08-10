@@ -1,52 +1,45 @@
 import app from "./app";
-import config from "./config/config";
-import logger from "./config/logger";
-import { initPostgresSchema } from "../lib/db/postgres";
+import { LoggerInfo, LoggerError } from "./utils/helpers";
+import { initPostgresSchema } from "@/lib/db/postgres";
 
-let isStarted = false;
+/**
+ * Backend Server Entry Point & Process Exception Boundary
+ * Single Responsibility: Initializes database connections and binds global process-level
+ * uncaughtException and unhandledRejection exception handlers.
+ */
+let isInitialized = false;
 
-export async function bootstrapBackendServer(): Promise<void> {
-  if (isStarted) return;
-  isStarted = true;
+export async function initializeBackendServer() {
+  if (isInitialized) return app;
 
-  logger.info(`Initializing Albireo Backend Engine in [${config.env.toUpperCase()}] mode...`);
+  try {
+    LoggerInfo(null, "Initializing Albireo Backend Server Runtime...", "Bootstrap");
 
-  // Bind Process Exception Safety Handlers (Inspired by devportal_backend_2.0/src/index.js)
+    // Initialize PostgreSQL Database Connection Pool & Auto-DDL Schema
+    await initPostgresSchema();
+
+    isInitialized = true;
+    LoggerInfo(null, "Albireo Backend Server successfully initialized.", "Bootstrap");
+  } catch (err: any) {
+    LoggerError(null, `Backend initialization failed: ${err.message}`, "Bootstrap");
+  }
+
+  return app;
+}
+
+// Bind Global Process Exception Handlers
+if (typeof process !== "undefined") {
   process.on("uncaughtException", (error: Error) => {
-    logger.error({
-      message: `Uncaught Exception: ${error.message}`,
-      component: "ProcessHandler",
-      stack: error.stack,
-    });
+    LoggerError(null, `Uncaught Exception: ${error.message}`, "ProcessException");
   });
 
   process.on("unhandledRejection", (reason: any) => {
-    logger.error({
-      message: `Unhandled Rejection: ${reason?.message || reason}`,
-      component: "ProcessHandler",
-      stack: reason?.stack || "",
-    });
+    LoggerError(null, `Unhandled Promise Rejection: ${reason?.message || reason}`, "ProcessException");
   });
 
   process.on("SIGTERM", () => {
-    logger.info("SIGTERM signal received. Gracefully terminating backend worker pools...");
+    LoggerInfo(null, "SIGTERM signal received. Shutting down backend graceful server runtime.", "ProcessShutdown");
   });
-
-  // Initialize PostgreSQL Connection Pool & Schema DDL
-  try {
-    const isDbReady = await initPostgresSchema();
-    if (isDbReady) {
-      logger.info("PostgreSQL Database Connection Pool initialized & verified successfully.");
-    } else {
-      logger.warn("PostgreSQL connection offline. Serving queries via fallback store.");
-    }
-  } catch (error: any) {
-    logger.error(`Database pool initialization error: ${error.message}`);
-  }
 }
 
-// Auto-run bootstrap on server startup
-bootstrapBackendServer();
-
-export { app, config, logger };
 export default app;

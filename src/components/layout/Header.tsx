@@ -9,7 +9,13 @@ import Button from "@/components/ui/Button";
 import ProUpgradeModal from "@/components/ui/ProUpgradeModal";
 import UserNavCorner from "@/components/layout/UserNavCorner";
 import { useAuth } from "@/context/AuthContext";
+import { APP_CONFIG } from "@/constants/appConstants";
 
+/**
+ * Platform Main Top Navigation Header
+ * Single Responsibility: Renders top navbar brand logo, desktop feature menus,
+ * and user profile pill or authentication CTA buttons. Restricts Log In & Get Started actions to desktop (>=1024px).
+ */
 export default function Header() {
   const { isLoggedIn } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -17,7 +23,6 @@ export default function Header() {
   const [isProModalOpen, setIsProModalOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,7 +50,6 @@ export default function Header() {
     setIsDropdownOpen(false);
   }, [pathname]);
 
-
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
@@ -64,13 +68,12 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group cursor-pointer">
             <span className="font-sora text-xl font-bold tracking-tight text-white uppercase">
-              ALBIREO<span className="text-[#22e600]">.</span>
+              {APP_CONFIG.name}<span className="text-[#22e600]">{APP_CONFIG.suffix}</span>
             </span>
           </Link>
 
           {/* Center Nav Links */}
           <nav className="hidden lg:flex items-center gap-7">
-            {/* PUBLIC VISITORS (BEFORE LOGGING IN): Only Blogs, Tools, Prop-Firms */}
             {!isLoggedIn ? (
               <>
                 <Link
@@ -136,10 +139,7 @@ export default function Header() {
                   Prop Firms
                 </Link>
               </>
-            ) : (
-              /* LOGGED IN USERS: Top navbar links removed; navigation is handled exclusively by the Left Sidebar */
-              null
-            )}
+            ) : null}
           </nav>
 
           {/* Right Action: Log In / Sign Up OR UserNavCorner Profile Pill (Strictly Desktop >= 1024px) */}
@@ -165,7 +165,6 @@ export default function Header() {
           </div>
         </div>
       </header>
-
 
       {/* Pro Modal */}
       <ProUpgradeModal

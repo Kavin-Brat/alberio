@@ -5,6 +5,7 @@ export const authRoute = {
   login: catchAsync(async (req: Request) => authController.handleLogin(req)),
   register: catchAsync(async (req: Request) => authController.handleRegister(req)),
   session: catchAsync(async (req: Request) => authController.handleGetSession(req)),
+  logout: catchAsync(async (req: Request) => authController.handleLogout(req)),
 };
 
 export default authRoute;

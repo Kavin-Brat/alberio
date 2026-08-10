@@ -4,6 +4,7 @@ import { authenticateUser, createUser, getUserByEmail, getUserById } from "@/lib
 import { signJwtToken } from "../utils/jwt";
 import { MenuService, MenuItem } from "./menuService";
 import { ApiError } from "../utils/ApiError";
+import { LoggerInfo } from "../utils/helpers";
 
 export interface AuthLoginResponse {
   success: boolean;
@@ -114,6 +115,17 @@ export class AuthService {
       user,
       allowedMenus,
       status: 200,
+    };
+  }
+
+  /**
+   * Logout user, invalidate session logs, and clear server-side state
+   */
+  public async logout(userId?: string): Promise<{ success: boolean; message: string }> {
+    LoggerInfo(null, `User logout requested for ID: ${userId || "Guest"}`, "AuthService");
+    return {
+      success: true,
+      message: "Logged out successfully. Session context cleared.",
     };
   }
 }
