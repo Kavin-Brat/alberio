@@ -3,23 +3,21 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, Menu, BarChart3, Terminal as TerminalIcon, GraduationCap, Sparkles } from "lucide-react";
+import { ChevronDown, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Button from "@/components/ui/Button";
-import { MobileNav } from "./MobileNav";
-import { AnimatePresence } from "framer-motion";
 import ProUpgradeModal from "@/components/ui/ProUpgradeModal";
 import UserNavCorner from "@/components/layout/UserNavCorner";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Header() {
-  const { isLoggedIn, logout } = useAuth();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { isLoggedIn } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isProModalOpen, setIsProModalOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,9 +42,9 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    setIsMobileMenuOpen(false);
     setIsDropdownOpen(false);
   }, [pathname]);
+
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -144,7 +142,7 @@ export default function Header() {
             )}
           </nav>
 
-          {/* Right Action: Log In / Sign Up OR UserNavCorner Profile Pill */}
+          {/* Right Action: Log In / Sign Up OR UserNavCorner Profile Pill (Strictly Desktop >= 1024px) */}
           <div className="hidden lg:flex items-center gap-3 font-sora">
             {isLoggedIn ? (
               <UserNavCorner />
@@ -165,27 +163,9 @@ export default function Header() {
               </>
             )}
           </div>
-
-          {/* Mobile Menu Toggle */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden text-muted-foreground hover:text-white focus:outline-hidden p-2"
-            aria-label="Toggle navigation menu"
-          >
-            <Menu className="h-6 w-6" />
-          </button>
         </div>
-
-        {/* Mobile Drawer */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <MobileNav
-              isOpen={isMobileMenuOpen}
-              onClose={() => setIsMobileMenuOpen(false)}
-            />
-          )}
-        </AnimatePresence>
       </header>
+
 
       {/* Pro Modal */}
       <ProUpgradeModal
